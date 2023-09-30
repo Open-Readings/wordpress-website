@@ -10,6 +10,9 @@
 /wp-content/languages
 /wp-content/plugins/index.php
 /wp-content/themes/index.php
+/wp-content/backups-dup-lite/
+/wp-content/abstracts/
+/wiki/
 /wp-includes/
 /index.php
 /license.txt

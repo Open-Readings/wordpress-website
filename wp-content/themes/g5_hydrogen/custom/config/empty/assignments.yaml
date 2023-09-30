@@ -1,0 +1,8 @@
+context: {  }
+menu: {  }
+language: {  }
+post:
+  page:
+    10: true
+taxonomy: {  }
+archive: {  }
