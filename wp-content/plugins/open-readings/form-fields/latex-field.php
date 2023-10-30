@@ -28,7 +28,6 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
         }
 
-        if ()
         if (!isset($_SESSION['file'])) {
             $timestamp = time();
             $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
