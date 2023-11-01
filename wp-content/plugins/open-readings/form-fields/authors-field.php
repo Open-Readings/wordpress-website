@@ -28,7 +28,7 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
                 <input type="email" name="email-author" placeholder="Email">
             </div>
         </div>
-        <button type="button" class="auth-add" data-field-id="' . $item['custom_id'] . '">Add</button>
-        <button type="button" class="auth-rem" data-field-id="' . $item['custom_id'] . '">Remove</button></div>';
+        <button type="button" class="auth-add" >Add</button>
+        <button type="button" class="auth-rem">Remove</button></div>';
 	}
 }

@@ -23,8 +23,8 @@ class Elementor_Reference_Field extends \ElementorPro\Modules\Forms\Fields\Field
         <label>References</label> <br>
         <div id="refList">
         </div><br>
-        <button type="button" class="ref-add" data-field-id="' . $item['custom_id'] . '">Add</button>
-        <button type="button" class="ref-rem" data-field-id="' . $item['custom_id'] . '">Remove</button>
+        <button type="button" class="ref-add">Add</button>
+        <button type="button" class="ref-rem">Remove</button>
         </div>';
 	}
 }
