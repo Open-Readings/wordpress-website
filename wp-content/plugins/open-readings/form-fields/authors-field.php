@@ -21,11 +21,11 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
 		echo '
         <div>
         <label>Authors</label><br>
-        <div id="' . $item["custom_id"] . '-List">
+        <div id="authList">
             <div>
-                <input type="text" name="name-' . $item["custom_id"] . '[]" placeholder="Name">
-                <input type="number" name="reference-' . $item["custom_id"] . '[]" placeholder="Affiliation">
-                <input type="email" name="email-' . $item["custom_id"] . '" placeholder="Email">
+                <input type="text" name="name[]" placeholder="Name" required>
+                <input type="number" name="reference[]" placeholder="Affiliation" required>
+                <input type="email" name="email-author" placeholder="Email">
             </div>
         </div>
         <button type="button" class="auth-add" data-field-id="' . $item['custom_id'] . '">Add</button>

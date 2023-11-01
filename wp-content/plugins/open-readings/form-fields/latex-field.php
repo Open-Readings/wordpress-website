@@ -22,36 +22,40 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
     public function render($item, $item_index, $form)
     {
-        if (!isset($_SESSION['id'])) {
+        if(!isset($_SESSION['id'])) {
             session_start();
             $_SESSION['id'] = 1;
-
         }
-
-        if (!isset($_SESSION['file'])) {
+        
+        if(!isset($_SESSION['file'])) {
             $timestamp = time();
             $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
-            shell_exec('/bin/mkdir latex/' . $_SESSION['file']);
-            shell_exec('/bin/mkdir latex/' . $_SESSION['file'] . "/images");
-            shell_exec('/bin/cp latex/3.pdf ' . "latex/" . $_SESSION['file']);
         }
+        $fdsokal = is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file']);
+        if(!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
+            shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
+            shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images"');
+            shell_exec('/bin/cp "' . WP_CONTENT_DIR . '/latex/3.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
+        }
+
 
         $folder = $_SESSION['file'];
 
-        echo '<div class="latex-flex">
-        <div class="latex-half-div">
+        echo '
+        </div>
+        <div class="latex-flex">
+        <div class="latex-half-div">   
+                    <textarea id="textArea" name="textArea" rows="20" cols="50"></textarea>
+                    <p>Character Count: <span id="charCount">0</span></p>
+                     <br><br>
                     
-
-                    <label for="textArea">Abstract content</label> <br>
-                    <textarea id="textArea" name="textArea" rows="20" cols="50"></textarea> <br><br>
-                    
-                    <button type="button" id="latexButton">Export to File</button>
+                    <button type="button" id="latexButton">Generate abstract</button>
                 
         </div>
         <div class="latex-half-div">
-            <iframe id="abstract" src="' . "/latex/" . $_SESSION['file'] . "/3.pdf#toolbar=0" . '" height="1200"></iframe>
+            <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . "/3.pdf#toolbar=0" . '" height="1200"></iframe>
         </div>
-    </div>';
+        </div>';
     }
 
 }

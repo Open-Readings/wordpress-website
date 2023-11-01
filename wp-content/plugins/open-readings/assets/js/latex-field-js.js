@@ -1,13 +1,31 @@
+var textarea = document.getElementById("textArea");
+var charCount = document.getElementById("charCount");
+
+textarea.addEventListener("input", function() {
+  var text = this.value;
+  var count = text.length;
+
+  // Change the maximum character limit here (e.g., 100)
+  var maxLimit = 3500;
+
+  if (count > maxLimit) {
+    this.value = text.substring(0, maxLimit);
+    count = maxLimit;
+  }
+
+  charCount.innerText = count;
+});
+
 
 document.getElementById("latexButton").addEventListener("click", function () {
     const form = this.closest('form');
 
     // Check if the form is valid
-    // if (form.checkValidity()) {
+    if (form.checkValidity()) {
         if (1){
         const formData = new FormData(form);
 
-        fetch("/latex/export.php", {
+        fetch(dirAjax.path + "/latex/export.php", {
             method: "POST",
             body: formData
         })
@@ -23,6 +41,7 @@ document.getElementById("latexButton").addEventListener("click", function () {
         // The form is not valid; you can display an error message or take other actions.
         console.error("Form is not valid. Please fill in all required fields.");
     }
+}
 });
 
 // function addPerson() {

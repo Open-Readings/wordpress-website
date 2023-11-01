@@ -2,12 +2,11 @@ var authAddButtons = document.querySelectorAll('.auth-add');
 
 authAddButtons.forEach(function(button) {
     button.addEventListener('click', function() {
-        var id = button.getAttribute('data-field-id');
-        const peopleList = document.getElementById(id + "-List");
+        const peopleList = document.getElementById("authList");
         const personField = document.createElement("div");
         personField.innerHTML = `
-        <input type="text" name="name-` + id + `[]" placeholder="Name">
-        <input type="number" name="reference-` + id + `[]" placeholder="Affiliation">
+        <input type="text" name="name[]" placeholder="Name" required>
+        <input type="number" name="reference[]" placeholder="Affiliation" required>
     `;
         peopleList.appendChild(personField);
     });
@@ -17,8 +16,7 @@ var authRemButtons = document.querySelectorAll('.auth-rem');
 
 authRemButtons.forEach(function(button) {
     button.addEventListener('click', function() {
-        var id = button.getAttribute('data-field-id');
-        const formFields = document.getElementById(id + "-List");
+        const formFields = document.getElementById("authList");
         var childDivs = formFields.querySelectorAll("div");
         var divCount = childDivs.length;
 
