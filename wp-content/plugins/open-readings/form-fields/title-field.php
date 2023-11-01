@@ -39,8 +39,8 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 			<?php
 
 		}
-		if (!empty($item['default_value']))
-			$item['field_value'] = $item['default_value'];
+		if (!empty($item['title_default_value']))
+			$item['field_value'] = $item['title_default_value'];
 
 		$default_value = $item['field_value'];
 		if (empty($default_value)) {
@@ -141,23 +141,24 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				'condition' => [
 					'field_type' => $this->get_type(),
 				],
-				'default' => esc_html__('Title', 'OR'),
+				'default' => esc_html__('', 'OR'),
 				'tab' => 'content',
 				'inner_tab' => 'form_fields_content_tab',
 				'tabs_wrapper' => 'form_fields_tabs',
 			],
-			'default_value' =>
+			'title_default_value' =>
 				[
-					'name' => 'default_value',
+					'name' => 'title_default_value',
 					'label' => esc_html__('Default Value', 'elementor-pro'),
 					'type' => Controls_Manager::TEXT,
 					'condition' => [
 						'field_type' => $this->get_type(),
+
 					],
 					'dynamic' => [
 						'active' => true,
 					],
-					'default' => esc_html__('Title', 'OR'),
+					'default' => esc_html__('', 'OR'),
 					'tab' => 'advanced',
 					'inner_tab' => 'form_fields_advanced_tab',
 					'tabs_wrapper' => 'form_fields_tabs',

@@ -35,7 +35,8 @@ function register_or_dependencies()
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
-  wp_register_script('university-field-js', plugins_url('assets/js/university-field-js.js', __FILE__));
+  wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
+  wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
   wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__));
   wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__));
   wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__));
@@ -66,7 +67,7 @@ function add_new_form_field($form_fields_registrar)
 {
 
   require_once(__DIR__ . '/form-fields/country-field.php');
-  require_once(__DIR__ . '/form-fields/university-field.php');
+  require_once(__DIR__ . '/form-fields/institution-field.php');
   require_once(__DIR__ . '/form-fields/latex-field.php');
   require_once(__DIR__ . '/form-fields/authors-field.php');
   require_once(__DIR__ . '/form-fields/affiliation-field.php');
@@ -79,7 +80,7 @@ function add_new_form_field($form_fields_registrar)
 
 
   $form_fields_registrar->register(new \Elementor_Country_Field());
-  $form_fields_registrar->register(new \Elementor_University_Field());
+  $form_fields_registrar->register(new \Elementor_Institution_Field());
   $form_fields_registrar->register(new \Elementor_Latex_Field());
   $form_fields_registrar->register(new \Elementor_Authors_Field());
   $form_fields_registrar->register(new \Elementor_Affiliation_Field());
