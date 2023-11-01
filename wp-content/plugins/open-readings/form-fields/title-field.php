@@ -44,7 +44,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 		$default_value = $item['field_value'];
 		if (empty($default_value)) {
-			$default_value = $item['placeholder'];
+			$default_value = $item['title_placeholder'];
 		}
 
 		?>
@@ -72,7 +72,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 			};
 
 			function fix_onChange_editable_elements() {
-				var default_value = "<?= $item['placeholder'] ?>";
+				var default_value = "<?= $item['title_placeholder'] ?>";
 				var tags = document.querySelectorAll('[contenteditable=true]');//(requires FF 3.1+, Safari 3.1+, IE8+)
 				for (var i = tags.length - 1; i >= 0; i--) if (typeof (tags[i].onblur) != 'function') {
 					tags[i].onfocus = function () {
@@ -134,9 +134,9 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				'tabs_wrapper' => 'form_fields_tabs',
 
 			],
-			'placeholder' => [
-				'name' => 'placeholder',
-				'label' => esc_html__('placeholder', 'OR'),
+			'title_placeholder' => [
+				'name' => 'title_placeholder',
+				'label' => esc_html__('Placeholder', 'OR'),
 				'type' => Controls_Manager::TEXT,
 				'condition' => [
 					'field_type' => $this->get_type(),
