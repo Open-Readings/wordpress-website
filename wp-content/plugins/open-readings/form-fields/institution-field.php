@@ -7,56 +7,22 @@ use ElementorPro\Modules\Forms\Classes\Form_Record;
 use ElementorPro\Plugin;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 
-class Elementor_Country_Field extends \ElementorPro\Modules\Forms\Fields\Field_Base
+class Elementor_Institution_Field extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
 
-    public $depended_scripts = ['country-field-js'];
+    public $depended_scripts = ['institution-field-js', 'institution-list-js'];
 
     public $depended_styles = ['registration-widget-style'];
 
     public function get_type()
     {
-        return 'country-field';
+        return 'institution-field';
     }
 
     public function get_name()
     {
-        return esc_html__('Country Field', 'elementor-form-country-field');
+        return esc_html__('Institution Field', 'OR');
     }
-
-
-
-    public function render($item, $item_index, $form)
-    {
-        global $wpdb;
-        $results = $wpdb->get_results('SELECT * FROM countries');
-        $countries = array();
-        foreach ($results as $result) {
-            $countries[$result->id] = $result->name;
-        }
-
-        wp_enqueue_script('country-field-js');
-        wp_localize_script(
-            'country-field-js',
-            'registration_ajax',
-            array(
-                'items' => $countries,
-                'custom_id' => $item['custom_id']
-            )
-        );
-        $form->add_render_attribute('input' . $item_index, 'class', 'elementor-field-textual country-input');
-        $form->add_render_attribute('input' . $item_index, 'placeholder', $item['country_placeholder']);
-        if (!empty($item['country_default_value'])) {
-            $item['field_value'] = $item['country_default_value'];
-            $form->add_render_attribute('input' . $item_index, 'value', $item['country_default_value']);
-        }
-        ?> <input <?php $form->print_render_attribute_string('input' . $item_index); ?>>
-        <?php
-        echo '
-		<div id="country-wrapper">
-		</div>';
-    }
-
 
     public function update_controls($widget)
     {
@@ -70,8 +36,8 @@ class Elementor_Country_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
         }
 
         $field_controls = [
-            'country_placeholder' => [
-                'name' => 'country_placeholder',
+            'institution_placeholder' => [
+                'name' => 'institution_placeholder',
                 'label' => esc_html__('Placeholder', 'OR'),
                 'type' => Controls_Manager::TEXT,
                 'condition' => [
@@ -82,9 +48,9 @@ class Elementor_Country_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
                 'inner_tab' => 'form_fields_content_tab',
                 'tabs_wrapper' => 'form_fields_tabs',
             ],
-            'country_default_value' =>
+            'institution_default_value' =>
                 [
-                    'name' => 'country_default_value',
+                    'name' => 'institution_default_value',
                     'label' => esc_html__('Default Value', 'OR'),
                     'type' => Controls_Manager::TEXT,
                     'condition' => [
@@ -104,5 +70,30 @@ class Elementor_Country_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
         $widget->update_control('form_fields', $control_data);
     }
 
+
+    public function render($item, $item_index, $form)
+    {
+        wp_enqueue_script('institutions-list-js');
+        wp_enqueue_script('institution-field-js');
+        wp_localize_script(
+            'institution-field-js',
+            'institution_field_ajax',
+            array(
+                'institution_id' => $item['custom_id']
+            )
+        );
+
+        $form->add_render_attribute('input' . $item_index, 'class', 'elementor-field-textual affiliation-input');
+        $form->add_render_attribute('input' . $item_index, 'placeholder', $item['institution_placeholder']);
+        if (!empty($item['institution_default_value'])) {
+            $item['field_value'] = $item['institution_default_value'];
+            $form->add_render_attribute('input' . $item_index, 'value', $item['institution_default_value']);
+        }
+        ?> <input <?php $form->print_render_attribute_string('input' . $item_index); ?>>
+        <?php
+        echo '
+        <div id="institution-wrapper">
+        </div>';
+    }
 
 }

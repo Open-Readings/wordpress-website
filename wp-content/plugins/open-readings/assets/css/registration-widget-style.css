@@ -1,5 +1,5 @@
-/* .abc {
-    color:red;
+.abc {
+    color: red;
 }
 
 .registration-selection {
@@ -9,13 +9,20 @@
     width: 500px;
 }
 
-.registration-dropdown-element, .registration-dropdown-element:hover, .registration-dropdown-element:active , .registration-dropdown-element:focus {
+.hidden {
+    display: none;
+}
+
+.registration-dropdown-element,
+.registration-dropdown-element:hover,
+.registration-dropdown-element:active,
+.registration-dropdown-element:focus {
     background-color: transparent;
     color: #555;
 }
 
 .registration-li:nth-child(n+5) {
-    display:none;
+    display: none;
 }
 
 .latex-flex {
@@ -25,13 +32,13 @@
 }
 
 .latex-half-div {
-    flex:50%;
+    flex: 50%;
 }
 
 .latex-abstract-content {
-    height:1000px;
+    height: 1000px;
 }
 
 .country-wrapper {
-    display:block;
-} */
+    display: block;
+}
