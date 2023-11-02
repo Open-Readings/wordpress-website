@@ -18,7 +18,7 @@ class Elementor_Image_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 	}
 
 	public function render( $item, $item_index, $form ) {
-        echo '<div>
+        echo '<div class="full">
         <input type="file" id="fileInput" multiple>
         <button class="file-add" data-field-id="' . $item['custom_id'] . '">Upload File</button>
         </div>';

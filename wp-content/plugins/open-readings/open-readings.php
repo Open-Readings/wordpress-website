@@ -48,7 +48,6 @@ function register_or_dependencies()
   $data_to_pass = array(
     'path' => content_url(), // Use admin-ajax.php for AJAX requests
   );
-
   wp_localize_script( 'latex-field-js', 'dirAjax', $data_to_pass );
   wp_localize_script( 'image-field-js', 'dirAjax', $data_to_pass );
 

@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $n = '\begin{center} ';
     $i = 1;
     foreach($_POST['name'] as $name){
-        $n = $n . $name;
+        $n = $n . $name . '$^{' . $_POST['aff_ref'][$i-1] . '}$';
         if ($i < count($_POST['name']))
             $n = $n . ', ';
         $i++;
@@ -66,8 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $a = '\begin{center} ';
     $i = 1;
-    foreach($_POST['reference'] as $name){
-        $a = $a . $name . '
+    foreach($_POST['affiliation'] as $name){
+        $a = $a . '$^{' . $i . '}$' . $name . '
         
         ';
         $i++;
@@ -86,8 +86,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $i++;
     }
 
-    
-    $title = "\begin{center} {\large \\textbf{" . $_POST['form_fields']['abstract_title'] . "}} \\end{center}
+    $titleField = $_POST['form_fields']['abstract_title'];
+    $titleField = str_replace('<sup>', '$^{', $titleField);
+    $titleField = str_replace('</sup><sub>', '}_{', $titleField);
+    $titleField = str_replace('</sup>', '}$', $titleField);
+    $titleField = str_replace('<sub>', '$_{', $titleField);
+    $titleField = str_replace('</sub><sup>', '}^{', $titleField);
+    $titleField = str_replace('</sub>', '}$', $titleField);
+    $titleField = str_replace('&nbsp;', '', $titleField);
+
+    $title = "\begin{center} {\large \\textbf{" . $titleField . "}} \\end{center}
     " ;
 
     $textData = $x . $title . $n . $a . $_POST["textArea"] . $r . $e;

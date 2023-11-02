@@ -25,20 +25,22 @@
     display: none;
 }
 
-.latex-flex {
-    background-color: re;
-    display: flex;
-    width: 100%;
-}
-
-.latex-half-div {
-    flex: 50%;
-}
-
 .latex-abstract-content {
     height: 1000px;
 }
 
 .country-wrapper {
     display: block;
+}
+.full{
+    width:100%;
+}
+
+.scroll {
+    height: 400px;
+    overflow: scroll;
+}
+
+.narrow {
+    width:100px;
 }

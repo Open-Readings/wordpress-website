@@ -30,7 +30,7 @@
     height:1000px;
 }
 
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 1000px) {
     .latex-flex {
         display: flex;
         width: 100%;

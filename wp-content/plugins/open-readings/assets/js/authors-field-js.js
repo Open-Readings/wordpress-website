@@ -6,7 +6,7 @@ authAddButtons.forEach(function(button) {
         const personField = document.createElement("div");
         personField.innerHTML = `
         <input type="text" name="name[]" placeholder="Name" required>
-        <input type="number" name="reference[]" placeholder="Affiliation" required>
+        <input type="text" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
     `;
         peopleList.appendChild(personField);
     });

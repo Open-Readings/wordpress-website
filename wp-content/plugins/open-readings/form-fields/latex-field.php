@@ -41,9 +41,14 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
         $folder = $_SESSION['file'];
 
+        $data_to_pass = array(
+            'folder' => $folder, // Use admin-ajax.php for AJAX requests
+          );
+          wp_localize_script( 'latex-field-js', 'folderAjax', $data_to_pass );
+
         echo '
-        </div>
-        <div class="latex-flex">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <div class="latex-flex full">
         <div class="latex-half-div">   
                     <textarea id="textArea" name="textArea" rows="20" cols="50"></textarea>
                     <p>Character Count: <span id="charCount">0</span></p>
@@ -54,6 +59,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         </div>
         <div class="latex-half-div">
             <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . "/3.pdf#toolbar=0" . '" height="1200"></iframe>
+            <pre class="scroll" id="logContent"></pre>
         </div>
         </div>';
     }

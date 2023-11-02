@@ -19,16 +19,16 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
 
 	public function render( $item, $item_index, $form ) {
 		echo '
-        <div>
-        <label>Authors</label><br>
-        <div id="authList">
-            <div>
-                <input type="text" name="name[]" placeholder="Name" required>
-                <input type="number" name="reference[]" placeholder="Affiliation" required>
-                <input type="email" name="email-author" placeholder="Email">
-            </div>
-        </div>
-        <button type="button" class="auth-add" >Add</button>
-        <button type="button" class="auth-rem">Remove</button></div>';
+        <div class="full">
+			<div id="authList">
+				<div>
+					<input type="text" name="name[]" placeholder="Full Name" required>
+					<input type="text" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
+					<input type="email" name="email-author" placeholder="Email">
+				</div>
+			</div>
+			<button type="button" class="auth-add" >Add</button>
+			<button type="button" class="auth-rem">Remove</button><br>
+		</div>';
 	}
 }

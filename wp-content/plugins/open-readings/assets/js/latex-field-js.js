@@ -1,5 +1,6 @@
 var textarea = document.getElementById("textArea");
 var charCount = document.getElementById("charCount");
+const latexButton = document.getElementById("latexButton");
 
 textarea.addEventListener("input", function() {
   var text = this.value;
@@ -16,10 +17,38 @@ textarea.addEventListener("input", function() {
   charCount.innerText = count;
 });
 
+function afterWait(){
+    latexButton.disabled = false;
+    console.log(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' );
+        fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime()) // Replace with the path to your log file
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('logContent').textContent = data;
+                const logContent = document.getElementById('logContent');
 
-document.getElementById("latexButton").addEventListener("click", function () {
+                // Get the content of the pre element
+                const content = logContent.textContent || logContent.innerText;
+        
+                // Find the position of the first exclamation mark
+                const firstExclamationPosition = content.indexOf('!');
+        
+                // Scroll to the section containing the first exclamation mark
+                if (firstExclamationPosition !== -1) {
+                    logContent.scrollTop = logContent.scrollHeight - logContent.clientHeight; // Scroll to the bottom
+                    logContent.scrollTop = logContent.scrollHeight * (firstExclamationPosition / content.length) - 1;
+                }
+            })
+            .catch(error => {
+                document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
+            });
+    document.getElementById("abstract").contentWindow.location.reload(true);
+       
+}
+
+
+latexButton.addEventListener("click", function () {
     const form = this.closest('form');
-
+    console.log(dirAjax.path + "/latex/export.php");
     // Check if the form is valid
     if (form.checkValidity()) {
         if (1){
@@ -36,13 +65,17 @@ document.getElementById("latexButton").addEventListener("click", function () {
         .catch(error => {
             console.error("Error exporting file: " + error);
         });
-        document.getElementById("abstract").contentWindow.location.reload(true);
+        latexButton.disabled = true;
+        setTimeout(() => {  afterWait(); }, 4000);
+            
+        
     } else {
         // The form is not valid; you can display an error message or take other actions.
         console.error("Form is not valid. Please fill in all required fields.");
     }
 }
 });
+
 
 // function addPerson() {
 //     const peopleList = document.getElementById("peopleList");

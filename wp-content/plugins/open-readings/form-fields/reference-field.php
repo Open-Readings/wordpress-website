@@ -19,12 +19,11 @@ class Elementor_Reference_Field extends \ElementorPro\Modules\Forms\Fields\Field
 
 	public function render( $item, $item_index, $form ) {
 		echo '
-        <div>
-        <label>References</label> <br>
+        <div class="full">
         <div id="refList">
-        </div><br>
+        </div>
         <button type="button" class="ref-add">Add</button>
-        <button type="button" class="ref-rem">Remove</button>
+        <button type="button" class="ref-rem">Remove</button><br>
         </div>';
 	}
 }
