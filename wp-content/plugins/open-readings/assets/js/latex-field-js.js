@@ -21,6 +21,17 @@ textarea.addEventListener("input", function() {
   charCount.innerText = count;
 });
 
+function setIframeHeight() {
+    const iframe = document.getElementById('abstract');
+    const width = iframe.offsetWidth; // Get the current width of the iframe
+    const height = width * 1.41; // Calculate the height based on the width and aspect ratio
+
+    iframe.style.height = height + 'px'; // Set the height of the iframe
+}
+
+window.addEventListener('load', setIframeHeight);
+window.addEventListener('resize', setIframeHeight);
+
 function afterWait(){
     latexButton.disabled = false;
     fileButton.disabled = false;

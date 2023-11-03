@@ -66,7 +66,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                 
         </div>
         <div class="latex-half-div">
-            <iframe class="pdf-field" id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/3.pdf#toolbar=0&view=FitH' . '" height="100%"></iframe>
+            <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/3.pdf#toolbar=0&view=FitH' . '"></iframe>
             <pre class="latex-error" id="logContent"></pre>
         </div>
         </div>';
