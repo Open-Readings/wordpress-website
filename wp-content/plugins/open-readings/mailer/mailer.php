@@ -49,9 +49,9 @@ class ORmailer
             $subject = 'Open Readings 2024 registration success';
         }
 
-        $template = get_option('or_registration_success_email_template');
+        $template = get_option('or_registration_success_email_content');
         if ($template == '') {
-            $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_registration_success_email_template.html');
+            $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_registration_success_content.html');
         }
         $message = strtr($template, $vars);
         $this->mail = wp_mail($to, $subject, $message);
