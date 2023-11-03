@@ -65,6 +65,18 @@ function register_faq_controls($controls_manager)
 add_action('elementor/controls/register', 'register_faq_controls');
 
 
+function register_or_mailer()
+{
+  require_once(__DIR__ . '/mailer/mailer.php');
+  $mailer = new ORmailer();
+
+  //add mailer as a global variable
+  global $or_mailer;
+  $or_mailer = $mailer;
+}
+
+add_action('init', 'register_or_mailer');
+
 
 define('OR_PLUGIN_DIR', __DIR__ . '/');
 

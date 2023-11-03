@@ -23,12 +23,12 @@ class ORmailer
         // stuff to init
     }
 
-    public function send_mail($to, $subject, $content)
+    public function send_OR_mail($to, $subject, $content)
     {
         //fetch template from wp settings
 
         $template = get_option('or_email_template');
-        if ($template == '') {
+        if (!$template) {
             $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_email_template.html');
         }
         $message = str_replace('[content]', $content, $template);
@@ -39,6 +39,24 @@ class ORmailer
         );
         $this->mail = wp_mail($to, $subject, $message, $headers);
         return $this->mail;
+    }
+
+
+    public function send_registration_success_email($vars, $to)
+    {
+        $subject = get_option('or_registration_success_email_subject');
+        if ($subject == '') {
+            $subject = 'Open Readings 2024 registration success';
+        }
+
+        $template = get_option('or_registration_success_email_template');
+        if ($template == '') {
+            $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_registration_success_email_template.html');
+        }
+        $message = strtr($template, $vars);
+        $this->mail = wp_mail($to, $subject, $message);
+
+
     }
 
 
