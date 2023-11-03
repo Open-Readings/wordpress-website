@@ -31,18 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     \usepackage{amsmath}
     \usepackage[utf8]{inputenc}
     \usepackage{graphicx}
-    \usepackage[L7x,T1]{fontenc}
     \usepackage[utf8]{inputenc}
-    \usepackage[lithuanian]{babel}
     \usepackage[left=3cm,right=1cm,top=3cm,bottom=2cm]{geometry}
-    \usepackage{lipsum}  
     \usepackage{tikz}
-    \usepackage{circuitikz}
     \usepackage{float}
-    \usepackage{vwcol}
     \usepackage{blindtext}
-    \usepackage{hyperref}
-    \usepackage{enumitem}
     \usepackage[1]{pagesel}
     \setlist{leftmargin=8mm}
     \addtolength\oddsidemargin{-1cm} \addtolength\evensidemargin{1cm}

@@ -14,12 +14,13 @@ if(!isset($_SESSION['file'])) {
     $timestamp = time();
     $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
 }
-
-if(!is_dir($_SESSION['file'])) {
-    shell_exec('/bin/mkdir ' . __DIR__ . '/' . $_SESSION['file']);
-    shell_exec('/bin/mkdir ' . __DIR__ . '/' . $_SESSION['file'] . "/images");
+if(!is_dir( __DIR__ . '/' . $_SESSION['file'])) {
+    shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
 }
 
+if(!is_dir( __DIR__ . '/' . $_SESSION['file']) . '/images') {
+    shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images' . '"');
+}
 $targetDirectory = __DIR__ . '/' . $_SESSION['file'] . "/images/";
 
 $files = glob($targetDirectory . '*'); // Get a list of all files in the directory
