@@ -1,0 +1,852 @@
+{
+    "dup_type": "lite",
+    "created": "2023-09-27 16:15:05",
+    "version_dup": "1.5.6",
+    "version_wp": "6.3.1",
+    "version_db": "10.6.12",
+    "version_php": "8.1.2-1ubuntu2.14",
+    "version_os": "Linux",
+    "blogname": "Open Readings 2024",
+    "exportOnlyDB": 0,
+    "secure_on": 0,
+    "secure_pass": "$2a$08$ndI54AtV.1hXAMc8rhqUJOzIY9rbw8hRPPAHbkYkBdMxJj30HXQpa",
+    "dbhost": null,
+    "dbname": null,
+    "dbuser": null,
+    "cpnl_host": null,
+    "cpnl_user": null,
+    "cpnl_pass": null,
+    "cpnl_enable": null,
+    "wp_tableprefix": "wp_",
+    "mu_mode": 0,
+    "mu_generation": 0,
+    "mu_siteadmins": [
+        "admin"
+    ],
+    "subsites": [
+        {
+            "id": 1,
+            "domain": "openreadings.eu",
+            "path": "\/",
+            "blogname": "Open Readings 2024",
+            "blog_prefix": "wp_",
+            "filteredTables": [],
+            "adminUsers": [
+                {
+                    "ID": "1",
+                    "user_login": "admin",
+                    "id": "1"
+                },
+                {
+                    "ID": "4",
+                    "user_login": "goda",
+                    "id": "4"
+                },
+                {
+                    "ID": "5",
+                    "user_login": "JustasNor",
+                    "id": "5"
+                },
+                {
+                    "ID": "3",
+                    "user_login": "martynasker",
+                    "id": "3"
+                },
+                {
+                    "ID": "2",
+                    "user_login": "rimantas",
+                    "id": "2"
+                }
+            ],
+            "fullHomeUrl": "https:\/\/openreadings.eu",
+            "fullSiteUrl": "https:\/\/openreadings.eu",
+            "uploadPath": "wp-content\/uploads",
+            "fullUploadPath": "\/srv\/www\/openreadings.eu\/wp-content\/uploads",
+            "fullUploadSafePath": "\/srv\/www\/openreadings.eu\/wp-content\/uploads",
+            "fullUploadUrl": "https:\/\/openreadings.eu\/wp-content\/uploads",
+            "filteredPaths": []
+        }
+    ],
+    "main_site_id": 1,
+    "mu_is_filtered": false,
+    "license_limit": 0,
+    "license_type": 0,
+    "dbInfo": {
+        "buildMode": "MYSQLDUMP",
+        "charSetList": [
+            "utf8mb4"
+        ],
+        "collationList": [
+            "utf8mb4_general_ci",
+            "utf8mb4_unicode_ci"
+        ],
+        "engineList": [
+            "InnoDB"
+        ],
+        "isTablesUpperCase": 0,
+        "isNameUpperCase": 0,
+        "name": "openreadings_wp_db",
+        "tablesBaseCount": 33,
+        "tablesFinalCount": 33,
+        "muFilteredTableCount": 0,
+        "tablesRowCount": 3639,
+        "tablesSizeOnDisk": 16220160,
+        "tablesList": {
+            "wp_actionscheduler_actions": {
+                "inaccurateRows": 26,
+                "insertedRows": 26,
+                "size": 131072
+            },
+            "wp_actionscheduler_claims": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 32768
+            },
+            "wp_actionscheduler_groups": {
+                "inaccurateRows": 4,
+                "insertedRows": 4,
+                "size": 32768
+            },
+            "wp_actionscheduler_logs": {
+                "inaccurateRows": 75,
+                "insertedRows": 75,
+                "size": 49152
+            },
+            "wp_aioseo_cache": {
+                "inaccurateRows": 26,
+                "insertedRows": 26,
+                "size": 147456
+            },
+            "wp_aioseo_notifications": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 81920
+            },
+            "wp_aioseo_posts": {
+                "inaccurateRows": 60,
+                "insertedRows": 60,
+                "size": 81920
+            },
+            "wp_commentmeta": {
+                "inaccurateRows": 6,
+                "insertedRows": 6,
+                "size": 49152
+            },
+            "wp_comments": {
+                "inaccurateRows": 3,
+                "insertedRows": 3,
+                "size": 98304
+            },
+            "wp_duplicator_packages": {
+                "inaccurateRows": 1,
+                "insertedRows": 1,
+                "size": 32768
+            },
+            "wp_e_events": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 32768
+            },
+            "wp_e_notes": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 196608
+            },
+            "wp_e_notes_users_relations": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 65536
+            },
+            "wp_e_submissions": {
+                "inaccurateRows": 29,
+                "insertedRows": 29,
+                "size": 311296
+            },
+            "wp_e_submissions_actions_log": {
+                "inaccurateRows": 28,
+                "insertedRows": 28,
+                "size": 131072
+            },
+            "wp_e_submissions_values": {
+                "inaccurateRows": 116,
+                "insertedRows": 116,
+                "size": 49152
+            },
+            "wp_hkdev_mm_access_keys": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 16384
+            },
+            "wp_hkdev_mm_unrestricted_ips": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 16384
+            },
+            "wp_links": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 32768
+            },
+            "wp_options": {
+                "inaccurateRows": 378,
+                "insertedRows": 385,
+                "size": 4325376
+            },
+            "wp_postmeta": {
+                "inaccurateRows": 2348,
+                "insertedRows": 2453,
+                "size": 7028736
+            },
+            "wp_posts": {
+                "inaccurateRows": 382,
+                "insertedRows": 445,
+                "size": 2703360
+            },
+            "wp_termmeta": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 49152
+            },
+            "wp_terms": {
+                "inaccurateRows": 7,
+                "insertedRows": 7,
+                "size": 49152
+            },
+            "wp_term_relationships": {
+                "inaccurateRows": 18,
+                "insertedRows": 18,
+                "size": 32768
+            },
+            "wp_term_taxonomy": {
+                "inaccurateRows": 7,
+                "insertedRows": 7,
+                "size": 49152
+            },
+            "wp_usermeta": {
+                "inaccurateRows": 118,
+                "insertedRows": 118,
+                "size": 49152
+            },
+            "wp_users": {
+                "inaccurateRows": 5,
+                "insertedRows": 5,
+                "size": 65536
+            },
+            "wp_wpforms_payments": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 163840
+            },
+            "wp_wpforms_payment_meta": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 65536
+            },
+            "wp_wpforms_tasks_meta": {
+                "inaccurateRows": 1,
+                "insertedRows": 1,
+                "size": 16384
+            },
+            "wp_wpmailsmtp_debug_events": {
+                "inaccurateRows": 0,
+                "insertedRows": 0,
+                "size": 16384
+            },
+            "wp_wpmailsmtp_tasks_meta": {
+                "inaccurateRows": 1,
+                "insertedRows": 1,
+                "size": 16384
+            }
+        },
+        "lowerCaseTableNames": 0,
+        "dbEngine": "MariaDB",
+        "version": "10.6.12",
+        "versionComment": "Ubuntu 22.04",
+        "viewCount": 0,
+        "procCount": 0,
+        "funcCount": 0,
+        "triggerList": []
+    },
+    "packInfo": {
+        "packageId": 1,
+        "packageName": "20230927_openreadings2024",
+        "packageHash": "603d593-27161505",
+        "secondaryHash": "c124d5e-27161505"
+    },
+    "fileInfo": {
+        "dirCount": 1557,
+        "fileCount": 8314,
+        "size": 423892478
+    },
+    "wpInfo": {
+        "version": "6.3.1",
+        "is_multisite": false,
+        "network_id": 1,
+        "targetRoot": "\/srv\/www\/openreadings.eu",
+        "targetPaths": [
+            "\/srv\/www\/openreadings.eu"
+        ],
+        "adminUsers": [
+            {
+                "ID": "1",
+                "user_login": "admin",
+                "id": "1"
+            },
+            {
+                "ID": "4",
+                "user_login": "goda",
+                "id": "4"
+            },
+            {
+                "ID": "5",
+                "user_login": "JustasNor",
+                "id": "5"
+            },
+            {
+                "ID": "3",
+                "user_login": "martynasker",
+                "id": "3"
+            },
+            {
+                "ID": "2",
+                "user_login": "rimantas",
+                "id": "2"
+            }
+        ],
+        "configs": {
+            "defines": {
+                "ABSPATH": {
+                    "value": "\/srv\/www\/openreadings.eu\/",
+                    "inWpConfig": true
+                },
+                "DB_CHARSET": {
+                    "value": "utf8",
+                    "inWpConfig": true
+                },
+                "DB_COLLATE": {
+                    "value": "",
+                    "inWpConfig": true
+                },
+                "AUTH_KEY": {
+                    "value": "]7gM?4K-Nd|%SD\/0yC&SE]?[]`rX)-^%dckuE{PtRIdI>|lPFfyZlt6UoY],86TA",
+                    "inWpConfig": true
+                },
+                "SECURE_AUTH_KEY": {
+                    "value": "wIU}T4Tb+-gsQ.T@?D60N|=jf,d=2av@Vvr1}4wqr]?e.l>5m0+ p&Xp#@SHLcib",
+                    "inWpConfig": true
+                },
+                "LOGGED_IN_KEY": {
+                    "value": "|e3mwJ~-L8p_D=t`|b$@%K273]@}F6q@Uo*-ZUoH*fDPzP%j|#r`)-z`]STZx;}m",
+                    "inWpConfig": true
+                },
+                "NONCE_KEY": {
+                    "value": "WRiN<\/D(x}7<_mLs@{Q L~r#KxM6`?6%#qHOT73chT{]5lHp0W!vp9wA&)`.v.7Z",
+                    "inWpConfig": true
+                },
+                "AUTH_SALT": {
+                    "value": "t$`**p[3?.&r.m?Bg@r*tk68y^r|B$U\/0!p)?7V)|:G!|xJ.n-E|Mc+w|z-yzH56",
+                    "inWpConfig": true
+                },
+                "SECURE_AUTH_SALT": {
+                    "value": "IGg.=)k++:uF|R #zFwzHasu$!&T$.tY+O6MICDaf`9nHjX3C}cl`AyO||,$?k+u",
+                    "inWpConfig": true
+                },
+                "LOGGED_IN_SALT": {
+                    "value": "L[+kF0xh6fb Wz+Xdx*G=;H2e1s|o![Nd&)*,LamLm_\/9Da]md>[+s2>#3t.Luo<",
+                    "inWpConfig": true
+                },
+                "NONCE_SALT": {
+                    "value": "tiU8xU7P_R>&6U6j@tt=Xa|&ANg& v<=gk$Y{Jth+#q>>ft#cQ<D|+22S\/~~Prdn",
+                    "inWpConfig": true
+                },
+                "WP_CONTENT_DIR": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content",
+                    "inWpConfig": false
+                },
+                "WP_CONTENT_URL": {
+                    "value": "https:\/\/openreadings.eu\/wp-content",
+                    "inWpConfig": false
+                },
+                "WP_PLUGIN_DIR": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content\/plugins",
+                    "inWpConfig": false
+                },
+                "WP_PLUGIN_URL": {
+                    "value": "https:\/\/openreadings.eu\/wp-content\/plugins",
+                    "inWpConfig": false
+                },
+                "PLUGINDIR": {
+                    "value": "wp-content\/plugins",
+                    "inWpConfig": false
+                },
+                "AUTOSAVE_INTERVAL": {
+                    "value": 60,
+                    "inWpConfig": false
+                },
+                "WP_POST_REVISIONS": {
+                    "value": true,
+                    "inWpConfig": false
+                },
+                "COOKIE_DOMAIN": {
+                    "value": false,
+                    "inWpConfig": false
+                },
+                "MULTISITE": {
+                    "value": false,
+                    "inWpConfig": false
+                },
+                "WP_DEBUG": {
+                    "value": false,
+                    "inWpConfig": true
+                },
+                "SCRIPT_DEBUG": {
+                    "value": false,
+                    "inWpConfig": false
+                },
+                "WP_DEBUG_LOG": {
+                    "value": false,
+                    "inWpConfig": false
+                },
+                "WP_DEBUG_DISPLAY": {
+                    "value": true,
+                    "inWpConfig": false
+                },
+                "WP_MEMORY_LIMIT": {
+                    "value": "40M",
+                    "inWpConfig": false
+                },
+                "WP_MAX_MEMORY_LIMIT": {
+                    "value": "256M",
+                    "inWpConfig": false
+                },
+                "WP_CACHE": {
+                    "value": false,
+                    "inWpConfig": false
+                },
+                "WP_LANG_DIR": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content\/languages",
+                    "inWpConfig": false
+                },
+                "SAVEQUERIES": {
+                    "value": true,
+                    "inWpConfig": false
+                },
+                "WP_CRON_LOCK_TIMEOUT": {
+                    "value": 60,
+                    "inWpConfig": false
+                },
+                "COOKIEPATH": {
+                    "value": "\/",
+                    "inWpConfig": false
+                },
+                "SITECOOKIEPATH": {
+                    "value": "\/",
+                    "inWpConfig": false
+                },
+                "ADMIN_COOKIE_PATH": {
+                    "value": "\/wp-admin",
+                    "inWpConfig": false
+                },
+                "PLUGINS_COOKIE_PATH": {
+                    "value": "\/wp-content\/plugins",
+                    "inWpConfig": false
+                },
+                "TEMPLATEPATH": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content\/themes\/kadence",
+                    "inWpConfig": false
+                },
+                "STYLESHEETPATH": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content\/themes\/kadence",
+                    "inWpConfig": false
+                },
+                "EMPTY_TRASH_DAYS": {
+                    "value": 30,
+                    "inWpConfig": false
+                },
+                "FORCE_SSL_ADMIN": {
+                    "value": true,
+                    "inWpConfig": false
+                },
+                "WPMU_PLUGIN_DIR": {
+                    "value": "\/srv\/www\/openreadings.eu\/wp-content\/mu-plugins",
+                    "inWpConfig": false
+                },
+                "WPMU_PLUGIN_URL": {
+                    "value": "https:\/\/openreadings.eu\/wp-content\/mu-plugins",
+                    "inWpConfig": false
+                },
+                "MUPLUGINDIR": {
+                    "value": "wp-content\/mu-plugins",
+                    "inWpConfig": false
+                }
+            },
+            "realValues": {
+                "siteUrl": "https:\/\/openreadings.eu",
+                "homeUrl": "https:\/\/openreadings.eu",
+                "loginUrl": "https:\/\/openreadings.eu\/wp-login.php",
+                "contentUrl": "https:\/\/openreadings.eu\/wp-content",
+                "uploadBaseUrl": "https:\/\/openreadings.eu\/wp-content\/uploads",
+                "pluginsUrl": "https:\/\/openreadings.eu\/wp-content\/plugins",
+                "mupluginsUrl": "https:\/\/openreadings.eu\/wp-content\/mu-plugins",
+                "themesUrl": "https:\/\/openreadings.eu\/wp-content\/themes",
+                "originalPaths": {
+                    "home": "\/srv\/www\/openreadings.eu",
+                    "abs": "\/srv\/www\/openreadings.eu",
+                    "wpconfig": "\/srv\/www\/openreadings.eu",
+                    "wpcontent": "\/srv\/www\/openreadings.eu\/wp-content",
+                    "uploads": "\/srv\/www\/openreadings.eu\/wp-content\/uploads",
+                    "plugins": "\/srv\/www\/openreadings.eu\/wp-content\/plugins",
+                    "muplugins": "\/srv\/www\/openreadings.eu\/wp-content\/mu-plugins",
+                    "themes": "\/srv\/www\/openreadings.eu\/wp-content\/themes"
+                },
+                "archivePaths": {
+                    "home": "\/srv\/www\/openreadings.eu",
+                    "abs": "\/srv\/www\/openreadings.eu",
+                    "wpconfig": "\/srv\/www\/openreadings.eu",
+                    "wpcontent": "\/srv\/www\/openreadings.eu\/wp-content",
+                    "uploads": "\/srv\/www\/openreadings.eu\/wp-content\/uploads",
+                    "plugins": "\/srv\/www\/openreadings.eu\/wp-content\/plugins",
+                    "muplugins": "\/srv\/www\/openreadings.eu\/wp-content\/mu-plugins",
+                    "themes": "\/srv\/www\/openreadings.eu\/wp-content\/themes"
+                }
+            }
+        },
+        "plugins": {
+            "advanced-custom-fields\/acf.php": {
+                "slug": "advanced-custom-fields\/acf.php",
+                "name": "Advanced Custom Fields",
+                "version": "6.2.1",
+                "pluginURI": "https:\/\/www.advancedcustomfields.com",
+                "author": "WP Engine",
+                "authorURI": "https:\/\/wpengine.com\/?utm_source=wordpress.org&utm_medium=referral&utm_campaign=plugin_directory&utm_content=advanced_custom_fields",
+                "description": "Customize WordPress with powerful, professional and intuitive fields.",
+                "title": "Advanced Custom Fields",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "akismet\/akismet.php": {
+                "slug": "akismet\/akismet.php",
+                "name": "Akismet Anti-Spam: Spam Protection",
+                "version": "5.2",
+                "pluginURI": "https:\/\/akismet.com\/",
+                "author": "Automattic - Anti Spam Team",
+                "authorURI": "https:\/\/automattic.com\/wordpress-plugins\/",
+                "description": "Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from spam<\/strong>. Akismet anti spam keeps your site protected even while you sleep. To get started: activate the Akismet plugin and then go to your Akismet Settings page to set up your API key.",
+                "title": "Akismet Anti-Spam: Spam Protection",
+                "networkActive": false,
+                "active": false,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "custom-fonts\/custom-fonts.php": {
+                "slug": "custom-fonts\/custom-fonts.php",
+                "name": "Custom Fonts",
+                "version": "2.1.0",
+                "pluginURI": "http:\/\/www.wpastra.com\/",
+                "author": "Brainstorm Force",
+                "authorURI": "http:\/\/www.brainstormforce.com",
+                "description": "Upload your own custom font or choose from a vast collection of Google fonts, all hosted directly on your server. Enjoy improved performance, enhanced privacy, and full site editing theme support. Take control of your website's typography without compromising performance, privacy or compliance!",
+                "title": "Custom Fonts",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "duplicate-page\/duplicatepage.php": {
+                "slug": "duplicate-page\/duplicatepage.php",
+                "name": "Duplicate Page",
+                "version": "4.5.3",
+                "pluginURI": "https:\/\/wordpress.org\/plugins\/duplicate-page\/",
+                "author": "mndpsingh287",
+                "authorURI": "https:\/\/profiles.wordpress.org\/mndpsingh287\/",
+                "description": "Duplicate Posts, Pages and Custom Posts using single click.",
+                "title": "Duplicate Page",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "duplicator\/duplicator.php": {
+                "slug": "duplicator\/duplicator.php",
+                "name": "Duplicator",
+                "version": "1.5.6",
+                "pluginURI": "https:\/\/duplicator.com\/",
+                "author": "Duplicator",
+                "authorURI": "https:\/\/duplicator.com\/",
+                "description": "Migrate and backup a copy of your WordPress files and database. Duplicate and move a site from one location to another quickly.",
+                "title": "Duplicator",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "elementor\/elementor.php": {
+                "slug": "elementor\/elementor.php",
+                "name": "Elementor",
+                "version": "3.16.3",
+                "pluginURI": "https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash",
+                "author": "Elementor.com",
+                "authorURI": "https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash",
+                "description": "The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!",
+                "title": "Elementor",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "elementor-pro\/elementor-pro.php": {
+                "slug": "elementor-pro\/elementor-pro.php",
+                "name": "Elementor Pro",
+                "version": "3.16.1",
+                "pluginURI": "https:\/\/go.elementor.com\/wp-dash-wp-plugins-author-uri\/",
+                "author": "Elementor.com",
+                "authorURI": "https:\/\/go.elementor.com\/wp-dash-wp-plugins-author-uri\/",
+                "description": "Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.",
+                "title": "Elementor Pro",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "query-monitor\/query-monitor.php": {
+                "slug": "query-monitor\/query-monitor.php",
+                "name": "Query Monitor",
+                "version": "3.13.1",
+                "pluginURI": "https:\/\/querymonitor.com\/",
+                "author": "John Blackbourn",
+                "authorURI": "https:\/\/querymonitor.com\/",
+                "description": "The developer tools panel for WordPress.",
+                "title": "Query Monitor",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "wp-extra-file-types\/wp-extra-file-types.php": {
+                "slug": "wp-extra-file-types\/wp-extra-file-types.php",
+                "name": "WP Extra File Types",
+                "version": "0.5.2",
+                "pluginURI": "http:\/\/www.airaghi.net\/en\/2015\/01\/02\/wordpress-custom-mime-types\/",
+                "author": "Davide Airaghi",
+                "authorURI": "http:\/\/www.airaghi.net",
+                "description": "Plugin to let you extend the list of allowed file types supported by the Wordpress Media Library.",
+                "title": "WP Extra File Types",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "wp-mail-smtp\/wp_mail_smtp.php": {
+                "slug": "wp-mail-smtp\/wp_mail_smtp.php",
+                "name": "WP Mail SMTP",
+                "version": "3.9.0",
+                "pluginURI": "https:\/\/wpmailsmtp.com\/",
+                "author": "WP Mail SMTP",
+                "authorURI": "https:\/\/wpmailsmtp.com\/",
+                "description": "Reconfigures the <code>wp_mail()<\/code> function to use Gmail\/Mailgun\/SendGrid\/SMTP instead of the default <code>mail()<\/code> and creates an options page to manage the settings.",
+                "title": "WP Mail SMTP",
+                "networkActive": false,
+                "active": true,
+                "mustUse": false,
+                "dropIns": false
+            },
+            "db.php": {
+                "slug": "db.php",
+                "name": "Query Monitor Database Class (Drop-in)",
+                "version": "3.13.1",
+                "pluginURI": "https:\/\/querymonitor.com\/",
+                "author": "John Blackbourn",
+                "authorURI": "https:\/\/querymonitor.com\/",
+                "description": "Database drop-in for Query Monitor, the developer tools panel for WordPress.",
+                "title": "Query Monitor Database Class (Drop-in)",
+                "networkActive": false,
+                "active": false,
+                "mustUse": false,
+                "dropIns": true
+            }
+        },
+        "themes": {
+            "g5_hydrogen": {
+                "slug": "g5_hydrogen",
+                "themeName": "Hydrogen",
+                "version": "${xml.version}",
+                "themeURI": "http:\/\/gantry.org",
+                "parentTheme": false,
+                "template": "g5_hydrogen",
+                "stylesheet": "g5_hydrogen",
+                "description": "Default Gantry 5 theme. Provides a simple, clean and fast design to get you started on developing your own theme or setting up a quick new site",
+                "author": "RocketTheme, LLC",
+                "authorURI": "http:\/\/rockettheme.com",
+                "tags": [],
+                "isAllowed": true,
+                "isActive": false,
+                "defaultTheme": false
+            },
+            "kadence": {
+                "slug": "kadence",
+                "themeName": "Kadence",
+                "version": "1.1.43",
+                "themeURI": "https:\/\/www.kadencewp.com\/kadence-theme\/",
+                "parentTheme": false,
+                "template": "kadence",
+                "stylesheet": "kadence",
+                "description": "Kadence Theme is a lightweight yet full featured WordPress theme for creating beautiful fast loading and accessible websites, easier than ever. It features an easy to use drag and drop header and footer builder to build any type of header in minutes. It features a full library of gorgeous starter templates that are easy to modify with our intelligent global font and color controls. With extensive integration with the most popular 3rd party plugins, you can quickly build impressive ecommerce websites, course websites, business websites, and more.",
+                "author": "Kadence WP",
+                "authorURI": "https:\/\/www.kadencewp.com\/",
+                "tags": [
+                    "translation-ready",
+                    "two-columns",
+                    "right-sidebar",
+                    "left-sidebar",
+                    "footer-widgets",
+                    "blog",
+                    "custom-logo",
+                    "custom-background",
+                    "custom-menu",
+                    "rtl-language-support",
+                    "editor-style",
+                    "threaded-comments",
+                    "custom-colors",
+                    "featured-images",
+                    "wide-blocks",
+                    "full-width-template",
+                    "theme-options",
+                    "e-commerce"
+                ],
+                "isAllowed": true,
+                "isActive": true,
+                "defaultTheme": false
+            },
+            "twentytwentyone": {
+                "slug": "twentytwentyone",
+                "themeName": "Twenty Twenty-One",
+                "version": "1.9",
+                "themeURI": "https:\/\/wordpress.org\/themes\/twentytwentyone\/",
+                "parentTheme": false,
+                "template": "twentytwentyone",
+                "stylesheet": "twentytwentyone",
+                "description": "Twenty Twenty-One is a blank canvas for your ideas and it makes the block editor your best brush. With new block patterns, which allow you to create a beautiful layout in a matter of seconds, this theme\u2019s soft colors and eye-catching \u2014 yet timeless \u2014 design will let your work shine. Take it for a spin! See how Twenty Twenty-One elevates your portfolio, business website, or personal blog.",
+                "author": "the WordPress team",
+                "authorURI": "https:\/\/wordpress.org\/",
+                "tags": [
+                    "one-column",
+                    "accessibility-ready",
+                    "custom-colors",
+                    "custom-menu",
+                    "custom-logo",
+                    "editor-style",
+                    "featured-images",
+                    "footer-widgets",
+                    "block-patterns",
+                    "rtl-language-support",
+                    "sticky-post",
+                    "threaded-comments",
+                    "translation-ready"
+                ],
+                "isAllowed": true,
+                "isActive": false,
+                "defaultTheme": false
+            },
+            "twentytwentythree": {
+                "slug": "twentytwentythree",
+                "themeName": "Twenty Twenty-Three",
+                "version": "1.2",
+                "themeURI": "https:\/\/wordpress.org\/themes\/twentytwentythree",
+                "parentTheme": false,
+                "template": "twentytwentythree",
+                "stylesheet": "twentytwentythree",
+                "description": "Twenty Twenty-Three is designed to take advantage of the new design tools introduced in WordPress 6.1. With a clean, blank base as a starting point, this default theme includes ten diverse style variations created by members of the WordPress community. Whether you want to build a complex or incredibly simple website, you can do it quickly and intuitively through the bundled styles or dive into creation and full customization yourself.",
+                "author": "the WordPress team",
+                "authorURI": "https:\/\/wordpress.org",
+                "tags": [
+                    "one-column",
+                    "custom-colors",
+                    "custom-menu",
+                    "custom-logo",
+                    "editor-style",
+                    "featured-images",
+                    "full-site-editing",
+                    "block-patterns",
+                    "rtl-language-support",
+                    "sticky-post",
+                    "threaded-comments",
+                    "translation-ready",
+                    "wide-blocks",
+                    "block-styles",
+                    "style-variations",
+                    "accessibility-ready",
+                    "blog",
+                    "portfolio",
+                    "news"
+                ],
+                "isAllowed": true,
+                "isActive": false,
+                "defaultTheme": true
+            },
+            "twentytwentytwo": {
+                "slug": "twentytwentytwo",
+                "themeName": "Twenty Twenty-Two",
+                "version": "1.5",
+                "themeURI": "https:\/\/wordpress.org\/themes\/twentytwentytwo\/",
+                "parentTheme": false,
+                "template": "twentytwentytwo",
+                "stylesheet": "twentytwentytwo",
+                "description": "Built on a solidly designed foundation, Twenty Twenty-Two embraces the idea that everyone deserves a truly unique website. The theme\u2019s subtle styles are inspired by the diversity and versatility of birds: its typography is lightweight yet strong, its color palette is drawn from nature, and its layout elements sit gently on the page. The true richness of Twenty Twenty-Two lies in its opportunity for customization. The theme is built to take advantage of the Site Editor features introduced in WordPress 5.9, which means that colors, typography, and the layout of every single page on your site can be customized to suit your vision. It also includes dozens of block patterns, opening the door to a wide range of professionally designed layouts in just a few clicks. Whether you\u2019re building a single-page website, a blog, a business website, or a portfolio, Twenty Twenty-Two will help you create a site that is uniquely yours.",
+                "author": "the WordPress team",
+                "authorURI": "https:\/\/wordpress.org\/",
+                "tags": [
+                    "one-column",
+                    "custom-colors",
+                    "custom-menu",
+                    "custom-logo",
+                    "editor-style",
+                    "featured-images",
+                    "full-site-editing",
+                    "block-patterns",
+                    "rtl-language-support",
+                    "sticky-post",
+                    "threaded-comments",
+                    "style-variations",
+                    "wide-blocks",
+                    "block-styles",
+                    "accessibility-ready",
+                    "blog",
+                    "portfolio",
+                    "news"
+                ],
+                "isAllowed": true,
+                "isActive": false,
+                "defaultTheme": false
+            }
+        }
+    },
+    "defaultStorageId": -1,
+    "components": [
+        "package_component_db",
+        "package_component_core",
+        "package_component_plugins",
+        "package_component_themes",
+        "package_component_uploads",
+        "package_component_other"
+    ],
+    "opts_delete": "[\"duplicator_ui_view_state\",\"duplicator_package_active\",\"duplicator_settings\",\"duplicator_is_pro_enable_notice_dismissed\"]",
+    "brand": {
+        "name": "Duplicator",
+        "isDefault": true,
+        "logo": "<i class=\"fa fa-bolt fa-sm\"><\/i> Duplicator",
+        "enabled": false,
+        "style": []
+    },
+    "overwriteInstallerParams": {
+        "blogname": {
+            "value": "Open Readings 2024"
+        }
+    },
+    "installer_base_name": "installer.php.bak",
+    "installer_backup_name": "20230927_openreadings2024_603d5937a826f9d21987_20230927161505_installer-backup.php",
+    "package_name": "20230927_openreadings2024_603d5937a826f9d21987_20230927161505_archive.zip",
+    "package_hash": "603d593-27161505",
+    "package_notes": ""
+}

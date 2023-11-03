@@ -3,13 +3,12 @@ var affAddButtons = document.querySelectorAll('.aff-add');
 
 affAddButtons.forEach(function(button) {
     button.addEventListener('click', function() {
-        var id = button.getAttribute('data-field-id');
-        const affiliationList = document.getElementById(id + "-List");
+        const affiliationList = document.getElementById("affList");
         const affiliationField = document.createElement("div");
         var childDivs = affiliationList.querySelectorAll("div");
         var divCount = childDivs.length;
         affiliationField.innerHTML = `<label>` + (divCount+1) + `. ` + `</label>` +
-        `<input type="text" name="aff-` + id + `[]" placeholder="Affiliation">
+        `<input type="text" name="affiliation[]" placeholder="Affiliation">
         `;
         affiliationList.appendChild(affiliationField);
     });
@@ -20,7 +19,7 @@ var affRemButtons = document.querySelectorAll('.aff-rem');
 affRemButtons.forEach(function(button) {
     button.addEventListener('click', function() {
         var id = button.getAttribute('data-field-id');
-        const formFields = document.getElementById(id + "-List");
+        const formFields = document.getElementById("affList");
         var childDivs = formFields.querySelectorAll("div");
         var divCount = childDivs.length;
 

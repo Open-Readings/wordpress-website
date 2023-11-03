@@ -34,6 +34,7 @@ function register_or_dependencies()
   wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__));
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
+  wp_register_style('latex-field-style', plugins_url('assets/css/latex-field-style.css', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
   wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
@@ -43,6 +44,12 @@ function register_or_dependencies()
   wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
   wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__));
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
+
+  $data_to_pass = array(
+    'path' => content_url(), // Use admin-ajax.php for AJAX requests
+  );
+  wp_localize_script( 'latex-field-js', 'dirAjax', $data_to_pass );
+  wp_localize_script( 'image-field-js', 'dirAjax', $data_to_pass );
 
 }
 

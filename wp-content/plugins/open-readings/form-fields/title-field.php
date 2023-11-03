@@ -34,7 +34,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 		if ($item['allow_script']) {
 			?>
-			<span style="font-size: 0.8em;"> to type in superscript or subscript use ^ and _ accordingly in the field (use
+			<span style="font-size: 0.8em;"> &nbsp; to type in superscript or subscript use ^ and _ accordingly in the field (use
 				whitespaces to escape them)</span>
 			<?php
 

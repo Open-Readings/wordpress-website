@@ -10,7 +10,7 @@ fileAddButtons.forEach(function(button) {
         formFile.append('fileToUpload1', fileInput.files[0]);
         formFile.append('fileToUpload2', fileInput.files[1]);
 
-        fetch("/latex/upload.php", {
+        fetch(dirAjax.path + "/latex/upload.php", {
             method: "POST",
             body: formFile
         })

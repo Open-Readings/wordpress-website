@@ -19,16 +19,15 @@ class Elementor_Affiliation_Field extends \ElementorPro\Modules\Forms\Fields\Fie
 
 	public function render( $item, $item_index, $form ) {
         
-		echo '<div><br>
-        <label>Affiliations</label><br>
-        <div id="' . $item['custom_id'] . '-List">
+		echo '<div class="full">
+        <div id="affList">
             <div>
                 <label>1. </label>
-                <input type="text" name="aff-' . $item['custom_id'] . '[]" placeholder="Affiliation">
+                <input type="text" name="affiliation[]" placeholder="Affiliation">
             </div>
-        </div><br>
-        <button type="button" class="aff-add" data-field-id="' . $item['custom_id'] . '" >Add</button>
-        <button type="button" class="aff-rem" data-field-id="' . $item['custom_id'] . '">Remove</button>
+        </div>
+        <button type="button" class="aff-add">Add</button>
+        <button type="button" class="aff-rem">Remove</button><br>
         </div>';
 	}
 	
