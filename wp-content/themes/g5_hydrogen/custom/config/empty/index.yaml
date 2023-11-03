@@ -1,0 +1,20 @@
+name: empty
+timestamp: 1694886405
+version: 7
+preset:
+  image: 'gantry-admin://images/layouts/default.png'
+  name: default
+  timestamp: 1694881473
+positions: {  }
+sections:
+  header: Header
+  navigation: Navigation
+  main: Main
+  footer: Footer
+  offcanvas: Offcanvas
+particles:
+  messages:
+    system-messages-6072: 'System Messages'
+  content:
+    system-content-2520: 'Page Content'
+inherit: {  }
