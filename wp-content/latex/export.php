@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     \usepackage{float}
     \usepackage{blindtext}
     \usepackage[1]{pagesel}
-    \setlist{leftmargin=8mm}
     \addtolength\oddsidemargin{-1cm} \addtolength\evensidemargin{1cm}
     \graphicspath{ {images/} }
     \usepackage{indentfirst}
