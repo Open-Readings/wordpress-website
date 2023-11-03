@@ -2,7 +2,6 @@ var fileAddButtons = document.querySelectorAll('.file-add');
 
 fileAddButtons.forEach(function(button) {
     button.addEventListener('click', function() {
-        console.log(1);
         // const form = this.closest('form');
         var id = button.getAttribute('data-field-id');
         var fileInput = document.getElementById('fileInput');
@@ -22,29 +21,19 @@ fileAddButtons.forEach(function(button) {
             console.error("Error exporting file: " + error);
         });
 
-        
+        fetch(dirAjax.path + "/latex/pause.php")
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Handle the response data from the PHP script
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
     });
 });
-
-
-
-
-// $('#uploadButton').on('click', function() {
-    // var fileInput = document.getElementById('fileInput').files[0];
-    // var formData = new FormData();
-    // formData.append('fileToUpload', fileInput);
-
-//     $.ajax({
-//         url: '/latex/upload.php',
-//         type: 'POST',
-//         data: formData,
-//         contentType: false,
-//         processData: false,
-//         success: function(response) {
-//             console.log(response);
-//         },
-//         error: function() {
-//             console.error('Error uploading file.');
-//         }
-//     });
-// });

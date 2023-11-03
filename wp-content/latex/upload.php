@@ -4,6 +4,12 @@ if(!isset($_SESSION['id'])) {
     $_SESSION['id'] = 1;
 }
 
+if(!isset($_SESSION['generating'])){
+    $_SESSION['generating'] = 0;
+}
+
+if($_SESSION['generating'] == 0){
+
 if(!isset($_SESSION['file'])) {
     $timestamp = time();
     $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
@@ -51,5 +57,5 @@ if ($uploadOk == 0) {
         echo "Sorry, there was an error uploading your file.";
     }
 }
-}
+}}
 ?>

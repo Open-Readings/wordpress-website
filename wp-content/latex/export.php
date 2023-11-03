@@ -5,6 +5,12 @@ if(!isset($_SESSION['id'])) {
     $_SESSION['id'] = 1;
 }
 
+if(!isset($_SESSION['generating'])){
+    $_SESSION['generating'] = 0;
+}
+
+if($_SESSION['generating'] == 0){
+
 if(!isset($_SESSION['file'])) {
     $timestamp = time();
     $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
@@ -14,6 +20,8 @@ if(!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
     shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
     shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images"');
 }
+
+
 
 $folder = $_SESSION['file'];
 
@@ -109,5 +117,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $filename = $folder . "/3.tex";
     file_put_contents($filename, $textData);
     shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . __DIR__ . '/' . $folder . '" "' . __DIR__ . '/' . $folder . '/3.tex"');
-}
+}}
 ?>

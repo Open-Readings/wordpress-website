@@ -58,8 +58,10 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                     <textarea id="textArea" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '">' . $item['latex_default_value'] . '</textarea>
                     <p>Character Count: <span id="charCount">0</span></p>
                      <br><br>
-                    
-                    <button type="button" id="latexButton">Generate abstract</button>
+                    <div class="flex-div">
+                    <button type="button" id="latexButton">Generate abstract </button>
+                    <div class="loader"></div>
+                    </div>
                 
         </div>
         <div class="latex-half-div">
