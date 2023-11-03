@@ -43,6 +43,13 @@
     vertical-align: middle;
 }
 
+.latex-error {
+    color:white;
+    font-weight: bold;
+    background-color: #bb0022;
+    display:none;
+}
+
 .loader {
     margin: 5px;
     border: 7px solid #f3f3f3;

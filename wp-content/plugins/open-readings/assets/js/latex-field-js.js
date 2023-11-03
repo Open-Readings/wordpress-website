@@ -3,6 +3,7 @@ var charCount = document.getElementById("charCount");
 const latexButton = document.getElementById("latexButton");
 const loader = document.getElementById('loader');
 var fileButton = document.getElementById('fileButton');
+const errorMessage = document.getElementById('errorMessage');
 
 
 textarea.addEventListener("input", function() {
@@ -25,27 +26,36 @@ function afterWait(){
     fileButton.disabled = false;
     loader.style.display = 'none';
     console.log(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' );
-        fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime()) // Replace with the path to your log file
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('logContent').textContent = data;
-                const logContent = document.getElementById('logContent');
+    fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime())
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('logContent').textContent = data;
+            const logContent = document.getElementById('logContent');
 
-                // Get the content of the pre element
-                const content = logContent.textContent || logContent.innerText;
+            // Get the content of the pre element
+            const content = logContent.textContent || logContent.innerText;
 
-                // Find the position of the first exclamation mark
-                const firstExclamationPosition = content.indexOf('!');
+            // Find the position of the first exclamation mark
+            const firstExclamationPosition = content.indexOf('!');
 
-                // Extract text starting from the first exclamation mark (if found)
-                const newTextContent = (firstExclamationPosition !== -1) ? content.substring(firstExclamationPosition) : '';
+            // Find the position of the first occurrence of a double line break after the first exclamation mark
+            const doubleLineBreakPosition = content.indexOf('\n\n', firstExclamationPosition);
 
-                // Display content after the first exclamation mark, or empty string if not found
-                logContent.textContent = newTextContent;
-            })
-            .catch(error => {
-                document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
-            });
+            // Extract text between the first exclamation mark and the first double line break
+            const newTextContent = (firstExclamationPosition !== -1 && doubleLineBreakPosition !== -1) ?
+                content.substring(firstExclamationPosition, doubleLineBreakPosition) :
+                '';
+
+            // Display content between the first exclamation mark and the first double line break
+            logContent.textContent = newTextContent;
+            if(newTextContent.length == 0)
+                logContent.style.display = "none";
+            else
+                logContent.style.display = "block";  
+        })
+        .catch(error => {
+            document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
+    });
     document.getElementById("abstract").contentWindow.location.reload(true);
        
 }
@@ -53,11 +63,17 @@ function afterWait(){
 
 latexButton.addEventListener("click", function () {
     const form = this.closest('form');
-    console.log(dirAjax.path + "/latex/export.php");
+    const inputs = form.querySelectorAll('input, textarea');
+
+    inputs.forEach(input => {
+        if (input.type !== 'submit' && input.type !== 'button') {
+            input.value = input.value.trim();
+        }
+    });
     // Check if the form is valid
     if (form.checkValidity()) {
-        if (1){
         const formData = new FormData(form);
+        errorMessage.style.display = 'none';
 
         fetch(dirAjax.path + "/latex/export.php", {
             method: "POST",
@@ -90,10 +106,10 @@ latexButton.addEventListener("click", function () {
         setTimeout(() => {  afterWait(); }, 4200);
             
         
-    } else {
-        // The form is not valid; you can display an error message or take other actions.
-        console.error("Form is not valid. Please fill in all required fields.");
-    }
+    
+} else {
+    errorMessage.style.display = 'block';
+    errorMessage.textContent = 'Please fill in all required fields.';
 }
 });
 

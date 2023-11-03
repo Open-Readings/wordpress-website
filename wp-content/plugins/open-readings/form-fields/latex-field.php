@@ -62,11 +62,12 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                     <button type="button" id="latexButton">Generate abstract </button>
                     <div class="loader" id="loader"></div>
                     </div>
+                    <p id="errorMessage" style="display: none; color: red;"></p>
                 
         </div>
         <div class="latex-half-div">
             <iframe class="pdf-field" id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/3.pdf#toolbar=0&view=FitH' . '" height="100%"></iframe>
-            <pre class="scroll" id="logContent"></pre>
+            <pre class="latex-error" id="logContent"></pre>
         </div>
         </div>';
     }
