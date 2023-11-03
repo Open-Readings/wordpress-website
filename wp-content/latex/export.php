@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $i = 0;
     foreach($_POST['name'] as $name){
         $authors = $authors . $name . '$^{' . $_POST['aff_ref'][$i] . '}$';
-        if ($i < count($_POST['name'] - 1))
+        if ($i < count($_POST['name']) - 1)
             $authors = $authors . ', ';
         $i++;
     }
