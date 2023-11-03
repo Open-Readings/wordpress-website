@@ -3,6 +3,11 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+use Elementor\Controls_Manager;
+use ElementorPro\Modules\Forms\Classes\Form_Record;
+use ElementorPro\Plugin;
+use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
+
 class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
 
@@ -50,7 +55,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="latex-flex full">
         <div class="latex-half-div">   
-                    <textarea id="textArea" name="textArea" rows="20" cols="50"></textarea>
+                    <textarea id="textArea" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '">' . $item['latex_default_value'] . '</textarea>
                     <p>Character Count: <span id="charCount">0</span></p>
                      <br><br>
                     
@@ -58,10 +63,56 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                 
         </div>
         <div class="latex-half-div">
-            <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . "/3.pdf#toolbar=0" . '" height="1200"></iframe>
+            <iframe class="pdf-field" id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/3.pdf#toolbar=0&view=FitH' . '" height="100%"></iframe>
             <pre class="scroll" id="logContent"></pre>
         </div>
         </div>';
+    }
+
+    public function update_controls($widget)
+    {
+        $elementor = Plugin::elementor();
+
+
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+
+        if (is_wp_error($control_data)) {
+            return;
+        }
+
+        $field_controls = [
+            'latex_placeholder' => [
+                'name' => 'latex_placeholder',
+                'label' => esc_html__('Placeholder', 'OR'),
+                'type' => Controls_Manager::TEXT,
+                'condition' => [
+                    'field_type' => $this->get_type(),
+                ],
+                'default' => esc_html__('', 'OR'),
+                'tab' => 'content',
+                'inner_tab' => 'form_fields_content_tab',
+                'tabs_wrapper' => 'form_fields_tabs',
+            ],
+            'latex_default_value' =>
+                [
+                    'name' => 'latex_default_value',
+                    'label' => esc_html__('Default Value', 'OR'),
+                    'type' => Controls_Manager::TEXT,
+                    'condition' => [
+                        'field_type' => $this->get_type(),
+                    ],
+                    'dynamic' => [
+                        'active' => true,
+                    ],
+                    'default' => esc_html__('', 'OR'),
+                    'tab' => 'advanced',
+                    'inner_tab' => 'form_fields_advanced_tab',
+                    'tabs_wrapper' => 'form_fields_tabs',
+                ],
+        ];
+
+        $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
+        $widget->update_control('form_fields', $control_data);
     }
 
 }

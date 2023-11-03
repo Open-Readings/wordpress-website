@@ -28,15 +28,15 @@ function afterWait(){
 
                 // Get the content of the pre element
                 const content = logContent.textContent || logContent.innerText;
-        
+
                 // Find the position of the first exclamation mark
                 const firstExclamationPosition = content.indexOf('!');
-        
-                // Scroll to the section containing the first exclamation mark
-                if (firstExclamationPosition !== -1) {
-                    logContent.scrollTop = logContent.scrollHeight - logContent.clientHeight; // Scroll to the bottom
-                    logContent.scrollTop = logContent.scrollHeight * (firstExclamationPosition / content.length) - 1;
-                }
+
+                // Extract text starting from the first exclamation mark (if found)
+                const newTextContent = (firstExclamationPosition !== -1) ? content.substring(firstExclamationPosition) : '';
+
+                // Display content after the first exclamation mark, or empty string if not found
+                logContent.textContent = newTextContent;
             })
             .catch(error => {
                 document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
@@ -75,65 +75,4 @@ latexButton.addEventListener("click", function () {
     }
 }
 });
-
-
-// function addPerson() {
-//     const peopleList = document.getElementById("peopleList");
-//     const personField = document.createElement("div");
-//     personField.innerHTML = `
-//         <input type="text" name="name[]" placeholder="Name">
-//         <input type="number" name="reference[]" placeholder="Affiliation">
-//     `;
-//     peopleList.appendChild(personField);
-// }
-
-// function removePerson(){
-//     const formFields = document.getElementById("peopleList");
-//     var childDivs = formFields.querySelectorAll("div");
-//     var divCount = childDivs.length;
-
-//         if (formFields.lastChild && divCount > 1) {
-//             formFields.removeChild(formFields.lastChild);
-//         }
-// }
-
-// function addAffiliation() {
-//     const affiliationList = document.getElementById("affiliationList");
-//     const affiliationField = document.createElement("div");
-//     var childDivs = affiliationList.querySelectorAll("div");
-//     var divCount = childDivs.length;
-//     affiliationField.innerHTML = `<label>` + (divCount+1) + `. ` + `</label>` +
-//     `<input type="text" name="affiliation[]" placeholder="Affiliation">
-//     `;
-//     affiliationList.appendChild(affiliationField);
-// }
-
-// function removeAffiliation(){
-//     const formFields = document.getElementById("affiliationList");
-//     var childDivs = formFields.querySelectorAll("div");
-//     var divCount = childDivs.length;
-
-//         if (formFields.lastChild && divCount > 1) {
-//             formFields.removeChild(formFields.lastChild);
-//         }
-// }
-
-// function addReference() {
-//     const referenceList = document.getElementById("referenceList");
-//     const referenceField = document.createElement("div");
-//     var childDivs = referenceList.querySelectorAll("div");
-//     var divCount = childDivs.length;
-//     referenceField.innerHTML = `<label>` + (divCount+1) + `. ` + `</label>` +
-//     `<input type="text" name="references[]" placeholder="Reference">
-//     `;
-//     referenceList.appendChild(referenceField);
-// }
-
-// function removeReference(){
-//     const formFields = document.getElementById("referenceList");
-
-//         if (formFields.lastChild) {
-//             formFields.removeChild(formFields.lastChild);
-//         }
-// }
 
