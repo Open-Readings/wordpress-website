@@ -46,10 +46,11 @@ function register_or_dependencies()
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
 
   $data_to_pass = array(
-    'path' => content_url(), // Use admin-ajax.php for AJAX requests
+    'path' => content_url(),
+    // Use admin-ajax.php for AJAX requests
   );
-  wp_localize_script( 'latex-field-js', 'dirAjax', $data_to_pass );
-  wp_localize_script( 'image-field-js', 'dirAjax', $data_to_pass );
+  wp_localize_script('latex-field-js', 'dirAjax', $data_to_pass);
+  wp_localize_script('image-field-js', 'dirAjax', $data_to_pass);
 
 }
 
@@ -65,7 +66,7 @@ add_action('elementor/controls/register', 'register_faq_controls');
 
 
 
-
+define('OR_PLUGIN_DIR', __DIR__ . '/');
 
 
 
