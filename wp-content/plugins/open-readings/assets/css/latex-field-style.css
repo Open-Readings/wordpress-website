@@ -39,7 +39,7 @@
 }
 
 .flex-div{
-    display:flex;
+    display:inline-flex;
     vertical-align: middle;
 }
 

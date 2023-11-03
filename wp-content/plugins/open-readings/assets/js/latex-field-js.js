@@ -1,7 +1,8 @@
 var textarea = document.getElementById("textArea");
 var charCount = document.getElementById("charCount");
 const latexButton = document.getElementById("latexButton");
-const loader = document.querySelector('.loader');
+const loader = document.getElementById('loader');
+var fileButton = document.getElementById('fileButton');
 
 
 textarea.addEventListener("input", function() {
@@ -21,6 +22,7 @@ textarea.addEventListener("input", function() {
 
 function afterWait(){
     latexButton.disabled = false;
+    fileButton.disabled = false;
     loader.style.display = 'none';
     console.log(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' );
         fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime()) // Replace with the path to your log file
@@ -69,6 +71,7 @@ latexButton.addEventListener("click", function () {
             console.error("Error exporting file: " + error);
         });
         latexButton.disabled = true;
+        fileButton.disabled = true;
         loader.style.display = 'block';
 
         fetch(dirAjax.path + "/latex/pause.php")
@@ -80,7 +83,6 @@ latexButton.addEventListener("click", function () {
         })
         .then(data => {
             // Handle the response data from the PHP script
-            console.log(data);
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

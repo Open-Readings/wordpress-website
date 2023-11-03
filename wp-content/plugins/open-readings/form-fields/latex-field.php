@@ -60,7 +60,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                      <br><br>
                     <div class="flex-div">
                     <button type="button" id="latexButton">Generate abstract </button>
-                    <div class="loader"></div>
+                    <div class="loader" id="loader"></div>
                     </div>
                 
         </div>
