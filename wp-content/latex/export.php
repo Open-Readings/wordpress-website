@@ -1,8 +1,5 @@
 <?php
 
-// define('WP_USE_THEMES', false);
-// require('wp-load.php');
-
 if(!isset($_SESSION['id'])) {
     session_start();
     $_SESSION['id'] = 1;
@@ -21,7 +18,7 @@ if(!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
 $folder = $_SESSION['file'];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $x = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
+    $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
 
     \usepackage{amsmath}
     \usepackage[utf8]{inputenc}
@@ -50,41 +47,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     \begin{document}
     ';
 
-    $e = '
-    \end{document}';
-    $n = '\begin{center} ';
-    $i = 1;
+
+    $authors = '\begin{center} ';
+    $i = 0;
     foreach($_POST['name'] as $name){
-        $n = $n . $name . '$^{' . $_POST['aff_ref'][$i-1] . '}$';
-        if ($i < count($_POST['name']))
-            $n = $n . ', ';
+        $authors = $authors . $name . '$^{' . $_POST['aff_ref'][$i] . '}$';
+        if ($i < count($_POST['name'] - 1))
+            $authors = $authors . ', ';
         $i++;
     }
-    $n = $n . ' \end{center}
+    $authors = $authors . ' \end{center}
 
     ';
 
-    $a = '\begin{center} ';
+
+    $affiliations = '\begin{center} ';
     $i = 1;
-    foreach($_POST['affiliation'] as $name){
-        $a = $a . '$^{' . $i . '}$' . $name . '
+    foreach($_POST['affiliation'] as $aff){
+        $affiliations = $affiliations . '$^{' . $i . '}$' . $aff . '
         
         ';
         $i++;
     }
-    $a = $a . $_POST['email-author'] . '
+    $affiliations = $affiliations . $_POST['email-author'] . '
     \end{center}
 
     ';
 
-    $r = '
-    ';
+
+    $references = '';
     $i = 1;
-    foreach($_POST['references'] as $name){
-        $r = $r . '\setcounter{footnote}{' . $i . '} ' . '\footnotetext{' . $name . '}
+    foreach($_POST['references'] as $ref){
+        $references = $references . '\setcounter{footnote}{' . $i . '} ' . '\footnotetext{' . $ref . '}
         ';
         $i++;
     }
+
 
     $titleField = $_POST['form_fields']['abstract_title'];
     $titleField = str_replace('<sup>', '$^{', $titleField);
@@ -98,10 +96,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $title = "\begin{center} {\large \\textbf{" . $titleField . "}} \\end{center}
     " ;
 
-    $textData = $x . $title . $n . $a . $_POST["textArea"] . $r . $e;
+
+    $abstractContent = $_POST["textArea"];
+
+
+    $endOfDocument = '
+    \end{document}';
+
+
+    $textData = $startOfDocument . $title . $authors . $affiliations . $abstractContent . $references . $endOfDocument;
 
     $filename = $folder . "/3.tex";
     file_put_contents($filename, $textData);
-    $xa = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . __DIR__ . '/' . $folder . '" "' . __DIR__ . '/' . $folder . '/3.tex"');
+    shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . __DIR__ . '/' . $folder . '" "' . __DIR__ . '/' . $folder . '/3.tex"');
 }
 ?>
