@@ -46,10 +46,11 @@ function register_or_dependencies()
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
 
   $data_to_pass = array(
-    'path' => content_url(), // Use admin-ajax.php for AJAX requests
+    'path' => content_url(),
+    // Use admin-ajax.php for AJAX requests
   );
-  wp_localize_script( 'latex-field-js', 'dirAjax', $data_to_pass );
-  wp_localize_script( 'image-field-js', 'dirAjax', $data_to_pass );
+  wp_localize_script('latex-field-js', 'dirAjax', $data_to_pass);
+  wp_localize_script('image-field-js', 'dirAjax', $data_to_pass);
 
 }
 
@@ -64,8 +65,20 @@ function register_faq_controls($controls_manager)
 add_action('elementor/controls/register', 'register_faq_controls');
 
 
+function register_or_mailer()
+{
+  require_once(__DIR__ . '/mailer/mailer.php');
+  $mailer = new ORmailer();
+
+  //add mailer as a global variable
+  global $or_mailer;
+  $or_mailer = $mailer;
+}
+
+add_action('init', 'register_or_mailer');
 
 
+define('OR_PLUGIN_DIR', __DIR__ . '/');
 
 
 
