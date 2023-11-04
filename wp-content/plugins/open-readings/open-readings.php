@@ -70,12 +70,48 @@ function register_or_mailer()
   require_once(__DIR__ . '/mailer/mailer.php');
   $mailer = new ORmailer();
 
+  add_menu_roles();
   //add mailer as a global variable
   global $or_mailer;
   $or_mailer = $mailer;
+
 }
 
+function load_custom_wp_admin_style($hook)
+{
+  // Load only on ?page=mypluginname
+  if ($hook != 'toplevel_page_or_registration') {
+    return;
+  }
+  wp_enqueue_style('or-registration-options.css', plugins_url('assets/css/registration-options.css', __FILE__));
+}
+
+
+add_action('admin_enqueue_scripts', 'load_custom_wp_admin_style');
+
+function add_menu_roles()
+{
+
+
+  //add new capability
+  $role = get_role('administrator');
+  $role->add_cap('manage_or_registration');
+  //add new capability
+  $role = get_role('editor');
+  $role->add_cap('manage_or_registration');
+}
+
+
+function register_admin()
+{
+  require_once(__DIR__ . '/registration/admin.php');
+  $admin = new ORregistrationAdmin();
+
+
+}
+add_action('init', 'register_admin');
 add_action('init', 'register_or_mailer');
+
 
 
 define('OR_PLUGIN_DIR', __DIR__ . '/');
