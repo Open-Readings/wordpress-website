@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
 
     \usepackage{amsmath}
-    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
     \usepackage{graphicx}
     \usepackage[utf8]{inputenc}
     \usepackage[left=3cm,right=1cm,top=3cm,bottom=2cm]{geometry}

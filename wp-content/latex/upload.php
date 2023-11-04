@@ -1,4 +1,9 @@
 <?php
+
+define('WP_USE_THEMES', false);
+require(dirname(dirname(__DIR__)) . '/wp-load.php');
+
+
 if(!isset($_SESSION['id'])) {
     session_start();
     $_SESSION['id'] = 1;
@@ -23,6 +28,8 @@ if(!is_dir( __DIR__ . '/' . $_SESSION['file']) . '/images') {
 }
 $targetDirectory = __DIR__ . '/' . $_SESSION['file'] . "/images/";
 
+
+
 $files = glob($targetDirectory . '*'); // Get a list of all files in the directory
 
 foreach ($files as $file) {
@@ -44,7 +51,7 @@ if ($_FILES[$filename]["size"] > 500000) {
     echo "File is too large.";
     $uploadOk = 0;
 }
-if ($fileType != "png" && $fileType != "jpeg") {
+if (($fileType != "png" && $fileType != "jpeg") && $fileType != "jpg") {
     echo "Only PNG or JPEG files are allowed.";
     $uploadOk = 0;
 }
@@ -58,5 +65,17 @@ if ($uploadOk == 0) {
         echo "Sorry, there was an error uploading your file.";
     }
 }
+
+function enqueue_custom_script() {
+    // Define your PHP variable to be passed to JavaScript
+    $php_variable = 'Hello from PHP!';
+
+    // Localize the script with the PHP variable
+    wp_localize_script('custom-script', 'php_vars', array(
+        'variable' => 1,
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_custom_script');
+
 }}
 ?>
