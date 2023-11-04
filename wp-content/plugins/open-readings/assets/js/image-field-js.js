@@ -1,11 +1,30 @@
 var fileButton1 = document.getElementById('fileButton');
 const uploadLoader = document.getElementById("uploadLoader");
 var latexButton1 = document.getElementById('latexButton');
+var imageMessage = document.getElementById('image-names');
+
 
 function uploadWait(){
     fileButton1.disabled = false;
     latexButton1.disabled = false;
     uploadLoader.style.display = "none";
+    var isImage = 1;
+    Array.from(fileInput.files).forEach(file => {
+        if (!file['name'].endsWith('.png') && !file['name'].endsWith('.jpeg') && !file['name'].endsWith('.jpg'))
+            isImage = 0;
+    });
+    if (!isImage){
+        imageMessage.textContent = "File type not allowed";
+    } else if (fileInput.files.length > 2) {
+        imageMessage.textContent = "Maximum number of files: 2";
+    } else if (fileInput.files.length == 0){
+        imageMessage.textContent = "0 files uploaded";
+    } else if (fileInput.files.length == 1) {
+        imageMessage.textContent = fileInput.files[0]['name'];
+    } else {
+        imageMessage.innerHTML = fileInput.files[0]['name'] + "<br>" + fileInput.files[1]['name'];
+    }
+    imageMessage.style.display = 'block';
 }
 
     fileButton1.addEventListener('click', function(event) {

@@ -77,7 +77,7 @@ latexButton.addEventListener("click", function () {
     const inputs = form.querySelectorAll('input, textarea');
 
     inputs.forEach(input => {
-        if (input.type !== 'submit' && input.type !== 'button') {
+        if (input.type !== 'submit' && input.type !== 'button' && input.type !== 'file') {
             input.value = input.value.trim();
         }
     });
@@ -120,7 +120,7 @@ latexButton.addEventListener("click", function () {
     
 } else {
     errorMessage.style.display = 'block';
-    errorMessage.textContent = 'Please fill in all required fields.';
+    errorMessage.textContent = 'Please correctly fill in all required fields.';
 }
 });
 

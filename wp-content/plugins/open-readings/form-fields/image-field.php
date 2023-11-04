@@ -24,6 +24,7 @@ class Elementor_Image_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 		<button id="fileButton" data-field-id="' . $item['custom_id'] . '">Upload File</button>
         <div class="loader" id="uploadLoader"></div>
         </div>
+		<p id="image-names" style="display:none"></p>
         
         </div>';
     }
