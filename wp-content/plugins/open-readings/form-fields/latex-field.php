@@ -27,17 +27,17 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
     public function render($item, $item_index, $form)
     {
-        if(!isset($_SESSION['id'])) {
+        if (!isset($_SESSION['id'])) {
             session_start();
             $_SESSION['id'] = 1;
         }
-        
-        if(!isset($_SESSION['file'])) {
+
+        if (!isset($_SESSION['file'])) {
             $timestamp = time();
             $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
         }
         $fdsokal = is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file']);
-        if(!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
+        if (!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
             shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
             shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images"');
             shell_exec('/bin/cp "' . WP_CONTENT_DIR . '/latex/3.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
@@ -47,9 +47,10 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         $folder = $_SESSION['file'];
 
         $data_to_pass = array(
-            'folder' => $folder, // Use admin-ajax.php for AJAX requests
-          );
-          wp_localize_script( 'latex-field-js', 'folderAjax', $data_to_pass );
+            'folder' => $folder,
+            // Use admin-ajax.php for AJAX requests
+        );
+        wp_localize_script('latex-field-js', 'folderAjax', $data_to_pass);
 
         echo '
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +58,6 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         <div class="latex-half-div">   
                     <textarea id="textArea" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '">' . $item['latex_default_value'] . '</textarea>
                     <p>Character Count: <span id="charCount">0</span></p>
-                     <br><br>
                     <div class="flex-div">
                     <button type="button" id="latexButton">Generate abstract </button>
                     <div class="loader" id="loader"></div>

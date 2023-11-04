@@ -34,7 +34,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 		if ($item['allow_script']) {
 			?>
-			<span style="font-size: 0.8em;"> &nbsp; to type in superscript or subscript use ^ and _ accordingly in the field (use
+			<span style="font-size: 0.8em;">To type in superscript or subscript use ^ and _ accordingly in the field (use
 				whitespaces to escape them)</span>
 			<?php
 
@@ -55,7 +55,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 		<input <?php $form->print_render_attribute_string('input' . $item_index); ?>>
 		<script>
 			function trim_title(value) {
-				var field_id = "<?= $field_id ?>";
+				var field_id = "<?php echo $field_id ?>";
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
 				var html = value.replace(regex, '');
@@ -72,11 +72,12 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 			};
 
 			function fix_onChange_editable_elements() {
-				var default_value = "<?= $item['title_placeholder'] ?>";
+				var default_value = "<?php echo $item['title_placeholder']; ?>";
 				var tags = document.querySelectorAll('[contenteditable=true]');//(requires FF 3.1+, Safari 3.1+, IE8+)
 				for (var i = tags.length - 1; i >= 0; i--) if (typeof (tags[i].onblur) != 'function') {
 					tags[i].onfocus = function () {
-						if (this.innerHTML == default_value) {
+						if (this.innerHTML.trim() == default_value) {
+
 							this.innerHTML = "";
 						}
 						this.data_orig = this.innerHTML;
@@ -84,7 +85,9 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 					tags[i].onblur = function () {
 						if (this.innerHTML != this.data_orig) {
 							<?php if ($item['allow_script']): ?>
+								console.log(this.innerHTML);
 								trim_title(this.innerHTML);
+
 							<?php else: ?>
 								var field_id = "<?= $field_id ?>";
 								document.getElementById(field_id).value = this.innerHTML;
