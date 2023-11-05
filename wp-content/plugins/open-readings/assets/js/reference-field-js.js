@@ -1,13 +1,13 @@
 var refAddButtons = document.querySelectorAll('.ref-add');
 
-refAddButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+refAddButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         const referenceList = document.getElementById("refList");
         const referenceField = document.createElement("div");
         var childDivs = referenceList.querySelectorAll("div");
         var divCount = childDivs.length;
-        referenceField.innerHTML = `<label>` + (divCount+1) + `. ` + `</label>` +
-        `<input type="text" name="references[]" placeholder="Reference" required>
+        referenceField.innerHTML = `<label>` + (divCount + 1) + `. ` + `</label>` +
+            `<input type="text" name="references[]" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)" required>
         `;
         referenceList.appendChild(referenceField);
     });
@@ -15,8 +15,8 @@ refAddButtons.forEach(function(button) {
 
 var refRemButtons = document.querySelectorAll('.ref-rem');
 
-refRemButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+refRemButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         const formFields = document.getElementById("refList");
 
         if (formFields.lastChild) {

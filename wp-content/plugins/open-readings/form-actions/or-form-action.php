@@ -28,22 +28,51 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
 
         $fields = [];
         foreach ($raw_fields as $field) {
-            $fields[$field['name']] = $field['value'];
+            $fields[$field['id']] = $field['value'];
+
+
+
+        }
+
+
+        foreach ($fields as $key => $value) {
+
+
+
         }
 
         $registration = new RegistrationData();
 
-        $registration->first_name = $fields['first_name'];
-        $registration->last_name = $fields['last_name'];
+        if ($fields['email'] != $fields['repeat_email']) {
+            $ajax_handler->add_error_message('Emails do not match');
+            return;
+        }
+
+        if ($fields['privacy'] == 'false' || $fields['privacy'] == '') {
+            $ajax_handler->add_error_message('You must agree to the privacy policy');
+            return;
+        }
+
+        if ($fields['research_area'] == 'Null' || $fields['research_area'] == 'Select') {
+            $ajax_handler->add_error_message('You must select a research area');
+            return;
+        }
+
+
+
+
+        $registration->first_name = preg_replace('/[^\\p{L} ]/u', '', $fields['firstname']);
+        $registration->last_name = preg_replace('/[^\\p{L} ]/u', '', $fields['lastname']);
         $registration->email = $fields['email'];
-        $registration->institution = $fields['institution'];
+        $registration->institution = preg_replace('/[^\\p{L} ]/u', '', $fields['institution']);
         $registration->country = $fields['country'];
-        $registration->department = $fields['department'];
+        $registration->department = preg_replace('/[^\\p{L} ]/u', '', $fields['department']);
 
         $registration->title = $fields['abstract_title'];
+        $registration->person_title = $fields['person_title'];
         $registration->privacy = $fields['privacy'];
-        $registration->needs_visa = $fields['needs_visa'];
-        $registration->agrees_to_email = $fields['agrees_to_email'];
+        $registration->needs_visa = $fields['visa'];
+        $registration->agrees_to_email = $fields['email_agree'];
         $registration->research_area = $fields['research_area'];
         $registration->presentation_type = $fields['presentation_type'];
 
@@ -53,14 +82,66 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $author_contact_email = $_POST['email-author'];
         $affiliation_array = $_POST['affiliation'];
         $abstract_content = $_POST['textArea'];
+        $session_id = $_POST['session_id'];
+
+
+
+        $registration->session_id = $session_id;
+        $generated_files_dir = WP_CONTENT_DIR . '/latex/' . $session_id . '';
+        $generated_images_dir = $generated_files_dir . 'images/';
+        $uploaded_images = scandir($generated_images_dir);
+        $img_array = array();
+        foreach ($uploaded_images as $image) {
+            if (!is_file($generated_images_dir . '/' . $image)) {
+                continue;
+            }
+            if ($image != '.' && $image != '..') {
+                $img_array[] = $image;
+
+            }
+        }
+        $registration->images = $img_array;
+        $pdf = $generated_files_dir . '/abstract.pdf';
+        if (!file_exists($pdf)) {
+            $ajax_handler->add_error_message('Please generate your abstract before submitting');
+            return;
+        }
+        $pdf = str_replace(WP_CONTENT_DIR, WP_CONTENT_URL, $pdf);
+        $registration->pdf = $pdf;
+
         $reference_array = $_POST['references']; //array su reference'ais is eiles
 
-        echo print_r($raw_fields);
+        $references = [];
+        foreach ($reference_array as $reference) {
+            $references[] = $reference;
+        }
+        $registration->references = $references;
+
+        $aggregated_authors_array = array();
+        for ($i = 0; $i < count($author_name_array); $i++) {
+            if ($author_radio == $i + 1)
+                $aggregated_authors_array[$i] = array(preg_replace('/[^\\p{L} ]/u', '', $author_name_array[$i]), $author_affiliation_reference_array[$i], $author_contact_email);
+            else {
+                $aggregated_authors_array[$i] = array(preg_replace('/[^\\p{L} ]/u', '', $author_name_array[$i]), $author_affiliation_reference_array[$i]);
+            }
+        }
 
 
+        $registration->authors = $aggregated_authors_array;
+        $registration->affiliations = $affiliation_array;
+        $registration->references = $reference_array;
+        $registration->abstract = $abstract_content;
 
+        $registration->session_id = $session_id;
 
+        global $or_registration_controller;
+        $result = $or_registration_controller->register($registration);
 
+        if (is_wp_error($result)) {
+            $ajax_handler->add_error_message($result->get_error_message());
+            return;
+        }
+        $ajax_handler->add_success_message('Registration was successful, please check your email for confirmation.');
 
     }
 
