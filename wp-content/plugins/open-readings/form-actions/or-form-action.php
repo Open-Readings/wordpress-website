@@ -47,6 +47,14 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $registration->research_area = $fields['research_area'];
         $registration->presentation_type = $fields['presentation_type'];
 
+        $author_name_array = $_POST['name']; //array su vardais is eiles
+        $author_affiliation_reference_array = $_POST['aff_ref']; //array su nuorodomis i affiliacijas is eiles
+        $author_radio = $_POST['contact_author']; //grazina skaiciu (autoriaus eiles nr)
+        $author_contact_email = $_POST['email-author'];
+        $affiliation_array = $_POST['affiliation'];
+        $abstract_content = $_POST['textArea'];
+        $reference_array = $_POST['references']; //array su reference'ais is eiles
+
         echo print_r($raw_fields);
 
 
