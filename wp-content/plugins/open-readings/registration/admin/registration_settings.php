@@ -54,10 +54,11 @@ function populate_database()
         'title',
         'privacy',
         'needs_visa',
+        'agrees_to_email',
         'research_area',
         'presentation_type',
         'presentation_id',
-        'submit_time'
+        'submit_time',
 
     ];
 
@@ -82,12 +83,13 @@ function populate_database()
         "country" => "varchar(255) NOT NULL",
         "department" => "varchar(255) NOT NULL",
         "title" => "varchar(255)",
-        "privacy" => "varchar(255) NOT NULL",
-        "needs_visa" => "varchar(255) NOT NULL",
+        "privacy" => "tinyint(1) NOT NULL",
+        "needs_visa" => "tinyint(1) NOT NULL",
         "research_area" => "varchar(255) NOT NULL",
         "presentation_type" => "varchar(255) NOT NULL",
         "presentation_id" => "varchar(255) NOT NULL",
         "submit_time" => "GETDATE() NOT NULL",
+        "agrees_to_email" => "tinyint(1) NOT NULL"
     ];
 
     $presentation_data_sql = [
@@ -118,7 +120,8 @@ function populate_database()
             research_area varchar(255) NOT NULL,
             presentation_type varchar(255) NOT NULL,
             presentation_id varchar(255) NOT NULL, 
-            submit_time DATETIME NOT NULL
+            submit_time DATETIME NOT NULL,
+            agrees_to_email tinyint(1) NOT NULL
             )");
 
 
@@ -142,7 +145,7 @@ function populate_database()
     //check if the presentation table has the correct columns
     if (!$presentation_table_exists) {
         $wpdb->query("CREATE TABLE $presentation_table_name (
-            hash_id varchar(255) NOT NULL, 
+            person_hash_id varchar(255) NOT NULL, 
             presentation_id varchar(255) NOT NULL, 
             PRIMARY KEY (presentation_id),
             title varchar(255) NOT NULL,
@@ -169,7 +172,6 @@ function populate_database()
     }
 
     //set foreign keys
-    $wpdb->query("ALTER TABLE $table_name ADD FOREIGN KEY (presentation_id) REFERENCES $presentation_table_name(presentation_id)");
     $wpdb->query("ALTER TABLE $presentation_table_name ADD FOREIGN KEY (hash_id) REFERENCES $table_name(hash_id)");
 
     echo '<div class="notice notice-success"><p>Database populated</p></div>';

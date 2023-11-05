@@ -1,0 +1,496 @@
+<?php
+namespace OpenReadings\Registration;
+
+use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
+
+
+class RegistrationData
+{
+    public string $first_name;
+    public string $last_name;
+    public string $email;
+    public string $institution;
+    public string $country;
+    public string $department;
+    public bool $privacy;
+    public bool $needs_visa;
+    public string $research_area;
+    public string $presentation_type;
+    public string $presentation_id;
+    public bool $agrees_to_email;
+    public string $title;
+    public $authors;
+    public $affiliations;
+    public $references;
+    public $images;
+    public string $abstract;
+    public string $pdf;
+
+
+
+    function map_from_person_data(PersonData $personData)
+    {
+        $this->first_name = $personData->first_name;
+        $this->last_name = $personData->last_name;
+        $this->email = $personData->email;
+        $this->institution = $personData->institution;
+        $this->country = $personData->country;
+        $this->department = $personData->department;
+        $this->privacy = $personData->privacy;
+        $this->needs_visa = $personData->needs_visa;
+        $this->research_area = $personData->research_area;
+        $this->presentation_type = $personData->presentation_type;
+        $this->presentation_id = $personData->presentation_id;
+        $this->agrees_to_email = $personData->agrees_to_email;
+
+
+    }
+
+    function map_from_presentation_data(PresentationData $presentationData)
+    {
+        $this->title = $presentationData->title;
+        $this->authors = json_decode($presentationData->authors);
+        $this->affiliations = json_decode($presentationData->affiliations);
+        $this->references = json_decode($presentationData->references);
+        $this->images = json_decode($presentationData->images);
+        $this->abstract = $presentationData->abstract;
+        $this->pdf = $presentationData->pdf;
+        $this->hash_id = $presentationData->person_hash_id;
+
+    }
+
+
+}
+
+class PersonData
+{
+    public string $first_name;
+    public string $last_name;
+    public string $email;
+    public string $institution;
+    public string $country;
+    public string $department;
+    public bool $privacy;
+    public bool $needs_visa;
+    public string $research_area;
+    public string $presentation_type;
+    public string $presentation_id;
+    public bool $agrees_to_email;
+
+    function map_from_query($result)
+    {
+        $this->first_name = $result['first_name'];
+        $this->last_name = $result['last_name'];
+        $this->email = $result['email'];
+        $this->institution = $result['institution'];
+        $this->country = $result['country'];
+        $this->department = $result['department'];
+        $this->privacy = $result['privacy'];
+        $this->needs_visa = $result['needs_visa'];
+        $this->research_area = $result['research_area'];
+        $this->presentation_type = $result['presentation_type'];
+        $this->presentation_id = $result['presentation_id'];
+        $this->agrees_to_email = $result['agrees_to_email'];
+
+
+    }
+
+    function map_from_class(RegistrationData $data, $hash_id)
+    {
+        $this->first_name = $data->first_name;
+        $this->last_name = $data->last_name;
+        $this->email = $data->email;
+        $this->institution = $data->institution;
+        $this->country = $data->country;
+        $this->department = $data->department;
+        $this->privacy = $data->privacy;
+        $this->needs_visa = $data->needs_visa;
+        $this->research_area = $data->research_area;
+        $this->presentation_type = $data->presentation_type;
+        $this->presentation_id = $data->presentation_id;
+        $this->agrees_to_email = $data->agrees_to_email;
+        $this->hash_id = $hash_id;
+
+
+    }
+}
+
+
+class PresentationData
+{
+    public string $title;
+    public string $authors;
+    public string $affiliations;
+    public string $abstract;
+    public string $references;
+    public string $images;
+    public string $pdf;
+    public string $person_hash_id;
+
+
+    function map_from_query($result)
+    {
+        $this->title = $result['title'];
+        $this->authors = $result['authors'];
+        $this->affiliations = $result['affiliations'];
+        $this->abstract = $result['abstract'];
+        $this->references = $result['references'];
+        $this->images = $result['images'];
+        $this->pdf = $result['pdf'];
+        $this->person_hash_id = $result['hash_id'];
+    }
+
+    function map_from_class(RegistrationData $data, $presentation_id, $hash_id)
+    {
+        $this->title = $data->title;
+        $this->authors = json_encode($data->authors);
+        $this->affiliations = json_encode($data->affiliations);
+        $this->abstract = $data->abstract;
+        $this->references = json_encode($data->references);
+        $this->images = json_encode($data->images);
+        $this->pdf = $data->pdf;
+        $this->presentation_id = $presentation_id;
+        $this->person_hash_id = $data->$hash_id;
+    }
+
+}
+
+
+class OpenReadingsRegistration
+{
+
+
+    function register_person(PersonData $person_data, $hash_id)
+    {
+
+        //check if all important fields exist and are not empty
+        foreach ($person_data as $key => $value) {
+            if (empty($value)) {
+                return new WP_Error('missing_field', 'Missing required field: ' . $key);
+            }
+        }
+        //insert person data into database
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
+        $query = '
+        INSERT INTO ' . $table_name . '
+        (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, presentation_id, agrees_to_email) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %s, %d)
+        ';
+
+        $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email);
+        $result = $wpdb->query($query);
+        if ($result === false) {
+            return new WP_Error('database_error', 'Database error');
+        }
+
+        return true;
+
+
+    }
+
+    function register_presentation(PresentationData $presentation_data, $presentation_id)
+    {
+        //check if all important fields exist
+
+
+        foreach ($presentation_data as $key => $value) {
+            if (empty($value)) {
+                return new WP_Error('missing_field', 'Missing required field: ' . $key);
+            }
+        }
+
+        //insert person data into database
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
+
+
+
+        $query = '
+        INSERT INTO ' . $table_name . '
+        (hash_id, presentation_id, title, authors, affiliations, abstract, references, images, pdf)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ';
+        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf);
+        $result = $wpdb->query($query);
+        if ($result === false) {
+            return new WP_Error('database_error', 'Database error');
+        }
+
+        return true;
+
+
+    }
+
+
+    function get_person_data($hash_id)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
+        $query = '
+        SELECT * FROM ' . $table_name . '
+        WHERE hash_id = %s
+        ';
+        $query = $wpdb->prepare($query, $hash_id);
+        $result = $wpdb->get_row($query, ARRAY_A);
+        if ($result === null) {
+            return new WP_Error('database_error', 'Database error');
+        }
+
+        //map result into a PersonData object
+        $person_data = new PersonData();
+        $person_data->map_from_query($result);
+
+
+        return $person_data;
+
+
+    }
+
+    function get_presentation_data($presentation_id)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
+        $query = '
+        SELECT * FROM ' . $table_name . '
+        WHERE presentation_id = %s
+        ';
+        $query = $wpdb->prepare($query, $presentation_id);
+        $result = $wpdb->get_row($query, ARRAY_A);
+        if ($result === null) {
+            return new WP_Error('database_error', 'Database error');
+        }
+
+        //map result into a PresentationData object
+        $presentation_data = new PresentationData();
+        $presentation_data->map_from_query($result);
+
+        return $presentation_data;
+    }
+
+    function update_person_data(PersonData $person_data, $hash_id)
+    {
+
+        //check if all important fields exist
+        foreach ($person_data as $key => $value) {
+            if (empty($value)) {
+                return new WP_Error('missing_field', 'Missing required field: ' . $key);
+            }
+        }
+
+        //update person data into database
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
+
+        $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, presentation_id = %s, agrees_to_email = %d WHERE hash_id = %s';
+
+        $query = $wpdb->prepare($query, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $hash_id);
+
+        $result = $wpdb->query($query);
+        if ($result === false) {
+            return new WP_Error('database_error', 'Database error');
+        }
+        $person_data = $this->get_person_data($hash_id);
+        return $person_data;
+    }
+
+
+    function update_presentation_data(PresentationData $presentation_data, $presentation_id)
+    {
+        //check if all important fields exist
+        foreach ($presentation_data as $key => $value) {
+            if (empty($value)) {
+                return new WP_Error('missing_field', 'Missing required field: ' . $key);
+            }
+        }
+
+        //update person data into database
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
+
+        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, abstract = %s, references = %s, images = %s, pdf = %s WHERE presentation_id = %s';
+
+        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_id);
+
+        $result = $wpdb->query($query);
+        if ($result === false) {
+            return new WP_Error('database_error', 'Database error');
+        }
+        $presentation_data = $this->get_presentation_data($presentation_id);
+        return $presentation_data;
+    }
+
+
+    public function register(RegistrationData $registration_data)
+    {
+
+        $start_date = get_option('or_registration_start');
+        $end_date = get_option('or_registration_end');
+
+        $now = new DateTime();
+
+
+
+        if (empty($start_date)) {
+            return new WP_Error('registration_not_open', 'Registration is not yet open');
+        } else {
+            $startDate = new DateTime($start_date);
+
+            if ($now < $startDate) {
+                return new WP_Error('registration_not_open', 'Registration is not yet open');
+            }
+
+
+
+        }
+
+        if (!empty($end_date)) {
+            $endDate = new DateTime($end_date);
+            if ($now > $endDate) {
+                return new WP_Error('registration_closed', 'Registration is closed');
+            }
+        }
+
+        $hash_id = md5($registration_data->email . $registration_data->first_name . $registration_data->last_name . rand(0, 10000));
+        $presentaion_id = md5($registration_data->title . $registration_data->email);
+
+
+        $person_data = new PersonData();
+        $person_data->map_from_class($registration_data, $hash_id);
+
+
+        $result = $this->register_person($person_data, $hash_id);
+
+        if (is_wp_error($result)) {
+            return $result;
+        }
+
+        $presentaion_data = new PresentationData();
+        $presentaion_data->map_from_class($registration_data, $presentaion_id, $hash_id);
+
+
+        $result = $this->register_presentation($presentaion_data, $presentaion_id);
+        if (is_wp_error($result)) {
+            return $result;
+        }
+
+        global $or_mailer;
+
+        $vars = $this->email_vars_map($registration_data, $hash_id);
+
+
+        $sent = $or_mailer->send_registration_success_email($vars, $registration_data->email);
+        if ($sent) {
+            return true;
+        } else {
+            return new WP_Error('email_error', 'Your submission, was saved, but we experienced an error sending you a confirmation email. Please contact us at info@openreadings.eu');
+        }
+
+
+    }
+
+    function email_vars_map($registration_data, $hash_id)
+    {
+        $vars = array(
+            "firstname" => $registration_data->first_name,
+            "lastname" => $registration_data->last_name,
+            "email" => $registration_data->email,
+            "institution" => $registration_data->institution,
+            "country" => $registration_data->country,
+            "department" => $registration_data->department,
+            "title" => $registration_data->title,
+            "abstract_pdf" => $registration_data->pdf,
+            "hash" => $hash_id
+
+
+
+        );
+        return $vars;
+
+    }
+
+    public function update(RegistrationData $registration_data, $hash_id)
+    {
+
+        $start_date = get_option('or_registration_start');
+        $end_date = get_option('or_registration_update_end');
+
+        $now = new DateTime();
+
+
+
+        if (empty($start_date)) {
+            return new WP_Error('registration_not_open', 'Registration is not yet open');
+        } else {
+            $startDate = new DateTime($start_date);
+
+            if ($now < $startDate) {
+                return new WP_Error('registration_not_open', 'Registration is not yet open');
+            }
+
+
+
+        }
+
+        if (!empty($end_date)) {
+            $endDate = new DateTime($end_date);
+            if ($now > $endDate) {
+                return new WP_Error('registration_closed', 'Registration is closed');
+            }
+        }
+
+        $person_data = new PersonData();
+        $person_data->map_from_class($registration_data, $hash_id);
+        $presentation_id = $this->get_person_data($hash_id)->presentation_id;
+        $update = $this->update_person_data($person_data, $hash_id);
+
+
+        $presentaion_data = new PresentationData();
+        $presentaion_data->map_from_class($registration_data, $presentation_id, $hash_id);
+        $update = $this->update_presentation_data($presentaion_data, $presentation_id);
+        if (is_wp_error($update)) {
+            return $update;
+        }
+
+
+        $vars = $this->email_vars_map($registration_data, $hash_id);
+        global $or_mailer;
+
+        $sent = $or_mailer->send_registration_update_success_email($vars, $registration_data->email);
+
+        if ($sent) {
+            return true;
+        } else {
+            return new WP_Error('email_error', 'Your submission, was saved, but we experienced an error sending you a confirmation email. Please contact us at info@openreadings.eu');
+        }
+
+
+
+    }
+
+
+    public function get($hash_id)
+    {
+        $person_data = $this->get_person_data($hash_id);
+        $presentation_data = $this->get_presentation_data($person_data->presentation_id);
+        $registration_data = new RegistrationData();
+        $registration_data->map_from_person_data($person_data);
+        $registration_data->map_from_presentation_data($presentation_data);
+        return $registration_data;
+    }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+?>

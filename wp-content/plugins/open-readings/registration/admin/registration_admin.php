@@ -33,7 +33,7 @@ function registration_settings()
 
     add_settings_section('or_registration_email_section', 'Email Settings', 'or_registration_email_section_callback', 'or_registration');
 
-    add_settings_field('or_registration_email_subject', 'Subject', 'or_registration_email_subject_callback', 'or_registration', 'or_registration_email_section');
+    add_settings_field('or_registration_success_email_subject', 'Subject', 'or_registration_email_subject_callback', 'or_registration', 'or_registration_email_section');
     add_settings_field('or_registration_email_success_template', 'Success Template', 'or_registration_email_success_template_callback', 'or_registration', 'or_registration_email_section');
     add_settings_field('or_registration_email_update_template', 'Update Template', 'or_registration_email_update_template_callback', 'or_registration', 'or_registration_email_section');
 
@@ -42,7 +42,7 @@ function registration_settings()
         'or_registration_start',
         'or_registration_end',
         'or_registration_update_end',
-        'or_registration_email_subject',
+        'or_registration_success_email_subject',
         'or_registration_email_success_template',
         'or_registration_email_update_template'
     );
