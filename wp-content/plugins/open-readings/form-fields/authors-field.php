@@ -22,11 +22,10 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
         <div class="full">
 			<div id="authList">
 				<div>
-					<input type="email" name="email-author" placeholder="Contact email" required><br>
-
+					<input id="email-author" style="display:none;" type="email" name="email-author" placeholder="Contact email" required>
 					<input type="text" pattern="^[^&%\$\\#^_\{\}~]*$" name="name[]" placeholder="Full name" required>
 					<input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
-					<label class="text-like-elementor"> Contact Author </label> <input type="radio" name="contact_author" value="1">
+					<label class="text-like-elementor"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="1">
 				</div>
 			</div>
 			<button type="button" class="auth-add" >Add</button>

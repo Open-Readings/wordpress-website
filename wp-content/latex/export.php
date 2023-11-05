@@ -67,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $i++;
     }
     $authors = $authors . ' \end{center}
+    \vspace{-.5cm}
 
     ';
 
@@ -81,7 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
     } \end{center}
-    \vspace{-.5cm}
 
     ';
 

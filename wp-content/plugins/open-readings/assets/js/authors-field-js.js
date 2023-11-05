@@ -9,10 +9,11 @@ authAddButtons.forEach(function(button) {
         personField.innerHTML = `
         <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="Full name" required>
         <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
-        <label class="text-like-elementor"> Contact Author </label> <input type="radio" name="contact_author" value="${divCount+1}">
+        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount+1}">
 
     `;
         peopleList.appendChild(personField);
+        getRadios();
     });
 });
 
@@ -30,6 +31,19 @@ authRemButtons.forEach(function(button) {
     });
 });
 
+function getRadios(){
+    var contactRadio = document.querySelectorAll('.contact-author');
+    contactRadio.forEach(function(radio) {
+    radio.addEventListener('change', function(){
+        console.log(1);
+        var fieldCopy = document.getElementById('email-author').cloneNode();
+        fieldCopy.style.display = "inline";
+        document.getElementById('email-author').remove();        
+        radio.insertAdjacentElement('afterend', fieldCopy);
+    });
+});
+}
+getRadios();
 
 
 // function addPerson() {
