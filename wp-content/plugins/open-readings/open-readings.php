@@ -1,4 +1,5 @@
 <?php
+use OpenReadings\Registration\OpenReadingsRegistration;
 
 /**
  * Open Readings
@@ -77,6 +78,17 @@ function register_or_mailer()
 
 }
 
+function register_or_registration_controller()
+{
+
+  require_once(__DIR__ . '/registration/registration.php');
+  global $or_registration_controller;
+  $or_registration_controller = new OpenReadingsRegistration();
+
+
+}
+
+add_action('init', 'register_or_registration_controller');
 function load_custom_wp_admin_style($hook)
 {
   // Load only on ?page=mypluginname
@@ -117,7 +129,16 @@ add_action('init', 'register_or_mailer');
 define('OR_PLUGIN_DIR', __DIR__ . '/');
 
 
+function add_new_form_actions($form_actions_registrar)
+{
 
+  require_once(__DIR__ . '/form-actions/or-form-action.php');
+
+  $form_actions_registrar->register(new \ORMainRegistrationSubmit());
+
+
+}
+add_action('elementor_pro/forms/actions/register', 'add_new_form_actions');
 
 function add_new_form_field($form_fields_registrar)
 {
@@ -130,6 +151,7 @@ function add_new_form_field($form_fields_registrar)
   require_once(__DIR__ . '/form-fields/reference-field.php');
   require_once(__DIR__ . '/form-fields/image-field.php');
   require_once(__DIR__ . '/form-fields/title-field.php');
+  require_once(__DIR__ . '/form-fields/simple-check-field.php');
 
 
 
@@ -143,6 +165,7 @@ function add_new_form_field($form_fields_registrar)
   $form_fields_registrar->register(new \Elementor_Reference_Field());
   $form_fields_registrar->register(new \Elementor_Image_Field());
   $form_fields_registrar->register(new \TitleField());
+  $form_fields_registrar->register(new \Elementor_Simple_Check_Field());
 
 
 

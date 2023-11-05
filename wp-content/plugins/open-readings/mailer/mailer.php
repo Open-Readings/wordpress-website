@@ -37,8 +37,8 @@ class ORmailer
         From: Open Readings 2024 <info@openreadings.eu>
         '
         );
-        $this->mail = wp_mail($to, $subject, $message, $headers);
-        return $this->mail;
+        return wp_mail($to, $subject, $message, $headers);
+
     }
 
 
@@ -49,17 +49,31 @@ class ORmailer
             $subject = 'Open Readings 2024 registration success';
         }
 
-        $template = get_option('or_registration_success_email_content');
+        $template = get_option('or_registration_email_success_template');
         if ($template == '') {
             $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_registration_success_content.html');
         }
         $message = strtr($template, $vars);
-        $this->mail = wp_mail($to, $subject, $message);
+        return $this->send_OR_mail($to, $subject, $message);
 
 
     }
 
 
+    public function send_registration_update_success_email($vars, $to)
+    {
+        $subject = '';
+        if ($subject == '') {
+            $subject = 'Open Readings 2024 registration update';
+        }
+
+        $template = get_option('or_registration_email_update_template');
+        if ($template == '') {
+            $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_registration_update_content.html');
+        }
+        $message = strtr($template, $vars);
+        return $this->send_OR_mail($to, $subject, $message);
+    }
 
 
 }
