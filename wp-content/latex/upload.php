@@ -53,42 +53,20 @@ if ($_SESSION['generating'] == 0) {
 
 
         if ($_FILES[$filename]["size"] > 500000) {
-            echo "File is too large.";
             $uploadOk = 0;
         }
         if (($fileType != "png" && $fileType != "jpeg") && $fileType != "jpg") {
-            echo "Only PNG or JPEG files are allowed.";
             $uploadOk = 0;
         }
         if ($i > $max_files) {
-            echo "Only " . $max_files . " files are allowed.";
             $uploadOk = 0;
         }
         if ($uploadOk == 0) {
-            echo "File was not uploaded.";
         } else {
             if (move_uploaded_file($_FILES[$filename]["tmp_name"], $targetFile)) {
-                echo "The file " . basename($_FILES[$filename]["name"]) . " has been uploaded.";
             } else {
-                echo "Sorry, there was an error uploading your file.";
             }
         }
-
-        function enqueue_custom_script()
-        {
-            // Define your PHP variable to be passed to JavaScript
-            $php_variable = 'Hello from PHP!';
-
-            // Localize the script with the PHP variable
-            wp_localize_script(
-                'custom-script',
-                'php_vars',
-                array(
-                    'variable' => 1,
-                )
-            );
-        }
-        add_action('wp_enqueue_scripts', 'enqueue_custom_script');
 
     }
 }

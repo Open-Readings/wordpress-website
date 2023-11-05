@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(0);
+
 if(!isset($_SESSION['id'])) {
     session_start();
     $_SESSION['id'] = 1;
@@ -10,6 +12,8 @@ if(!isset($_SESSION['generating'])){
 }
 
 if($_SESSION['generating'] == 0){
+
+$_SESSION['generating'] == 1;
 
 if(!isset($_SESSION['file'])) {
     $timestamp = time();
@@ -83,8 +87,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $i++;
     }
 
+    function fixUnclosedTags($text, $tagOpen, $tagClose) {
+        $countOpen = substr_count($text, $tagOpen);
+        $countClose = substr_count($text, $tagClose);
+    
+        $tagDiff = $countOpen - $countClose;
+    
+        if ($tagDiff > 0) {
+            $text .= str_repeat($tagClose, $tagDiff);
+        }
+    
+        return $text;
+    }
 
     $titleField = $_POST['form_fields']['abstract_title'];
+
+        // Add missing </sup> tags
+    $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
+
+    // Add missing </sub> tags
+    $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
+    
+
     $titleField = str_replace('<sup>', '$^{', $titleField);
     $titleField = str_replace('</sup><sub>', '}_{', $titleField);
     $titleField = str_replace('</sup>', '}$', $titleField);
@@ -109,5 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $filename = $folder . "/3.tex";
     file_put_contents($filename, $textData);
     shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . __DIR__ . '/' . $folder . '" "' . __DIR__ . '/' . $folder . '/3.tex"');
+    $_SESSION['generating'] == 0;
+    echo 'Export completed';
 }}
 ?>

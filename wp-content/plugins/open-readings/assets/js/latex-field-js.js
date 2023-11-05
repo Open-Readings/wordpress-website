@@ -72,9 +72,13 @@ function afterWait(){
 }
 
 
-latexButton.addEventListener("click", function () {
+
+latexButton.addEventListener("click", async function () {
     const form = this.closest('form');
     const inputs = form.querySelectorAll('input, textarea');
+        latexButton.disabled = true;
+        fileButton.disabled = true;
+        loader.style.display = 'block';
 
     inputs.forEach(input => {
         if (input.type !== 'submit' && input.type !== 'button' && input.type !== 'file') {
@@ -86,41 +90,26 @@ latexButton.addEventListener("click", function () {
         const formData = new FormData(form);
         errorMessage.style.display = 'none';
 
-        fetch(dirAjax.path + "/latex/export.php", {
+
+    try {
+        const response = await fetch(dirAjax.path + "/latex/export.php", {
             method: "POST",
             body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            // Handle the response data as needed
-        })
-        .catch(error => {
-            console.error("Error exporting file: " + error);
         });
-        latexButton.disabled = true;
-        fileButton.disabled = true;
-        loader.style.display = 'block';
 
-        fetch(dirAjax.path + "/latex/pause.php")
-        .then(response => {
-            if (!response.ok) {
-            throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            // Handle the response data from the PHP script
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-        setTimeout(() => {  afterWait(); }, 4200);
-            
-        
-    
-} else {
-    errorMessage.style.display = 'block';
-    errorMessage.textContent = 'Please correctly fill in all required fields.';
+        // Wait for the response and check its content
+        const data = await response.text();
+        console.log(data);
+
+        // Check if the response indicates the operation has finished
+        if (data.includes('Export completed')) {
+            // Call the function afterWait()
+            afterWait();
+        } else {
+            // Process not completed yet, display error or handle as needed
+        }
+    } catch (error) {
+        console.error("Error exporting file: " + error);
+    }
 }
 });
-
