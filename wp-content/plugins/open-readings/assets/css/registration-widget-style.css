@@ -44,3 +44,16 @@
 .narrow {
     width:100px;
 }
+
+.text-like-elementor {
+    font-family: var(--e-global-typography-text-font-family), Sans-serif;
+    font-weight: var(--e-global-typography-text-font-weight);
+    color: var(--e-global-color-text);
+}
+
+.image-code {
+    display:inline; 
+    color: #2386f3; 
+    font-weight:bold;
+    cursor: pointer;
+}

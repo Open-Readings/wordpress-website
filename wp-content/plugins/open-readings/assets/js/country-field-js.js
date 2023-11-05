@@ -56,7 +56,6 @@ function onCountryClick(e) {
     e.preventDefault();
     const buttonEl = e.target;
     inputElement.value = buttonEl.innerHTML;
-    console.log(inputElement.value);
     removeCountryDropdown();
 }
 

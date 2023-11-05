@@ -56,8 +56,8 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="latex-flex full">
         <div class="latex-half-div">   
-                    <textarea id="textArea" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '">' . $item['latex_default_value'] . '</textarea>
-                    <p>Character Count: <span id="charCount">0</span></p>
+                    <textarea id="textArea" class="text-like-elementor" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
+                    <p class="text-like-elementor">Character Count: <span id="charCount">0</span></p>
                     <div class="flex-div">
                     <button type="button" id="latexButton">Generate abstract </button>
                     <div class="loader" id="loader"></div>

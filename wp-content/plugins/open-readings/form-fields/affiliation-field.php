@@ -23,7 +23,7 @@ class Elementor_Affiliation_Field extends \ElementorPro\Modules\Forms\Fields\Fie
         <div id="affList">
             <div>
                 <label>1. </label>
-                <input type="text" name="affiliation[]" placeholder="Affiliation">
+                <input type="text" name="affiliation[]" placeholder="Affiliation" required>
             </div>
         </div>
         <button type="button" class="aff-add">Add</button>

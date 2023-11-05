@@ -36,27 +36,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     \usepackage[T1]{fontenc}
     \usepackage{graphicx}
     \usepackage[utf8]{inputenc}
-    \usepackage[left=3cm,right=1cm,top=3cm,bottom=2cm]{geometry}
+    \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
     \usepackage{tikz}
     \usepackage{float}
     \usepackage{blindtext}
     \usepackage[1]{pagesel}
-    \addtolength\oddsidemargin{-1cm} \addtolength\evensidemargin{1cm}
     \graphicspath{ {images/} }
     \usepackage{indentfirst}
     \usepackage{caption}
     \captionsetup[table]{labelsep=period}
     \captionsetup[figure]{labelsep=space}
     \pagestyle{empty}
+    \makeatletter
+    \renewcommand{\fnum@figure}{Fig. \thefigure :}
+    \makeatother
     \begin{document}
     ';
 
 
     $authors = '\begin{center} ';
-    $i = 0;
+    $i = 1;
     foreach($_POST['name'] as $name){
-        $authors = $authors . $name . '$^{' . $_POST['aff_ref'][$i] . '}$';
-        if ($i < count($_POST['name']) - 1)
+        if ($_POST['contact_author'] == $i)
+            $authors = $authors . '\underline{' . $name . '}$^{' . $_POST['aff_ref'][$i - 1] . '}$';
+        else
+            $authors = $authors . $name . '$^{' . $_POST['aff_ref'][$i - 1] . '}$';
+
+        if ($i < count($_POST['name']))
             $authors = $authors . ', ';
         $i++;
     }
@@ -65,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ';
 
 
-    $affiliations = '\begin{center} ';
+    $affiliations = '\begin{center} {\small ';
     $i = 1;
     foreach($_POST['affiliation'] as $aff){
         $affiliations = $affiliations . '$^{' . $i . '}$' . $aff . '
@@ -73,8 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ';
         $i++;
     }
-    $affiliations = $affiliations . $_POST['email-author'] . '
-    \end{center}
+    $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
+    } \end{center}
+    \vspace{-.5cm}
 
     ';
 
@@ -117,8 +124,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $titleField = str_replace('</sub>', '}$', $titleField);
     $titleField = str_replace('&nbsp;', '', $titleField);
 
-    $title = "\begin{center} {\large \\textbf{" . $titleField . "}} \\end{center}
-    " ;
+    $title = "\begin{center} \MakeUppercase{ {\large \\textbf{" . $titleField . "}}} \\end{center}
+    \\vspace{-0.8cm}" ;
 
 
     $abstractContent = $_POST["textArea"];

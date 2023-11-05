@@ -6,20 +6,22 @@ var fileButton = document.getElementById('fileButton');
 const errorMessage = document.getElementById('errorMessage');
 
 
-textarea.addEventListener("input", function() {
-  var text = this.value;
+textarea.addEventListener("input", function(){countChar();});
+
+function countChar(){
+var text = textarea.value;
   var count = text.length;
 
   // Change the maximum character limit here (e.g., 100)
   var maxLimit = 3500;
 
   if (count > maxLimit) {
-    this.value = text.substring(0, maxLimit);
+    textarea.value = text.substring(0, maxLimit);
     count = maxLimit;
   }
 
   charCount.innerText = count;
-});
+}
 
 function setIframeHeight() {
     const iframe = document.getElementById('abstract');
@@ -27,6 +29,7 @@ function setIframeHeight() {
     const height = width * 1.41; // Calculate the height based on the width and aspect ratio
 
     iframe.style.height = height + 'px'; // Set the height of the iframe
+    countChar();
 }
 
 window.addEventListener('load', setIframeHeight);
@@ -36,7 +39,6 @@ function afterWait(){
     latexButton.disabled = false;
     fileButton.disabled = false;
     loader.style.display = 'none';
-    console.log(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' );
     fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime())
         .then(response => response.text())
         .then(data => {
@@ -76,17 +78,19 @@ function afterWait(){
 latexButton.addEventListener("click", async function () {
     const form = this.closest('form');
     const inputs = form.querySelectorAll('input, textarea');
-        latexButton.disabled = true;
-        fileButton.disabled = true;
-        loader.style.display = 'block';
-
     inputs.forEach(input => {
         if (input.type !== 'submit' && input.type !== 'button' && input.type !== 'file') {
             input.value = input.value.trim();
         }
     });
+       
+
+    
     // Check if the form is valid
     if (form.checkValidity()) {
+        latexButton.disabled = true;
+        fileButton.disabled = true;
+        loader.style.display = 'block';
         const formData = new FormData(form);
         errorMessage.style.display = 'none';
 
@@ -99,7 +103,6 @@ latexButton.addEventListener("click", async function () {
 
         // Wait for the response and check its content
         const data = await response.text();
-        console.log(data);
 
         // Check if the response indicates the operation has finished
         if (data.includes('Export completed')) {
@@ -109,7 +112,6 @@ latexButton.addEventListener("click", async function () {
             // Process not completed yet, display error or handle as needed
         }
     } catch (error) {
-        console.error("Error exporting file: " + error);
     }
 }
 });

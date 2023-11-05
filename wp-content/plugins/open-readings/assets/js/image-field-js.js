@@ -2,7 +2,7 @@ var fileButton1 = document.getElementById('fileButton');
 const uploadLoader = document.getElementById("uploadLoader");
 var latexButton1 = document.getElementById('latexButton');
 var imageMessage = document.getElementById('image-names');
-
+let imageCodeElements;
 
 function uploadWait() {
     fileButton1.disabled = false;
@@ -20,18 +20,31 @@ function uploadWait() {
     }
     else if (fileInput.files.length == 0) {
         imageMessage.textContent = "0 files uploaded";
-    } else if (fileInput.files.length == 1) {
-        imageMessage.textContent = fileInput.files[0]['name'];
     } else {
         imageMessage.innerHTML = '';
         for (file of fileInput.files) {
 
             if (file['name'].endsWith('.png') || file['name'].endsWith('.jpeg') || file['name'].endsWith('.jpg'))
-                imageMessage.innerHTML += file['name'] + "<br>";
+                imageMessage.innerHTML += '<p style="font-weight:bold; display:inline">' + file['name'] + '</p> <p class="image-code"> Copy image LaTeX code to clipboard' + "</p><br>";
         }
     }
+    imageCodeElements = document.querySelectorAll(".image-code");
     imageMessage.style.display = 'block';
+    imageCodeElements.forEach((imageCode) => {
+        imageCode.addEventListener('click', async function() {
+            const precedingName = this.previousElementSibling;
+            const name = precedingName.textContent;
+            const textToCopy = `\\begin{figure}[H] \n\\center \n\\includegraphics[height=6cm]{${name}} \n\\caption{Add a caption} \n\\end{figure}`;
+    
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+            } catch (err) {
+            }
+        });
+    });
 }
+
+
 
 fileButton1.addEventListener('click', function (event) {
     event.preventDefault();
@@ -54,22 +67,13 @@ fileButton1.addEventListener('click', function (event) {
             // Handle the response data as needed
         })
         .catch(error => {
-            console.error("Error exporting file: " + error);
         });
 
-    fetch(dirAjax.path + "/latex/pause.php")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            // Handle the response data from the PHP script
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+    
     setTimeout(() => { uploadWait(); }, 4200);
 });
+
+
+
+
+

@@ -3,10 +3,14 @@ var authAddButtons = document.querySelectorAll('.auth-add');
 authAddButtons.forEach(function(button) {
     button.addEventListener('click', function() {
         const peopleList = document.getElementById("authList");
+        var childDivs = peopleList.querySelectorAll("div");
+        var divCount = childDivs.length;
         const personField = document.createElement("div");
         personField.innerHTML = `
-        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="Name" required>
+        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="Full name" required>
         <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
+        <label class="text-like-elementor"> Contact Author </label> <input type="radio" name="contact_author" value="${divCount+1}">
+
     `;
         peopleList.appendChild(personField);
     });

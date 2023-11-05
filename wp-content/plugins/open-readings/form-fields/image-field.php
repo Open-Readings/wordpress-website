@@ -26,7 +26,7 @@ class Elementor_Image_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 		$max_files = $max_files ? $max_files : 2;
 		?>
 		<div class="full">
-			<input type="file" id="fileInput" multiple>
+			<input class="text-like-elementor" type="file" id="fileInput" multiple>
 			<div class="flex-div">
 				<button id="fileButton" data-field-id="' . $item['custom_id'] . '">Upload File</button>
 				<div class="loader" id="uploadLoader"></div>
@@ -36,7 +36,7 @@ class Elementor_Image_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
 				</script>
 			</div>
-			<p id="image-names" style="display:none"></p>
+			<p id="image-names" class="text-like-elementor" style="display:none"></p>
 
 		</div>
 
