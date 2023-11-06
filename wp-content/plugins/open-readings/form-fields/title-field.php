@@ -70,7 +70,11 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				document.getElementById("presentation_title_div").innerHTML = html;
 				document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ');
 
-
+				//trim if more than 500 chars
+				if (html.length > 500) {
+					document.getElementById("presentation_title_div").innerHTML = html.substring(0, 500);
+					document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ').substring(0, 500);
+				}
 
 
 			};

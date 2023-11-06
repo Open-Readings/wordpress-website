@@ -117,12 +117,70 @@ if ($_SESSION['generating'] == 0) {
         $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-        $titleField = str_replace('<sup>', '$^{', $titleField);
-        $titleField = str_replace('</sup><sub>', '}_{', $titleField);
-        $titleField = str_replace('</sup>', '}$', $titleField);
-        $titleField = str_replace('<sub>', '$_{', $titleField);
-        $titleField = str_replace('</sub><sup>', '}^{', $titleField);
-        $titleField = str_replace('</sub>', '}$', $titleField);
+
+        //find fist <sup> or <sub> tag
+
+        $sup_starting_tag = '<sup>';
+        $sub_starting_tag = '<sub>';
+        $sub_ending_tag = '</sub>';
+        $sup_ending_tag = '</sup>';
+        $layers = 0;
+        $is_in_math_mode = false;
+        for ($i = 0; $i < strlen($titleField); $i++) {
+            if (substr($titleField, $i, strlen($sup_starting_tag)) == $sup_starting_tag) {
+                $sup_starting_tag_index = $i;
+                $layers++;
+                if ($layers == 1) {
+                    $titleField = substr_replace($titleField, '$^{', $sup_starting_tag_index, strlen($sup_starting_tag));
+                } else {
+                    //replace <sup> with $^{
+                    $titleField = substr_replace($titleField, '^{', $sup_starting_tag_index, strlen($sup_starting_tag));
+                }
+                $i -= strlen($sup_starting_tag);
+            }
+            if (substr($titleField, $i, strlen($sub_starting_tag)) == $sub_starting_tag) {
+                $sub_starting_tag_index = $i;
+                $layers++;
+                if ($layers == 1) {
+                    $titleField = substr_replace($titleField, '$_{', $sub_starting_tag_index, strlen($sub_starting_tag));
+                } else {
+                    //replace <sub> with $_{
+                    $titleField = substr_replace($titleField, '_{', $sub_starting_tag_index, strlen($sub_starting_tag));
+                }
+                $i -= strlen($sup_starting_tag);
+
+            }
+
+            if (substr($titleField, $i, strlen($sub_ending_tag)) == $sub_ending_tag) {
+                $sub_ending_tag_index = $i;
+                $layers--;
+                if ($layers == 0) {
+                    //replace </sub> with }$
+                    $titleField = substr_replace($titleField, '}$', $sub_ending_tag_index, strlen($sub_ending_tag));
+                } else {
+                    //replace </sub> with }$
+                    $titleField = substr_replace($titleField, '}', $sub_ending_tag_index, strlen($sub_ending_tag));
+                }
+                //replace </sub> with }$
+                $i -= strlen($sup_starting_tag);
+            }
+            if (substr($titleField, $i, strlen($sup_ending_tag)) == $sup_ending_tag) {
+                $sup_ending_tag_index = $i;
+                $layers--;
+                if ($layers == 0) {
+                    //replace </sup> with }$
+                    $titleField = substr_replace($titleField, '}$', $sup_ending_tag_index, strlen($sup_ending_tag));
+                } else {
+                    //replace </sup> with }$
+                    $titleField = substr_replace($titleField, '}', $sup_ending_tag_index, strlen($sup_ending_tag));
+                }
+                $i -= strlen($sup_starting_tag);
+            }
+
+        }
+
+
+
         $titleField = str_replace('&nbsp;', '', $titleField);
 
         $title = "\begin{center} \MakeUppercase{ {\large \\textbf{" . $titleField . "}}} \\end{center}
