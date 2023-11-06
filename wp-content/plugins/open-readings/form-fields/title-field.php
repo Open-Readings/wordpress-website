@@ -34,7 +34,8 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 		if ($item['allow_script']) {
 			?>
-			<span style="font-size: 0.8em;" class="text-like-elementor full">To type in superscript or subscript use ^ and _ accordingly in the field (use
+			<span style="font-size: 0.8em;" class="text-like-elementor full">To type in superscript or subscript use ^ and _
+				accordingly in the field (use
 				whitespaces to escape them)</span>
 			<?php
 
@@ -59,9 +60,12 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
 				var html = value.replace(regex, '');
-				html = html.replace('^', '<sup>');
+				var html = html.replace(/[^a-zA-Z0-9\s^_&nbsp;<>/]/g, "");
+				console.log(html);
+				console.log(regex);
+				html = html.replace(/\^([a-zA-Z\d]+)/g, '<sup>$1</sup>').replace(/_([a-zA-Z\d]+)/g, '<sub>$1</sub>');
+
 				html = html.replace('&nbsp;</sup>', '</sup>&nbsp;');
-				html = html.replace('_', '<sub>');
 				html = html.replace('&nbsp;</sub>', '</sub>&nbsp;');
 				document.getElementById("presentation_title_div").innerHTML = html;
 				document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ');

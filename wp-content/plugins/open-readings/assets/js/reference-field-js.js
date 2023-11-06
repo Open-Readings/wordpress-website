@@ -6,7 +6,7 @@ refAddButtons.forEach(function (button) {
         const referenceField = document.createElement("div");
         var childDivs = referenceList.querySelectorAll("div");
         var divCount = childDivs.length;
-        referenceField.innerHTML = `<label>` + (divCount + 1) + `. ` + `</label>` +
+        referenceField.innerHTML = `<label>` + (divCount + 1) + `.` + `</label>` +
             `<input type="text" name="references[]" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)" required>
         `;
         referenceList.appendChild(referenceField);
