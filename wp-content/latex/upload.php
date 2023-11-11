@@ -5,6 +5,7 @@ require(dirname(dirname(__DIR__)) . '/wp-load.php');
 
 
 if (!isset($_SESSION['id'])) {
+    ini_set('session.gc_maxlifetime', 3600);
     session_start();
     $_SESSION['id'] = 1;
 }

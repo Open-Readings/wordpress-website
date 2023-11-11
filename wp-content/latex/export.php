@@ -3,6 +3,7 @@
 error_reporting(0);
 
 if (!isset($_SESSION['id'])) {
+    ini_set('session.gc_maxlifetime', 3600);
     session_start();
     $_SESSION['id'] = 1;
 }

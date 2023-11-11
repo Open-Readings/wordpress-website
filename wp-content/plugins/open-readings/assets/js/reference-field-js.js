@@ -10,7 +10,8 @@ refAddButtons.forEach(function (button) {
             `<input type="text" class="ref-width" maxlength="300" name="references[]" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)" required>
         `;
         referenceField.className = "ref-div";
-        referenceList.appendChild(referenceField);
+        if (divCount < 10)
+            referenceList.appendChild(referenceField);
     });
 });
 

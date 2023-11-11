@@ -70,10 +70,11 @@ function afterWait($exportReturn) {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
     });
     console.log('afterWait');
-    if ($exportReturn == 0)
+    if ($exportReturn == 0){
+        document.getElementById("abstract").style.display = "block";
         document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
-    else
-        document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/abstract.pdf#toolbar=0&view=FitH');
+    } else
+        document.getElementById("abstract").style.display = "none";
 
         //document.getElementById("abstract").contentWindow.location.reload(true);
     setIframeHeight();       

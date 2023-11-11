@@ -28,6 +28,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
     public function render($item, $item_index, $form)
     {
         if (!isset($_SESSION['id'])) {
+            ini_set('session.gc_maxlifetime', 3600);
             session_start();
             $_SESSION['id'] = 1;
         }
