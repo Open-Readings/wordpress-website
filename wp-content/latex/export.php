@@ -139,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $filename = $folder . "/3.tex";
     file_put_contents($filename, $textData);
-    shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . __DIR__ . '/' . $folder . '" "' . __DIR__ . '/' . $folder . '/3.tex"');
+    shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/3.tex"');
     $_SESSION['generating'] == 0;
     echo 'Export completed';
 }}

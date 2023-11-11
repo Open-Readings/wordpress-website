@@ -69,7 +69,8 @@ function afterWait(){
         .catch(error => {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
     });
-    document.getElementById("abstract").contentWindow.location.reload(true);
+    document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/3.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+    // document.getElementById("abstract").contentWindow.location.reload(true);
        
 }
 
