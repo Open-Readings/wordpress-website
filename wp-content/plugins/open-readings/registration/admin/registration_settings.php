@@ -71,7 +71,8 @@ function populate_database()
         'references',
         'content',
         'images',
-        'pdf'
+        'pdf',
+        'session_id'
     ];
 
     $person_data_sql = [
@@ -93,7 +94,7 @@ function populate_database()
     ];
 
     $presentation_data_sql = [
-        'hash_id' => "varchar(255) NOT NULL",
+        'person_hash_id' => "varchar(255) NOT NULL",
         'presentation_id' => "varchar(255) NOT NULL, PRIMARY KEY (presentation_id)",
         'title' => "varchar(255) NOT NULL",
         'authors' => "varchar(1000) NOT NULL",
@@ -102,6 +103,7 @@ function populate_database()
         'content' => "varchar(4000) NOT NULL",
         'images' => "varchar(1000) NOT NULL",
         'pdf' => "varchar(255) NOT NULL",
+        'session_id' => "varchar(255) NOT NULL",
 
     ];
     if (!$table_exists) {
@@ -154,7 +156,8 @@ function populate_database()
             `references` varchar(1000) NOT NULL,
             content varchar(4000) NOT NULL,
             images varchar(1000) NOT NULL,
-            pdf varchar(255) NOT NULL
+            pdf varchar(255) NOT NULL,
+            session_id varchar(255) NOT NULL
             )");
 
     } else {
@@ -172,7 +175,7 @@ function populate_database()
     }
 
     //set foreign keys
-    $wpdb->query("ALTER TABLE $presentation_table_name ADD FOREIGN KEY (hash_id) REFERENCES $table_name(hash_id)");
+    $wpdb->query("ALTER TABLE $presentation_table_name ADD FOREIGN KEY (person_hash_id) REFERENCES $table_name (hash_id)");
 
     echo '<div class="notice notice-success"><p>Database populated</p></div>';
 

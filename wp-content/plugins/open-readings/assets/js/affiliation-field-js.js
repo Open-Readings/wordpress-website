@@ -1,14 +1,14 @@
 // var id = affiliation_ajax.id;
 var affAddButtons = document.querySelectorAll('.aff-add');
 
-affAddButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+affAddButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         const affiliationList = document.getElementById("affList");
         const affiliationField = document.createElement("div");
         var childDivs = affiliationList.querySelectorAll("div");
         var divCount = childDivs.length;
-        affiliationField.innerHTML = `<label>` + (divCount+1) + `. ` + `</label>` +
-        `<input type="text" name="affiliation[]" placeholder="Affiliation">
+        affiliationField.innerHTML = `<label>` + (divCount + 1) + `.` + `</label>` +
+            `<input type="text" name="affiliation[]" placeholder="(e.g. Vilnius University)">
         `;
         affiliationList.appendChild(affiliationField);
     });
@@ -16,8 +16,8 @@ affAddButtons.forEach(function(button) {
 
 var affRemButtons = document.querySelectorAll('.aff-rem');
 
-affRemButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+affRemButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         var id = button.getAttribute('data-field-id');
         const formFields = document.getElementById("affList");
         var childDivs = formFields.querySelectorAll("div");

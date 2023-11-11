@@ -1,7 +1,9 @@
 <?php
 namespace OpenReadings\Registration;
 
+use DateTime;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
+use WP_Error;
 
 
 class RegistrationData
@@ -18,11 +20,13 @@ class RegistrationData
     public string $presentation_type;
     public string $presentation_id;
     public bool $agrees_to_email;
+
+    public string $person_title;
     public string $title;
-    public $authors;
-    public $affiliations;
-    public $references;
-    public $images;
+    public $authors = array();
+    public $affiliations = array();
+    public $references = array();
+    public $images = array();
     public string $abstract;
     public string $pdf;
 
@@ -64,6 +68,7 @@ class RegistrationData
 
 class PersonData
 {
+    public string $title;
     public string $first_name;
     public string $last_name;
     public string $email;
@@ -76,6 +81,8 @@ class PersonData
     public string $presentation_type;
     public string $presentation_id;
     public bool $agrees_to_email;
+
+    public string $session_id;
 
     function map_from_query($result)
     {
@@ -91,6 +98,7 @@ class PersonData
         $this->presentation_type = $result['presentation_type'];
         $this->presentation_id = $result['presentation_id'];
         $this->agrees_to_email = $result['agrees_to_email'];
+        $this->title = $result['title'];
 
 
     }
@@ -110,6 +118,7 @@ class PersonData
         $this->presentation_id = $data->presentation_id;
         $this->agrees_to_email = $data->agrees_to_email;
         $this->hash_id = $hash_id;
+        $this->title = $data->person_title;
 
 
     }
@@ -128,6 +137,7 @@ class PresentationData
     public string $person_hash_id;
 
 
+    public string $session_id;
     function map_from_query($result)
     {
         $this->title = $result['title'];
@@ -149,8 +159,9 @@ class PresentationData
         $this->references = json_encode($data->references);
         $this->images = json_encode($data->images);
         $this->pdf = $data->pdf;
+        $this->session_id = $data->session_id;
         $this->presentation_id = $presentation_id;
-        $this->person_hash_id = $data->$hash_id;
+        $this->person_hash_id = $hash_id;
     }
 
 }
@@ -166,6 +177,13 @@ class OpenReadingsRegistration
         //check if all important fields exist and are not empty
         foreach ($person_data as $key => $value) {
             if (empty($value)) {
+                if ($key == 'agrees_to_email') {
+                    continue;
+
+                }
+                if ($key == 'needs_visa') {
+                    continue;
+                }
                 return new WP_Error('missing_field', 'Missing required field: ' . $key);
             }
         }
@@ -174,11 +192,11 @@ class OpenReadingsRegistration
         $table_name = $wpdb->prefix . get_option('or_registration_database_table');
         $query = '
         INSERT INTO ' . $table_name . '
-        (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, presentation_id, agrees_to_email) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %s, %d)
+        (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, presentation_id, agrees_to_email, title) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s)
         ';
 
-        $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email);
+        $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $person_data->title);
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
@@ -208,10 +226,12 @@ class OpenReadingsRegistration
 
         $query = '
         INSERT INTO ' . $table_name . '
-        (hash_id, presentation_id, title, authors, affiliations, abstract, references, images, pdf)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ';
-        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf);
+
+
+        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id);
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
@@ -358,6 +378,7 @@ class OpenReadingsRegistration
 
 
         $person_data = new PersonData();
+        $registration_data->presentation_id = $presentaion_id;
         $person_data->map_from_class($registration_data, $hash_id);
 
 
@@ -393,18 +414,25 @@ class OpenReadingsRegistration
 
     function email_vars_map($registration_data, $hash_id)
     {
+
+        $authors_list_string = '';
+        //seperate authors by comma
+        $authors_list = [];
+        foreach ($registration_data->authors as $author) {
+            $authors_list[] = $author[0];
+        }
         $vars = array(
-            "firstname" => $registration_data->first_name,
-            "lastname" => $registration_data->last_name,
-            "email" => $registration_data->email,
-            "institution" => $registration_data->institution,
-            "country" => $registration_data->country,
-            "department" => $registration_data->department,
-            "title" => $registration_data->title,
-            "abstract_pdf" => $registration_data->pdf,
-            "hash" => $hash_id
-
-
+            '${firstname}' => $registration_data->first_name,
+            '${lastname}' => $registration_data->last_name,
+            '${email}' => $registration_data->email,
+            '${institution}' => $registration_data->institution,
+            '${country}' => $registration_data->country,
+            '${department}' => $registration_data->department,
+            '${presentation_title}' => $registration_data->title,
+            '${abstract_pdf}' => $registration_data->pdf,
+            '${hash}' => $hash_id,
+            '${authors_list}' => implode(', ', $authors_list),
+            '${title}' => $registration_data->title,
 
         );
         return $vars;

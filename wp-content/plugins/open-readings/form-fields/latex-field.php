@@ -40,7 +40,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         if (!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
             shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
             shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images"');
-            shell_exec('/bin/cp "' . WP_CONTENT_DIR . '/latex/3.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
+            shell_exec('/bin/cp "' . WP_CONTENT_DIR . '/latex/abstract.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
         }
 
 
@@ -55,6 +55,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         echo '
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="latex-flex full">
+        <input class="hidden" value= "' . $_SESSION['file'] . '" name="session_id"/>
         <div class="latex-half-div">   
                     <textarea id="textArea" class="text-like-elementor" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
                     <p class="text-like-elementor">Character Count: <span id="charCount">0</span></p>
@@ -66,7 +67,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
                 
         </div>
         <div class="latex-half-div">
-            <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/3.pdf#toolbar=0&view=FitH' . '"></iframe>
+            <iframe id="abstract" src="' . content_url() . '/latex/' . $_SESSION['file'] . '/abstract.pdf#toolbar=0&view=FitH' . '"></iframe>
             <pre class="latex-error" id="logContent"></pre>
         </div>
         </div>';

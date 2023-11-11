@@ -6,21 +6,21 @@ var fileButton = document.getElementById('fileButton');
 const errorMessage = document.getElementById('errorMessage');
 
 
-textarea.addEventListener("input", function(){countChar();});
+textarea.addEventListener("input", function () { countChar(); });
 
-function countChar(){
-var text = textarea.value;
-  var count = text.length;
+function countChar() {
+    var text = textarea.value;
+    var count = text.length;
 
-  // Change the maximum character limit here (e.g., 100)
-  var maxLimit = 3500;
+    // Change the maximum character limit here (e.g., 100)
+    var maxLimit = 2000;
 
-  if (count > maxLimit) {
-    textarea.value = text.substring(0, maxLimit);
-    count = maxLimit;
-  }
+    if (count > maxLimit) {
+        textarea.value = text.substring(0, maxLimit);
+        count = maxLimit;
+    }
 
-  charCount.innerText = count;
+    charCount.innerText = count;
 }
 
 function setIframeHeight() {
@@ -35,11 +35,11 @@ function setIframeHeight() {
 window.addEventListener('load', setIframeHeight);
 window.addEventListener('resize', setIframeHeight);
 
-function afterWait(){
+function afterWait() {
     latexButton.disabled = false;
     fileButton.disabled = false;
     loader.style.display = 'none';
-    fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/3.log' + '?timestamp=' + new Date().getTime())
+    fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.log' + '?timestamp=' + new Date().getTime())
         .then(response => response.text())
         .then(data => {
             document.getElementById('logContent').textContent = data;
@@ -61,17 +61,18 @@ function afterWait(){
 
             // Display content between the first exclamation mark and the first double line break
             logContent.textContent = newTextContent;
-            if(newTextContent.length == 0)
+            if (newTextContent.length == 0)
                 logContent.style.display = "none";
             else
-                logContent.style.display = "block";  
+                logContent.style.display = "block";
         })
         .catch(error => {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
     });
-    document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/3.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
-    // document.getElementById("abstract").contentWindow.location.reload(true);
-       
+    console.log('afterWait');
+    document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+    //document.getElementById("abstract").contentWindow.location.reload(true);
+    setIframeHeight();       
 }
 
 
@@ -84,9 +85,9 @@ latexButton.addEventListener("click", async function () {
             input.value = input.value.trim();
         }
     });
-       
 
-    
+
+
     // Check if the form is valid
     if (form.checkValidity()) {
         latexButton.disabled = true;
@@ -96,23 +97,41 @@ latexButton.addEventListener("click", async function () {
         errorMessage.style.display = 'none';
 
 
-    try {
-        const response = await fetch(dirAjax.path + "/latex/export.php", {
-            method: "POST",
-            body: formData
-        });
+        try {
+            const response = await fetch(dirAjax.path + "/latex/export.php", {
+                method: "POST",
+                body: formData
+            });
 
-        // Wait for the response and check its content
-        const data = await response.text();
+            // Wait for the response and check its content
+            const data = await response.text();
 
-        // Check if the response indicates the operation has finished
-        if (data.includes('Export completed')) {
-            // Call the function afterWait()
-            afterWait();
-        } else {
-            // Process not completed yet, display error or handle as needed
+            // Check if the response indicates the operation has finished
+            if (data.includes('Export completed')) {
+                // Call the function afterWait()
+                afterWait();
+            } else {
+                // Process not completed yet, display error or handle as needed
+            }
+        } catch (error) {
         }
-    } catch (error) {
+    } else {
+        console.log('Form is not valid');
+        errorMessage.style.display = 'block';
+        const invalidFields = [];
+
+        // Iterate through the form elements
+        for (let i = 0; i < form.elements.length; i++) {
+            const field = form.elements[i];
+
+            if (field.type !== 'submit' && !field.validity.valid) {
+                // Add the invalid field to the array
+                invalidFields.push(field);
+            }
+
+        }
+
+        console.log(invalidFields);
+        errorMessage.innerHTML = 'Please fill in all the required fields. make sure you have specified the corresponding author email correctly.';
     }
-}
 });

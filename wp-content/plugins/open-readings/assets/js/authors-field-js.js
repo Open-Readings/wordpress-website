@@ -1,15 +1,15 @@
 var authAddButtons = document.querySelectorAll('.auth-add');
 
-authAddButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+authAddButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         const peopleList = document.getElementById("authList");
         var childDivs = peopleList.querySelectorAll("div");
         var divCount = childDivs.length;
         const personField = document.createElement("div");
         personField.innerHTML = `
-        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="Full name" required>
-        <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="Aff. Nr." required>
-        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount+1}">
+        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="(e.g. John Smith)" required>
+        <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="(e.g. 1,2)" required>
+        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount + 1}">
 
     `;
         peopleList.appendChild(personField);
@@ -19,8 +19,8 @@ authAddButtons.forEach(function(button) {
 
 var authRemButtons = document.querySelectorAll('.auth-rem');
 
-authRemButtons.forEach(function(button) {
-    button.addEventListener('click', function() {
+authRemButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
         const formFields = document.getElementById("authList");
         var childDivs = formFields.querySelectorAll("div");
         var divCount = childDivs.length;
@@ -31,17 +31,22 @@ authRemButtons.forEach(function(button) {
     });
 });
 
-function getRadios(){
+function getRadios() {
     var contactRadio = document.querySelectorAll('.contact-author');
-    contactRadio.forEach(function(radio) {
-    radio.addEventListener('change', function(){
-        console.log(1);
-        var fieldCopy = document.getElementById('email-author').cloneNode();
-        fieldCopy.style.display = "inline";
-        document.getElementById('email-author').remove();        
-        radio.insertAdjacentElement('afterend', fieldCopy);
+    contactRadio.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            console.log(1);
+            if (document.getElementById('email-author') == null) {
+                var emailField = '<input id="email-author" style="display:none;" type="email" name="email-author" placeholder="john.smith@example.edu" required>'
+                document.getElementById('authList').insertAdjacentHTML('afterend', emailField);
+            }
+            var fieldCopy = document.getElementById('email-author').cloneNode();
+
+            fieldCopy.style.display = "inline";
+            document.getElementById('email-author').remove();
+            radio.insertAdjacentElement('afterend', fieldCopy);
+        });
     });
-});
 }
 getRadios();
 
