@@ -13,7 +13,7 @@ if (!isset($_SESSION['generating'])) {
 
 if ($_SESSION['generating'] == 0) {
 
-    $_SESSION['generating'] == 1;
+    $_SESSION['generating'] = 1;
 
     if (!isset($_SESSION['file'])) {
         $timestamp = time();
@@ -196,10 +196,10 @@ if ($_SESSION['generating'] == 0) {
 
         $textData = $startOfDocument . $title . $authors . $affiliations . $abstractContent . $references . $endOfDocument;
 
-    $filename = $folder . "/3.tex";
+    $filename = $folder . "/abstract.tex";
     file_put_contents($filename, $textData);
     shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
-    $_SESSION['generating'] == 0;
+    $_SESSION['generating'] = 0;
     echo 'Export completed';
 }}
 ?>
