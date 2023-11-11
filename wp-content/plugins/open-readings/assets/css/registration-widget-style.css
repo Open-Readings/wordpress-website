@@ -57,3 +57,37 @@
     font-weight:bold;
     cursor: pointer;
 }
+
+.aff-div {
+    width:100%;
+    display: flex;
+    align-items: center;
+}
+
+.aff-width {
+    flex:80%;
+}
+
+.aff-label {
+    width:30px;
+}
+.ref-div {
+    width:100%;
+    display: flex;
+    align-items: center;
+}
+
+.ref-width {
+    flex:80%;
+}
+
+.ref-label {
+    width:30px;
+}
+
+#outerContainer #mainContainer div.toolbar {
+    display: none !important; /* hide PDF viewer toolbar */
+  }
+  #outerContainer #mainContainer #viewerContainer {
+    top: 0 !important; /* move doc up into empty bar space */
+  }

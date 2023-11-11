@@ -7,12 +7,13 @@ authAddButtons.forEach(function (button) {
         var divCount = childDivs.length;
         const personField = document.createElement("div");
         personField.innerHTML = `
-        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" name="name[]" placeholder="(e.g. John Smith)" required>
+        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" class="author-width" name="name[]" placeholder="(e.g. John Smith)" required>
         <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="(e.g. 1,2)" required>
         <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount + 1}">
 
     `;
-        peopleList.appendChild(personField);
+        if (divCount < 15)
+            peopleList.appendChild(personField);
         getRadios();
     });
 });

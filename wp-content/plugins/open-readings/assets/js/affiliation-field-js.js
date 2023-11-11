@@ -7,10 +7,12 @@ affAddButtons.forEach(function (button) {
         const affiliationField = document.createElement("div");
         var childDivs = affiliationList.querySelectorAll("div");
         var divCount = childDivs.length;
-        affiliationField.innerHTML = `<label>` + (divCount + 1) + `.` + `</label>` +
-            `<input type="text" name="affiliation[]" placeholder="(e.g. Vilnius University)">
+        affiliationField.innerHTML = `<label class="aff-label">` + (divCount + 1) + `.` + `</label>` +
+            `<input type="text" class="aff-width" maxlength="200" name="affiliation[]" placeholder="(e.g. Vilnius University)">
         `;
-        affiliationList.appendChild(affiliationField);
+        affiliationField.className = "aff-div";
+        if (divCount < 7)
+            affiliationList.appendChild(affiliationField);
     });
 });
 

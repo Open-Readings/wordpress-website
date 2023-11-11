@@ -26,10 +26,9 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
         <div class="full">
 			<div id="authList">
 				<div>
-					<input id="email-author" style="display:none;" type="email" name="email-author" placeholder="john.smith@example.edu" required>
-					<input type="text" pattern="^[^&%\$\\#^_\{\}~]*$" name="name[]" placeholder="(e.g. John Smith)" required>
+					<input type="text" pattern="^[^&%\$\\#^_\{\}~]*$" class="author-width" name="name[]" placeholder="(e.g. John Smith)" required>
 					<input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="(e.g. 1,2)" required>
-					<label class="text-like-elementor"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="1">
+					<label class="text-like-elementor"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="1" checked><input id="email-author" style="display:inline;" type="email" name="email-author" placeholder="john.smith@example.edu" required>
 				</div>
 			</div>
 			<button type="button" class="auth-add" >Add</button>

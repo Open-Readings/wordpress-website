@@ -68,13 +68,9 @@
     100% { transform: rotate(360deg); }
   }
 
-@media only screen and (min-width: 1000px) {
-    .latex-flex {
-        display: flex;
-        width: 100%;
-    }
-    
-    .latex-half-div {
-        flex:50%;
-    }
-}
+  #outerContainer #mainContainer div.toolbar {
+    display: none !important; /* hide PDF viewer toolbar */
+  }
+  #outerContainer #mainContainer #viewerContainer {
+    top: 0 !important; /* move doc up into empty bar space */
+  }
