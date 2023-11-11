@@ -200,6 +200,10 @@ if ($_SESSION['generating'] == 0) {
     file_put_contents($filename, $textData);
     shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
     $_SESSION['generating'] = 0;
-    echo 'Export completed';
+
+    if(file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
+        echo 'Export completed';
+    else
+        echo 'Export failed';
 }}
 ?>

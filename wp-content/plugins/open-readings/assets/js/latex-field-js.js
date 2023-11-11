@@ -35,7 +35,7 @@ function setIframeHeight() {
 window.addEventListener('load', setIframeHeight);
 window.addEventListener('resize', setIframeHeight);
 
-function afterWait() {
+function afterWait($exportReturn) {
     latexButton.disabled = false;
     fileButton.disabled = false;
     loader.style.display = 'none';
@@ -70,8 +70,12 @@ function afterWait() {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
     });
     console.log('afterWait');
-    document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
-    //document.getElementById("abstract").contentWindow.location.reload(true);
+    if ($exportReturn == 0)
+        document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+    else
+        document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/abstract.pdf#toolbar=0&view=FitH');
+
+        //document.getElementById("abstract").contentWindow.location.reload(true);
     setIframeHeight();       
 }
 
@@ -109,9 +113,9 @@ latexButton.addEventListener("click", async function () {
             // Check if the response indicates the operation has finished
             if (data.includes('Export completed')) {
                 // Call the function afterWait()
-                afterWait();
-            } else {
-                // Process not completed yet, display error or handle as needed
+                afterWait(0);
+            } else if (data.includes('Export failed')) {
+                afterWait(1);
             }
         } catch (error) {
         }
