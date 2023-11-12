@@ -22,8 +22,8 @@ if ($_SESSION['generating'] == 0) {
     }
 
     if (!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
-        shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
-        shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images"');
+        shell_exec('mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
+        shell_exec('mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images"');
     }
 
 
@@ -58,10 +58,17 @@ if ($_SESSION['generating'] == 0) {
         $authors = '\begin{center} ';
         $i = 1;
         foreach ($_POST['name'] as $name) {
+            $name = trim($name);
+            $name = preg_replace('/[^\p{L}\p{N}\s&]/', '', $name);
+            $aff_ref = $_POST['aff_ref'][$i - 1];
+            $aff_ref = trim($aff_ref);
+            //replace everything that is not a digit or ,
+            $aff_ref = preg_replace('/[^\d,]/', '', $aff_ref);
+
             if ($_POST['contact_author'] == $i)
-                $authors = $authors . '\underline{' . $name . '}$^{' . $_POST['aff_ref'][$i - 1] . '}$';
+                $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref . '}$';
             else
-                $authors = $authors . $name . '$^{' . $_POST['aff_ref'][$i - 1] . '}$';
+                $authors = $authors . $name . '$^{' . $aff_ref . '}$';
 
             if ($i < count($_POST['name']))
                 $authors = $authors . ', ';
@@ -117,6 +124,8 @@ if ($_SESSION['generating'] == 0) {
         // Add missing </sub> tags
         $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
+
+        $titleField = preg_replace('/[^\p{L}\p{N}\s&<>;\/]/', '', $titleField);
 
 
         //find fist <sup> or <sub> tag
@@ -197,14 +206,15 @@ if ($_SESSION['generating'] == 0) {
 
         $textData = $startOfDocument . $title . $authors . $affiliations . $abstractContent . $references . $endOfDocument;
 
-    $filename = $folder . "/abstract.tex";
-    file_put_contents($filename, $textData);
-    shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
-    $_SESSION['generating'] = 0;
+        $filename = $folder . "/abstract.tex";
+        file_put_contents($filename, $textData);
+        shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+        $_SESSION['generating'] = 0;
 
-    if(file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
-        echo 'Export completed';
-    else
-        echo 'Export failed';
-}}
+        if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
+            echo 'Export completed';
+        else
+            echo 'Export failed';
+    }
+}
 ?>

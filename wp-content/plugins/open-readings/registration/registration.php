@@ -153,11 +153,11 @@ class PresentationData
     function map_from_class(RegistrationData $data, $presentation_id, $hash_id)
     {
         $this->title = $data->title;
-        $this->authors = json_encode($data->authors);
-        $this->affiliations = json_encode($data->affiliations);
+        $this->authors = json_encode($data->authors, JSON_UNESCAPED_UNICODE);
+        $this->affiliations = json_encode($data->affiliations, JSON_UNESCAPED_UNICODE);
         $this->abstract = $data->abstract;
-        $this->references = json_encode($data->references);
-        $this->images = json_encode($data->images);
+        $this->references = json_encode($data->references, JSON_UNESCAPED_UNICODE);
+        $this->images = json_encode($data->images, JSON_UNESCAPED_UNICODE);
         $this->pdf = $data->pdf;
         $this->session_id = $data->session_id;
         $this->presentation_id = $presentation_id;

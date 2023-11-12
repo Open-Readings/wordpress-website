@@ -60,20 +60,22 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
 				var html = value.replace(regex, '');
-				var html = html.replace(/[^a-zA-Z0-9\s^_&nbsp;<>/]/g, "");
+				var html = html.replace(/[^\p{L}\p{N}\s&^_<>;/]/gu, "");
 				console.log(html);
 				console.log(regex);
 				html = html.replace(/\^([a-zA-Z\d]+)/g, '<sup>$1</sup>').replace(/_([a-zA-Z\d]+)/g, '<sub>$1</sub>');
 
 				html = html.replace('&nbsp;</sup>', '</sup>&nbsp;');
+				html = html.replace(' </sup>', '</sup> ');
 				html = html.replace('&nbsp;</sub>', '</sub>&nbsp;');
+				html = html.replace(' </sub>', '</sub> ');
 				document.getElementById("presentation_title_div").innerHTML = html;
 				document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ');
 
 				//trim if more than 500 chars
-				if (html.length > 500) {
-					document.getElementById("presentation_title_div").innerHTML = html.substring(0, 500);
-					document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ').substring(0, 500);
+				if (html.length > 250) {
+					document.getElementById("presentation_title_div").innerHTML = html.substring(0, 250);
+					document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ').substring(0, 250);
 				}
 
 
