@@ -112,11 +112,19 @@ latexButton.addEventListener("click", async function () {
             const data = await response.text();
 
             // Check if the response indicates the operation has finished
-            if (data.includes('Export completed')) {
+            if (data.includes('Export completed::0')) {
                 // Call the function afterWait()
                 afterWait(0);
-            } else if (data.includes('Export failed')) {
+                errorMessage.style.display = 'none';
+            } else if (data.includes('Export failed::1')) {
+                errorMessage.innerHTML = 'Failed to generate document';
+                errorMessage.style.display = 'block';
                 afterWait(1);
+            } else if (data.includes('Export failed::')){
+                var message = data.match(/Export failed::(.*?)::end/);
+                errorMessage.innerHTML = message[1];
+                errorMessage.style.display = 'block';
+                afterWait(0);
             }
         } catch (error) {
         }

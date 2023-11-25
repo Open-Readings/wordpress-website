@@ -11,9 +11,9 @@ use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
 
-    public $depended_scripts = ['latex-field-js'];
+    public $depended_scripts = ['latex-field-js', 'highlight-js', 'latex-min-js'];
 
-    public $depended_styles = ['latex-field-style'];
+    public $depended_styles = ['latex-field-style', 'highlight-default-style'];
 
     public function get_type()
     {
@@ -52,20 +52,26 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
             // Use admin-ajax.php for AJAX requests
         );
         wp_localize_script('latex-field-js', 'folderAjax', $data_to_pass);
+        add_action('elementor_pro/loaded', function () {
+            add_action('elementor/frontend/before_enqueue_scripts', function () {
+                wp_enqueue_script('highlight-js');
+                wp_enqueue_style('highlight-default-style');
+             });
+        });
 
         echo '
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="latex-flex full">
         <input class="hidden" value= "' . $_SESSION['file'] . '" name="session_id"/>
         <div class="latex-half-div">   
-                    <textarea id="textArea" class="text-like-elementor" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
+                    <textarea id="textArea" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
                     <p class="text-like-elementor">Character Count: <span id="charCount">0</span></p>
                     <div class="flex-div">
                     <button type="button" id="latexButton">Generate abstract </button>
                     <div class="loader" id="loader"></div>
                     </div>
                     <p id="errorMessage" style="display: none; color: red;"></p>
-                
+                   
         </div>
         <div class="latex-half-div">
             <pre class="latex-error" id="logContent"></pre>
