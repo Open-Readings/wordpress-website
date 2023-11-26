@@ -171,3 +171,12 @@ function add_new_form_field($form_fields_registrar)
 
 }
 add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
+
+
+
+function populate_registration_form(){
+    require_once(__DIR__ . '/registration/populate-form-fields.php');
+  
+}
+
+add_action('init', 'populate_registration_form');

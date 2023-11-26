@@ -27,13 +27,14 @@ class RegistrationData
     public $affiliations = array();
     public $references = array();
     public $images = array();
+    public string $author_radio;
     public string $abstract;
     public string $pdf;
 
 
-
     function map_from_person_data(PersonData $personData)
     {
+        $this->person_title = $personData->title;
         $this->first_name = $personData->first_name;
         $this->last_name = $personData->last_name;
         $this->email = $personData->email;
@@ -60,6 +61,7 @@ class RegistrationData
         $this->abstract = $presentationData->abstract;
         $this->pdf = $presentationData->pdf;
         $this->hash_id = $presentationData->person_hash_id;
+        $this->author_radio = $presentationData->author_radio;
 
     }
 
@@ -135,6 +137,7 @@ class PresentationData
     public string $images;
     public string $pdf;
     public string $person_hash_id;
+    public string $author_radio;
 
 
     public string $session_id;
@@ -143,11 +146,13 @@ class PresentationData
         $this->title = $result['title'];
         $this->authors = $result['authors'];
         $this->affiliations = $result['affiliations'];
-        $this->abstract = $result['abstract'];
+        $this->abstract = $result['content'];
         $this->references = $result['references'];
         $this->images = $result['images'];
         $this->pdf = $result['pdf'];
-        $this->person_hash_id = $result['hash_id'];
+        $this->person_hash_id = $result['person_hash_id'];
+        $this->author_radio = $result['author_radio'];
+
     }
 
     function map_from_class(RegistrationData $data, $presentation_id, $hash_id)
@@ -162,6 +167,8 @@ class PresentationData
         $this->session_id = $data->session_id;
         $this->presentation_id = $presentation_id;
         $this->person_hash_id = $hash_id;
+        $this->author_radio = $data->author_radio;
+
     }
 
 }
@@ -179,7 +186,6 @@ class OpenReadingsRegistration
             if (empty($value)) {
                 if ($key == 'agrees_to_email') {
                     continue;
-
                 }
                 if ($key == 'needs_visa') {
                     continue;
@@ -226,12 +232,12 @@ class OpenReadingsRegistration
 
         $query = '
         INSERT INTO ' . $table_name . '
-        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id, author_radio)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ';
 
 
-        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id);
+        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id, $presentaion_data->author_radio);
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
