@@ -34,8 +34,11 @@ function register_or_dependencies()
 {
   wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__));
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
+  wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
   wp_register_style('latex-field-style', plugins_url('assets/css/latex-field-style.css', __FILE__));
+  wp_register_script('highlight-js', plugins_url('assets/js/highlight.js', __FILE__));
+  wp_register_script('latex-min-js', plugins_url('assets/js/latex.min.js', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
   wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));

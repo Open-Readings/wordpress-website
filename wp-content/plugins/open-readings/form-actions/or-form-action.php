@@ -21,14 +21,13 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
      */
     public function run($record, $ajax_handler)
     {
-
         $form_name = $record->get_form_settings('form_name');
         $form_id = $record->get_form_settings('form_id');
         $raw_fields = $record->get('fields');
 
         $fields = [];
         foreach ($raw_fields as $field) {
-            $fields[$field['id']] = $field['value'];
+            $fields[$field['id']] = $field['raw_value'];
 
 
 
@@ -82,13 +81,17 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $author_contact_email = $_POST['email-author'];
         $affiliation_array = $_POST['affiliation'];
         $abstract_content = $_POST['textArea'];
-        $session_id = $_POST['session_id'];
+        if (!isset($_SESSION['id'])) {
+            session_start();
+            $_SESSION['id'] = 1;
+        }
+        $session_id = $_SESSION['file'];
 
 
 
         $registration->session_id = $session_id;
         $generated_files_dir = WP_CONTENT_DIR . '/latex/' . $session_id . '';
-        $generated_images_dir = $generated_files_dir . 'images/';
+        $generated_images_dir = $generated_files_dir . '/images/';
         $uploaded_images = scandir($generated_images_dir);
         $img_array = array();
         foreach ($uploaded_images as $image) {
@@ -109,12 +112,19 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $pdf = str_replace(WP_CONTENT_DIR, WP_CONTENT_URL, $pdf);
         $registration->pdf = $pdf;
 
-        $reference_array = $_POST['references']; //array su reference'ais is eiles
-
-        $references = [];
-        foreach ($reference_array as $reference) {
-            $references[] = $reference;
+        if(isset($_POST['references'])){
+            $reference_array = $_POST['references']; //array su reference'ais is eiles
+            $references = [];
+            foreach ($reference_array as $reference) {
+                $references[] = $reference;
         }
+        }
+        else{
+            $reference_array = [];
+            $references = [];
+        }
+
+        
         $registration->references = $references;
 
         $aggregated_authors_array = array();
@@ -126,7 +136,6 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
             }
         }
 
-
         $registration->authors = $aggregated_authors_array;
         $registration->affiliations = $affiliation_array;
         $registration->references = $reference_array;
@@ -135,12 +144,19 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $registration->session_id = $session_id;
 
         global $or_registration_controller;
-        $result = $or_registration_controller->register($registration);
-
+        if(isset($_SESSION['update'])){
+            $registration->presentation_id = $_SESSION['presentation_id'];
+            $result = $or_registration_controller->update($registration, $_SESSION['hash']);
+        }
+        else{
+            $result = $or_registration_controller->register($registration);
+        }
         if (is_wp_error($result)) {
             $ajax_handler->add_error_message($result->get_error_message());
             return;
         }
+        session_unset();
+        session_destroy();
         $ajax_handler->add_success_message('Registration was successful, please check your email for confirmation.');
 
     }

@@ -38,6 +38,8 @@ if ($_SESSION['generating'] == 0) {
             unlink($file); // Remove the file
         }
     }
+    if(isset($_SESSION['filenames']))
+        unset($_SESSION['filenames']);
 
     $max_files = get_option('or_registration_max_images');
     $max_files = $max_files ? $max_files : 2;
@@ -50,6 +52,7 @@ if ($_SESSION['generating'] == 0) {
         $targetFile = $targetDirectory . basename($_FILES[$filename]["name"]);
         $uploadOk = 1;
         $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $_SESSION['filenames'][$i-1] = basename($_FILES[$filename]["name"]);
 
 
 

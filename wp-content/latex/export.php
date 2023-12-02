@@ -4,41 +4,55 @@ error_reporting(0);
 
 
 function check_abstract_fields(){
-    $author_names = $_POST['name'];
-    $author_affiliations = $_POST['aff_ref'];
-    $author_radio = $_POST['contact_author'];
-    $author_email = $_POST['email-author'];
-    $affiliations = $_POST['affiliation'];
-    $abstract_content = $_POST['textArea'];
+    $title_length = 200;
+    $field_group = [
+        ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
+        ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
+        ['email-author', 'Corresponding author email', 100, ''],
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9, ]/u'],
+        ['textArea', 'Abstract content', 2000, ''],
+        ['references', 'Reference', 200, '/[^\\p{L}0-9, ]/u']
+    ];
 
-    $pattern = '/[^\\p{L} ]/u';
-    foreach ($author_names as $author_name){
-        if (strlen($author_name) > 15){
-            return "Author name too long.";
-        } else if (preg_match($pattern, $author_name)){
-            return "Special characters not allowed in author name field.";
-        } else if (trim($author_name) == '') {
-            return "Author field can't be empty.";
+    
+    
+    foreach($field_group as $item){
+        if (is_array($_POST[$item[0]])){
+            foreach($_POST[$item[0]] as $field){
+                if (mb_strlen($field) > $item[2]){
+                    return $item[1] . ": field input too long";
+                } 
+                if ($item[3] != '') if (preg_match($item[3], $field)){
+                    return $item[1] . " field: special characters not allowed in field.";
+                } 
+                if (trim($field) == '') {
+                    return $item[1] . ": detected empty field.";
+                }
+            }
+        } else {
+            $field = $_POST[$item[0]];
+            if (mb_strlen($field) > $item[2]){
+                return $item[1] . ": field input too long";
+            } 
+            if ($item[3] != '') if (preg_match($item[3], $field)){
+                return $item[1] . " field: special characters not allowed in field.";
+            } 
+            if (trim($field) == '' && $item[0] != 'references') {
+                return $item[1] . ": detected empty field.";
+            }
         }
     }
-    foreach ($affiliations as $affiliation){
-        if (strlen($affiliation) > 100){
-            return "Affiliation name too long.";
-        } else if (preg_match($pattern, $affiliation)){
-            return "Special characters not allowed in affiliation field.";
-        } else if (trim($affiliation) == '') {
-            return "Affiliation field can't be empty.";
+    $title = $_POST['form_fields']['abstract_title'];
+        if (mb_strlen($title) > $title_length){
+            return "Title field input too long";
+        } else if (preg_match('/[^\\p{L}0-9,<>\/ ]/u', $title)){
+            return "Title field: special characters not allowed in field.";
+        } else if (trim($title) == '') {
+            return "Abstact title: detected empty field.";
         }
-    }
-    foreach ($author_affiliations as $author_affiliation){
-        if (strlen($author_affiliation) > 100){
-            return "Affiliation reference too long.";
-        } else if (preg_match('[0-9, ]*', $author_affiliation)){
-            return "Characters not allowed in affiliation reference field.";
-        } else if (trim($author_affiliation) == '') {
-            return "Affiliation reference field can't be empty.";
-        }
-    }
+
+    if (filter_var($_POST['email-author'], FILTER_VALIDATE_EMAIL) == false) 
+        return "Corresponding author email not valid";
 
     return 0;
 }
@@ -116,7 +130,7 @@ function generate_abstract(){
             $i = 1;
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
-                $name = preg_replace('/[^\p{L}\p{N}\s&]/', '', $name);
+                $name = preg_replace('/[^\p{L}\s]/u', '', $name);
                 $aff_ref = $_POST['aff_ref'][$i - 1];
                 $aff_ref = trim($aff_ref);
                 //replace everything that is not a digit or ,

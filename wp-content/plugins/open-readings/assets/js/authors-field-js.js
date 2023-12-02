@@ -7,9 +7,9 @@ authAddButtons.forEach(function (button) {
         var divCount = childDivs.length;
         const personField = document.createElement("div");
         personField.innerHTML = `
-        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" class="author-width" name="name[]" placeholder="(e.g. John Smith)" required>
-        <input type="text" pattern="[0-9, ]*" class="narrow" name="aff_ref[]" placeholder="(e.g. 1,2)" required>
-        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount + 1}">
+        <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" class="author-width form-padding" name="name[]" placeholder="(e.g. John Smith)" required>
+        <input type="text" pattern="[0-9, ]*" class="narrow form-padding" name="aff_ref[]" placeholder="(e.g. 1,2)" required>
+        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author form-padding" style="margin: 5px;" type="radio" name="contact_author" value="${divCount + 1}">
 
     `;
         if (divCount < 15)
@@ -38,7 +38,7 @@ function getRadios() {
         radio.addEventListener('change', function () {
             console.log(1);
             if (document.getElementById('email-author') == null) {
-                var emailField = '<input id="email-author" style="display:none;" type="email" name="email-author" placeholder="john.smith@example.edu" required>'
+                var emailField = '<input id="email-author" class="form-padding" style="display:none;" type="email" name="email-author" placeholder="john.smith@example.edu" required>'
                 document.getElementById('authList').insertAdjacentHTML('afterend', emailField);
             }
             var fieldCopy = document.getElementById('email-author').cloneNode();

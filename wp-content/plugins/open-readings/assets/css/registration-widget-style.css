@@ -64,12 +64,23 @@
     align-items: center;
 }
 
+/* .aff-add{
+    margin-left: 25px;
+}
+
+.ref-add {
+    margin-left:25px;
+} */
+.form-padding {
+    margin: 5px 0px;
+}
+
 .aff-width {
     flex:80%;
 }
 
 .aff-label {
-    width:30px;
+    width:25px;
 }
 .ref-div {
     width:100%;
@@ -82,7 +93,7 @@
 }
 
 .ref-label {
-    width:30px;
+    width:25px;
 }
 
 #outerContainer #mainContainer div.toolbar {

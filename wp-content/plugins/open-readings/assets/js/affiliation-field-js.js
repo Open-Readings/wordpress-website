@@ -8,7 +8,7 @@ affAddButtons.forEach(function (button) {
         var childDivs = affiliationList.querySelectorAll("div");
         var divCount = childDivs.length;
         affiliationField.innerHTML = `<label class="aff-label">` + (divCount + 1) + `.` + `</label>` +
-            `<input type="text" class="aff-width" maxlength="200" name="affiliation[]" placeholder="(e.g. Vilnius University)">
+            `<input type="text" class="aff-width form-padding" maxlength="200" name="affiliation[]" placeholder="(e.g. Vilnius University)">
         `;
         affiliationField.className = "aff-div";
         if (divCount < 7)
