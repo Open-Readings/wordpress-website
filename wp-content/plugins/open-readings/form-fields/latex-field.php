@@ -13,7 +13,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
     public $depended_scripts = ['latex-field-js', 'highlight-js', 'latex-min-js'];
 
-    public $depended_styles = ['latex-field-style', 'highlight-default-style'];
+    public $depended_styles = ['latex-field-style', 'highlight-style'];
 
     public function get_type()
     {
@@ -64,16 +64,22 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         <div class="latex-flex full">
         <input class="hidden" value= "' . $_SESSION['file'] . '" name="session_id"/>
         <div class="latex-half-div">   
-                    <textarea id="textArea" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
-                    <p class="text-like-elementor">Character Count: <span id="charCount">0</span></p>
+                    <textarea id="textArea" spellcheck="false" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
+                    <pre class="pre-style"><code class="language-latex code-style" id="display-latex-code">
+\begin{equation}
+\int = abc
+\end{equation}
+            </code></pre>
+                    <p class="text-like-elementor margin-absolute">Character Count: <span id="charCount">0</span></p>
                     <div class="flex-div">
-                    <button type="button" id="latexButton">Generate abstract </button>
+                    <button type="button" class="form-padding" id="latexButton">Generate abstract </button>
                     <div class="loader" id="loader"></div>
                     </div>
                     <p id="errorMessage" style="display: none; color: red;"></p>
                    
         </div>
         <div class="latex-half-div">
+            
             <pre class="latex-error" id="logContent"></pre>
             <iframe class="pdf-frame" id="abstract" src="' . content_url() . '/latex/abstract.pdf#toolbar=0' . '"></iframe>
         </div>
