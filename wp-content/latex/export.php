@@ -3,7 +3,8 @@
 error_reporting(0);
 
 
-function check_abstract_fields(){
+function check_abstract_fields()
+{
     $title_length = 200;
     $field_group = [
         ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
@@ -14,44 +15,44 @@ function check_abstract_fields(){
         ['references', 'Reference', 200, '/[^\\p{L}0-9, ]/u']
     ];
 
-    
-    
-    foreach($field_group as $item){
-        if (is_array($_POST[$item[0]])){
-            foreach($_POST[$item[0]] as $field){
-                if (mb_strlen($field) > $item[2]){
+
+
+    foreach ($field_group as $item) {
+        if (is_array($_POST[$item[0]])) {
+            foreach ($_POST[$item[0]] as $field) {
+                if (mb_strlen($field) > $item[2]) {
                     return $item[1] . ": field input too long";
-                } 
-                if ($item[3] != '') if (preg_match($item[3], $field)){
+                }
+                if ($item[3] != '') if (preg_match($item[3], $field)) {
                     return $item[1] . " field: special characters not allowed in field.";
-                } 
+                }
                 if (trim($field) == '') {
                     return $item[1] . ": detected empty field.";
                 }
             }
         } else {
             $field = $_POST[$item[0]];
-            if (mb_strlen($field) > $item[2]){
+            if (mb_strlen($field) > $item[2]) {
                 return $item[1] . ": field input too long";
-            } 
-            if ($item[3] != '') if (preg_match($item[3], $field)){
+            }
+            if ($item[3] != '') if (preg_match($item[3], $field)) {
                 return $item[1] . " field: special characters not allowed in field.";
-            } 
+            }
             if (trim($field) == '' && $item[0] != 'references') {
                 return $item[1] . ": detected empty field.";
             }
         }
     }
     $title = $_POST['form_fields']['abstract_title'];
-        if (mb_strlen($title) > $title_length){
-            return "Title field input too long";
-        } else if (preg_match('/[^\\p{L}0-9,<>\/ ]/u', $title)){
-            return "Title field: special characters not allowed in field.";
-        } else if (trim($title) == '') {
-            return "Abstact title: detected empty field.";
-        }
+    if (mb_strlen($title) > $title_length) {
+        return "Title field input too long";
+    } else if (preg_match('/[^\\p{L}0-9,<>\/ ]/u', $title)) {
+        return "Title field: special characters not allowed in field.";
+    } else if (trim($title) == '') {
+        return "Abstact title: detected empty field.";
+    }
 
-    if (filter_var($_POST['email-author'], FILTER_VALIDATE_EMAIL) == false) 
+    if (filter_var($_POST['email-author'], FILTER_VALIDATE_EMAIL) == false)
         return "Corresponding author email not valid";
 
     return 0;
@@ -71,7 +72,8 @@ function fixUnclosedTags($text, $tagOpen, $tagClose)
     return $text;
 }
 
-function generate_abstract(){
+function generate_abstract()
+{
 
     if (!isset($_SESSION['id'])) {
         ini_set('session.gc_maxlifetime', 3600);
@@ -173,7 +175,7 @@ function generate_abstract(){
                 $i++;
             }
 
-            
+
 
             $titleField = $_POST['form_fields']['abstract_title'];
 
@@ -267,7 +269,7 @@ function generate_abstract(){
 
             $filename = $folder . "/abstract.tex";
             file_put_contents($filename, $textData);
-            $abcd=shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
             $_SESSION['generating'] = 0;
 
             if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
@@ -282,7 +284,7 @@ function generate_abstract(){
 $field_validity = check_abstract_fields();
 if ($field_validity == 0)
     generate_abstract();
-else if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf')){
+else if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf')) {
     echo 'Export failed::' . $field_validity . '::end';
 } else {
     echo 'Export failed::' . $field_validity . '::end';
