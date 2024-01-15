@@ -9,9 +9,9 @@ function check_abstract_fields(){
         ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
         ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
         ['email-author', 'Corresponding author email', 100, ''],
-        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9, ]/u'],
-        ['textArea', 'Abstract content', 2000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9, ]/u']
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()-&:;!$]/u'],
+        ['textArea', 'Abstract content', 3000, ''],
+        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>()-&:;!$]/u']
     ];
 
     

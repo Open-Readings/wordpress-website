@@ -60,7 +60,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
 				var html = value.replace(regex, '');
-				var html = html.replace(/[^\p{L}\p{N}\s&^_<>;/]/gu, "");
+				var html = html.replace(/[^\p{L}\p{N}\s&^_<>-;/]/gu, "");
 				console.log(html);
 				console.log(regex);
 				html = html.replace(/\^([a-zA-Z\d]+)/g, '<sup>$1</sup>').replace(/_([a-zA-Z\d]+)/g, '<sub>$1</sub>');

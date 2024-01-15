@@ -370,10 +370,10 @@ class OpenReadingsRegistration
             ['department', 'Department', 200, '/[^\\p{L} ]/u'],
             ['research_area', 'Research area', 200, '/[^\\p{L} ]/u'],
             ['person_title', 'Person title', 200, '/[^\\p{L} ]/u'],
-            ['title', 'Presentation title', 300, '/[^\\p{L}0-9,<>\/ ]/u'],
-            ['affiliations', 'Affiliation', 200, '/[^\\p{L} ]/u'],
-            ['references', 'Abstract references', 200, '/[^\\p{L}0-9, ]/u'],
-            ['abstract', 'Abstract content', 2000, '']
+            ['title', 'Presentation title', 300, '/[^\\p{L}0-9 <>()-&:;!$]/u'],
+            ['affiliations', 'Affiliation', 200, '/[^\\p{L}0-9 <>()-&:;!$]/u'],
+            ['references', 'Abstract references', 200, '/[^\\p{L}0-9 <>()-&:;!$]/u'],
+            ['abstract', 'Abstract content', 3000, '']
         ];
         foreach($field_group_one as $item){
             if (is_array($registration_data->{$item[0]})){
