@@ -111,9 +111,11 @@ function add_menu_roles()
   //add new capability
   $role = get_role('administrator');
   $role->add_cap('manage_or_registration');
+  $role->add_cap('manage_or_mailer');
   //add new capability
   $role = get_role('editor');
   $role->add_cap('manage_or_registration');
+  $role->add_cap('manage_or_mailer');
 }
 
 
@@ -123,7 +125,9 @@ function register_admin()
   $admin = new ORregistrationAdmin();
 
 
+
 }
+
 add_action('init', 'register_admin');
 add_action('init', 'register_or_mailer');
 
@@ -136,7 +140,8 @@ function add_new_form_actions($form_actions_registrar)
 {
 
   require_once(__DIR__ . '/form-actions/or-form-action.php');
-
+  require_once(__DIR__ . '/form-actions/custom-form.php');
+  $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
 
@@ -160,6 +165,7 @@ function add_new_form_field($form_fields_registrar)
 
 
 
+
   $form_fields_registrar->register(new \Elementor_Country_Field());
   $form_fields_registrar->register(new \Elementor_Institution_Field());
   $form_fields_registrar->register(new \Elementor_Latex_Field());
@@ -177,9 +183,10 @@ add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
 
 
-function populate_registration_form(){
-    require_once(__DIR__ . '/registration/populate-form-fields.php');
-  
+function populate_registration_form()
+{
+  require_once(__DIR__ . '/registration/populate-form-fields.php');
+
 }
 
 add_action('init', 'populate_registration_form');

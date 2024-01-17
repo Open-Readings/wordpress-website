@@ -21,11 +21,13 @@ if ($_SESSION['generating'] == 0) {
         $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
     }
     if (!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
-        shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
+        mkdir(__DIR__ . '/' . $_SESSION['file']);
+        //shell_exec('sudo /bin/mkdir   -m 777 "' . __DIR__ . '/' . $_SESSION['file'] . '"');
     }
 
     if (!is_dir(__DIR__ . '/' . $_SESSION['file']) . '/images') {
-        shell_exec('/bin/mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images' . '"');
+        mkdir(__DIR__ . '/' . $_SESSION['file'] . '/images');
+        //shell_exec('sudo /bin/mkdir -m 777 "' . __DIR__ . '/' . $_SESSION['file'] . '/images' . '"');
     }
     $targetDirectory = __DIR__ . '/' . $_SESSION['file'] . "/images/";
 
@@ -38,7 +40,7 @@ if ($_SESSION['generating'] == 0) {
             unlink($file); // Remove the file
         }
     }
-    if(isset($_SESSION['filenames']))
+    if (isset($_SESSION['filenames']))
         unset($_SESSION['filenames']);
 
     $max_files = get_option('or_registration_max_images');
@@ -52,11 +54,11 @@ if ($_SESSION['generating'] == 0) {
         $targetFile = $targetDirectory . basename($_FILES[$filename]["name"]);
         $uploadOk = 1;
         $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-        $_SESSION['filenames'][$i-1] = basename($_FILES[$filename]["name"]);
+        $_SESSION['filenames'][$i - 1] = basename($_FILES[$filename]["name"]);
 
 
 
-        if ($_FILES[$filename]["size"] > 500000) {
+        if ($_FILES[$filename]["size"] > 6000000) {
             $uploadOk = 0;
         }
         if (($fileType != "png" && $fileType != "jpeg") && $fileType != "jpg") {
