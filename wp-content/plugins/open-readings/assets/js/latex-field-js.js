@@ -68,16 +68,16 @@ function afterWait($exportReturn) {
         })
         .catch(error => {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
-    });
+        });
     console.log('afterWait');
-    if ($exportReturn == 0){
+    if ($exportReturn == 0) {
         document.getElementById("abstract").style.display = "block";
         document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
     } else
         document.getElementById("abstract").style.display = "none";
 
-        //document.getElementById("abstract").contentWindow.location.reload(true);
-    setIframeHeight();       
+    //document.getElementById("abstract").contentWindow.location.reload(true);
+    setIframeHeight();
 }
 
 
@@ -120,13 +120,19 @@ latexButton.addEventListener("click", async function () {
                 errorMessage.innerHTML = 'Failed to generate document';
                 errorMessage.style.display = 'block';
                 afterWait(1);
-            } else if (data.includes('Export failed::')){
+            } else if (data.includes('Export failed::')) {
                 var message = data.match(/Export failed::(.*?)::end/);
                 errorMessage.innerHTML = message[1];
                 errorMessage.style.display = 'block';
                 afterWait(0);
             }
+            else {
+                console.log(data);
+                errorMessage.innerHTML = 'Failed to generate document';
+                afterWait(0);
+            }
         } catch (error) {
+            console.log(error);
         }
     } else {
         console.log('Form is not valid');

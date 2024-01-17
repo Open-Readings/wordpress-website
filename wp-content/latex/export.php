@@ -10,9 +10,9 @@ function check_abstract_fields()
         ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
         ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
         ['email-author', 'Corresponding author email', 100, ''],
-        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9, ]/u'],
-        ['textArea', 'Abstract content', 2000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9, ]/u']
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
+        ['textArea', 'Abstract content', 3000, ''],
+        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u']
     ];
 
 
@@ -46,7 +46,7 @@ function check_abstract_fields()
     $title = $_POST['form_fields']['abstract_title'];
     if (mb_strlen($title) > $title_length) {
         return "Title field input too long";
-    } else if (preg_match('/[^\\p{L}0-9,<>\/ ]/u', $title)) {
+    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;()*\-.\/]/u', $title)) {
         return "Title field: special characters not allowed in field.";
     } else if (trim($title) == '') {
         return "Abstact title: detected empty field.";
@@ -95,8 +95,8 @@ function generate_abstract()
         }
 
         if (!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
-            shell_exec('mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '"');
-            shell_exec('mkdir "' . __DIR__ . '/' . $_SESSION['file'] . '/images"');
+            mkdir(__DIR__ . '/' . $_SESSION['file'], 0777, true);
+            mkdir(__DIR__ . '/' . $_SESSION['file'] . '/images', 0777, true);
         }
 
 
@@ -186,7 +186,7 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&<>;\/]/', '', $titleField);
+            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+=<>;\/]/', '', $titleField);
 
 
             //find fist <sup> or <sub> tag
@@ -267,9 +267,14 @@ function generate_abstract()
 
             $textData = $startOfDocument . $title . $authors . $affiliations . $abstractContent . $references . $endOfDocument;
 
+
             $filename = $folder . "/abstract.tex";
-            file_put_contents($filename, $textData);
-            shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $created = file_put_contents($filename, $textData);
+            if ($created === false) {
+                echo 'Export failed::failed to create abstract.tex::end';
+                error_log($filename . " creation failed");
+            }
+            $abcd = shell_exec('sudo /bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
             $_SESSION['generating'] = 0;
 
             if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))

@@ -39,9 +39,9 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         }
         $fdsokal = is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file']);
         if (!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
-            shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
-            shell_exec('/bin/mkdir "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images"');
-            shell_exec('/bin/cp "' . WP_CONTENT_DIR . '/latex/abstract.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
+            mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'], 0777, true);
+            mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images', 0777, true);
+            // shell_exec('sudo /bin/cp "' . WP_CONTENT_DIR . '/latex/abstract.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
         }
 
 
@@ -56,7 +56,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
             add_action('elementor/frontend/before_enqueue_scripts', function () {
                 wp_enqueue_script('highlight-js');
                 wp_enqueue_style('highlight-default-style');
-             });
+            });
         });
 
         echo '
