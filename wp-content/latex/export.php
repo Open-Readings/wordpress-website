@@ -7,7 +7,7 @@ function check_abstract_fields()
 {
     $title_length = 200;
     $field_group = [
-        ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
+        ['name', 'Author name', 200, '/[^\\p{L}- ]/u'],
         ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
         ['email-author', 'Corresponding author email', 100, ''],
         ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
@@ -107,7 +107,7 @@ function generate_abstract()
             $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
 
         \usepackage{amsmath}
-        \usepackage[T1]{fontenc}
+        \usepackage{lmodern}
         \usepackage{graphicx}
         \usepackage[utf8]{inputenc}
         \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
@@ -132,7 +132,7 @@ function generate_abstract()
             $i = 1;
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
-                $name = preg_replace('/[^\p{L}\s]/u', '', $name);
+                $name = preg_replace('/[^\p{L}\-\s]/u', '', $name);
                 $aff_ref = $_POST['aff_ref'][$i - 1];
                 $aff_ref = trim($aff_ref);
                 //replace everything that is not a digit or ,
@@ -274,7 +274,7 @@ function generate_abstract()
                 echo 'Export failed::failed to create abstract.tex::end';
                 error_log($filename . " creation failed");
             }
-            $abcd = shell_exec('sudo /bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
             $_SESSION['generating'] = 0;
 
             if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
