@@ -2,6 +2,76 @@
 
 error_reporting(0);
 
+
+function check_abstract_fields()
+{
+    $title_length = 200;
+    $field_group = [
+        ['name', 'Author name', 200, '/[^\\p{L}- ]/u'],
+        ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
+        ['email-author', 'Corresponding author email', 100, ''],
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
+        ['textArea', 'Abstract content', 3000, ''],
+        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u']
+    ];
+
+
+
+    foreach ($field_group as $item) {
+        if (is_array($_POST[$item[0]])) {
+            foreach ($_POST[$item[0]] as $field) {
+                if (mb_strlen($field) > $item[2]) {
+                    return $item[1] . ": field input too long";
+                }
+                if ($item[3] != '') if (preg_match($item[3], $field)) {
+                    return $item[1] . " field: special characters not allowed in field.";
+                }
+                if (trim($field) == '') {
+                    return $item[1] . ": detected empty field.";
+                }
+            }
+        } else {
+            $field = $_POST[$item[0]];
+            if (mb_strlen($field) > $item[2]) {
+                return $item[1] . ": field input too long";
+            }
+            if ($item[3] != '') if (preg_match($item[3], $field)) {
+                return $item[1] . " field: special characters not allowed in field.";
+            }
+            if (trim($field) == '' && $item[0] != 'references') {
+                return $item[1] . ": detected empty field.";
+            }
+        }
+    }
+    $title = $_POST['form_fields']['abstract_title'];
+    if (mb_strlen($title) > $title_length) {
+        return "Title field input too long";
+    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;()*\-.\/]/u', $title)) {
+        return "Title field: special characters not allowed in field.";
+    } else if (trim($title) == '') {
+        return "Abstact title: detected empty field.";
+    }
+
+    if (filter_var($_POST['email-author'], FILTER_VALIDATE_EMAIL) == false)
+        return "Corresponding author email not valid";
+
+    return 0;
+}
+
+function fixUnclosedTags($text, $tagOpen, $tagClose)
+{
+    $countOpen = substr_count($text, $tagOpen);
+    $countClose = substr_count($text, $tagClose);
+
+    $tagDiff = $countOpen - $countClose;
+
+    if ($tagDiff > 0) {
+        $text .= str_repeat($tagClose, $tagDiff);
+    }
+
+    return $text;
+}
+
 function generate_abstract()
 {
 
@@ -24,7 +94,7 @@ function generate_abstract()
             $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
 
         \usepackage{amsmath}
-        \usepackage[T1]{fontenc}
+        \usepackage{lmodern}
         \usepackage{graphicx}
         \usepackage[utf8]{inputenc}
         \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
@@ -49,7 +119,7 @@ function generate_abstract()
             $i = 1;
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
-                $name = preg_replace('/[^\p{L}\s]/u', '', $name);
+                $name = preg_replace('/[^\p{L}\-\s]/u', '', $name);
                 $aff_ref = $_POST['aff_ref'][$i - 1];
                 $aff_ref = trim($aff_ref);
                 //replace everything that is not a digit or ,
@@ -191,7 +261,7 @@ function generate_abstract()
                 echo 'Export failed::failed to create abstract.tex::end';
                 error_log($filename . " creation failed");
             }
-            $_ = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
             $_SESSION['generating'] = 0;
 
             if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
@@ -201,83 +271,6 @@ function generate_abstract()
         }
     }
 }
-
-
-function check_abstract_fields()
-{
-    $title_length = 200;
-    $field_group = [
-        ['name', 'Author name', 200, '/[^\\p{L} ]/u'],
-        ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
-        ['email-author', 'Corresponding author email', 100, ''],
-        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
-        ['textArea', 'Abstract content', 3000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u']
-    ];
-
-
-
-    foreach ($field_group as $item) {
-        if (is_array($_POST[$item[0]])) {
-            foreach ($_POST[$item[0]] as $field) {
-                if (mb_strlen($field) > $item[2]) {
-                    return $item[1] . ": field input too long";
-                }
-                if ($item[3] != '') if (preg_match($item[3], $field)) {
-                    return $item[1] . " field: special characters not allowed in field.";
-                }
-                if (trim($field) == '') {
-                    return $item[1] . ": detected empty field.";
-                }
-            }
-        } else {
-            $field = $_POST[$item[0]];
-            if (mb_strlen($field) > $item[2]) {
-                return $item[1] . ": field input too long";
-            }
-            if ($item[3] != '') if (preg_match($item[3], $field)) {
-                return $item[1] . " field: special characters not allowed in field.";
-            }
-            if (trim($field) == '' && $item[0] != 'references') {
-                return $item[1] . ": detected empty field.";
-            }
-        }
-    }
-    $title = $_POST['form_fields']['abstract_title'];
-    $myfile = fopen("0test_galima_trinti.txt", "w");
-    $txt = "Mickey Mouse\n";
-    fwrite($myfile, $txt);
-    fwrite($myfile, $txt);
-    fclose($myfile);
-    if (mb_strlen($title) > $title_length) {
-        return "Title field input too long";
-    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;()*\{}-.\/]/u', $title)) {
-        return "Title field: special characters not allowed in field.";
-    } else if (trim($title) == '') {
-        return "Abstact title: detected empty field.";
-    }
-
-    if (filter_var($_POST['email-author'], FILTER_VALIDATE_EMAIL) == false)
-        return "Corresponding author email not valid";
-
-    return 0;
-}
-
-function fixUnclosedTags($text, $tagOpen, $tagClose)
-{
-    $countOpen = substr_count($text, $tagOpen);
-    $countClose = substr_count($text, $tagClose);
-
-    $tagDiff = $countOpen - $countClose;
-
-    if ($tagDiff > 0) {
-        $text .= str_repeat($tagClose, $tagDiff);
-    }
-
-    return $text;
-}
-
-
 // generate_abstract();
 
 $field_validity = check_abstract_fields();

@@ -372,8 +372,9 @@ class OpenReadingsRegistration
             ['research_area', 'Research area', 200, '/[^\\p{L} ]/u'],
             ['person_title', 'Person title', 200, ''],
             ['title', 'Presentation title', 300, ''],
-            ['affiliations', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
-            ['references', 'Abstract references', 200, '/[^\\p{L}0-9 .,<>()\-&:;!$]/u'],
+           
+            ['affiliations', 'Affiliation', 200, '/[^\\p{L}0-9 .<>()\\-&:;!$]/u'],
+            ['references', 'Abstract references', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
             ['abstract', 'Abstract content', 3000, '']
         ];
         foreach ($field_group_one as $item) {

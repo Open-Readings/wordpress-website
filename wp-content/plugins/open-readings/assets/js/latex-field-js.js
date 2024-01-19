@@ -129,7 +129,8 @@ latexButton.addEventListener("click", async function () {
             else {
                 console.log(data);
                 errorMessage.innerHTML = 'Failed to generate document';
-                afterWait(0);
+                errorMessage.style.display = 'none';
+                afterWait(1);
             }
         } catch (error) {
             console.log(error);
