@@ -33,18 +33,6 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
             $_SESSION['id'] = 1;
         }
 
-        if (!isset($_SESSION['file'])) {
-            $timestamp = time();
-            $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
-        }
-        $fdsokal = is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file']);
-        if (!is_dir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'])) {
-            mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'], 0777, true);
-            mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images', 0777, true);
-            // shell_exec('sudo /bin/cp "' . WP_CONTENT_DIR . '/latex/abstract.pdf" "' . WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '"');
-        }
-
-
         $folder = $_SESSION['file'];
 
         $data_to_pass = array(
@@ -62,7 +50,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         echo '
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <div class="latex-flex full">
-        <input class="hidden" value= "' . $_SESSION['file'] . '" name="session_id"/>
+        <input class="hidden" value= "' . $folder . '" name="session_id"/>
         <div class="latex-half-div">   
                     <textarea id="textArea" spellcheck="false" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
                     <pre class="pre-style"><code class="language-latex code-style" id="display-latex-code">

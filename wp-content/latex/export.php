@@ -88,19 +88,6 @@ function generate_abstract()
     if ($_SESSION['generating'] == 0) {
 
         $_SESSION['generating'] = 1;
-
-        if (!isset($_SESSION['file'])) {
-            $timestamp = time();
-            $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
-        }
-
-        if (!is_dir(__DIR__ . '/' . $_SESSION['file'])) {
-            mkdir(__DIR__ . '/' . $_SESSION['file'], 0777, true);
-            mkdir(__DIR__ . '/' . $_SESSION['file'] . '/images', 0777, true);
-        }
-
-
-
         $folder = $_SESSION['file'];
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {

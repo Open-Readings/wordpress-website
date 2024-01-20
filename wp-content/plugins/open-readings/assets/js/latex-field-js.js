@@ -13,7 +13,7 @@ function countChar() {
     var count = text.length;
 
     // Change the maximum character limit here (e.g., 100)
-    var maxLimit = 2000;
+    var maxLimit = 3000;
 
     if (count > maxLimit) {
         textarea.value = text.substring(0, maxLimit);

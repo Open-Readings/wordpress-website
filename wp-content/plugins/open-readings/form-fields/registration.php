@@ -531,7 +531,7 @@ class OpenReadingsRegistration
             '${country}' => $registration_data->country,
             '${department}' => $registration_data->department,
             '${presentation_title}' => $registration_data->title,
-            '${abstract_pdf}' => $registration_data->pdf,
+            '${abstract_pdf}' => $registration_data->pdf . '?' . time(),
             '${hash}' => $hash_id,
             '${authors_list}' => implode(', ', $authors_list),
             '${title}' => $registration_data->title,

@@ -183,10 +183,27 @@ add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
 
 
-function populate_registration_form()
-{
-  require_once(__DIR__ . '/registration/populate-form-fields.php');
+// function populate_registration_form()
+// {
+//   require_once(__DIR__ . '/registration/populate-form-fields.php');
 
+// }
+
+
+
+// add_action('init', 'populate_registration_form');
+
+function enqueue_form_fill_script() {
+  if (did_action('wp_loaded') > 1){
+    return;
+  }
+  require_once(__DIR__ . '/registration/begin-session.php');
 }
+add_action('wp_loaded', 'enqueue_form_fill_script');
 
-add_action('init', 'populate_registration_form');
+function my_custom_function() {
+  if (did_action('wp_footer') > 1)
+    return;
+  require_once(__DIR__ . '/registration/populate-form-fields.php');
+}
+add_action('wp_footer', 'my_custom_function');

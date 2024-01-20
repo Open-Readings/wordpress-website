@@ -5,11 +5,8 @@ use OpenReadings\Registration\PersonData;
 use OpenReadings\Registration\PresentationData;
 use OpenReadings\Registration\RegistrationData;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+if ($_SERVER['REQUEST_METHOD'] == 'POST')
     return;
-}
-
 // Get the ID from the URL (you can use your preferred method for getting the ID)
 $id = isset($_GET['id']) ? ($_GET['id']) : 0;
 
@@ -21,30 +18,10 @@ if (!isset($_SESSION['id'])) {
     session_start();
     $_SESSION['id'] = 1;
 }
-   
 
-
-if(is_wp_error($registration_data)){
-    if (isset($_SESSION['update']))
-        unset($_SESSION['update']);
-    if (isset($_SESSION['dont_overwrite'])){
-        unset($_SESSION['file']);
-        unset($_SESSION['dont_overwrite']);
-        unset($_SESSION['hash']);
-        unset($_SESSION['presentation_id']);
-    }
+if(!isset($_SESSION['update'])){
     return;
 }
-
-
-$_SESSION['file'] = $registration_data->session_id;
-$_SESSION['dont_overwrite'] = true;
-$_SESSION['update'] = 1;
-$_SESSION['hash'] = $id;
-$_SESSION['presentation_id'] = $registration_data->presentation_id;
-    
-
-
 
 $person_data_fields = [
     ['form-field-person_title', 'person_title'],
@@ -185,5 +162,5 @@ document.addEventListener('DOMContentLoaded', function() {
     abstract.setAttribute("src", '<?=WP_CONTENT_URL?>' + '/latex/' + '<?=$registration_data->session_id?>' + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
     abstract.style.display = 'block';
 });
-console.log(0);
+console.log(9999);
 </script>
