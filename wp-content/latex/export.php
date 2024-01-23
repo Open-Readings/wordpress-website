@@ -7,12 +7,12 @@ function check_abstract_fields()
 {
     $title_length = 200;
     $field_group = [
-        ['name', 'Author name', 200, '/[^\\p{L}- ]/u'],
+        ['name', 'Author name', 200, '/[^\\p{L}\-.,;() ]/u'],
         ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
         ['email-author', 'Corresponding author email', 100, ''],
-        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u'],
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
         ['textArea', 'Abstract content', 3000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>()\-&:;!$]/u']
+        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>.,()\-&:;!$]/u']
     ];
 
 
@@ -173,7 +173,7 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+=<>;\/]/', '', $titleField);
+            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=<>;\/]/', '', $titleField);
 
 
             //find fist <sup> or <sub> tag
@@ -241,7 +241,7 @@ function generate_abstract()
 
             $titleField = str_replace('&nbsp;', '', $titleField);
 
-            $title = "\begin{center} \MakeUppercase{ {\large \\textbf{" . $titleField . "}}} \\end{center}
+            $title = "\begin{center}  {\large \\textbf{" . $titleField . "}} \\end{center}
         \\vspace{-0.8cm}";
 
 

@@ -57,13 +57,25 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 		<script>
 			function trim_title(value) {
 				var field_id = "<?php echo $field_id ?>";
+				var allowed_regex = "<?php echo $item['regex'] ?>"
+				if (allowed_regex == "") {
+					allowed_regex = "\\p{L}\\p{N}\\s&_^<>\\- ()=+;\\/";
+				}
+				var allowed_sub_regex = "<?php echo $item['sub_regex'] ?>"
+				if (allowed_sub_regex == "") {
+					allowed_sub_regex = "A-Za-z0-9+\\-=()";
+				}
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
 				var html = value.replace(regex, '');
-				var html = html.replace(/[^\p{L}\p{N}\s&^_<>\-=+;\/]/gu, "");
-				console.log(html);
-				console.log(regex);
-				html = html.replace(/\^([a-zA-Z\d]+)/g, '<sup>$1</sup>').replace(/_([a-zA-Z\d]+)/g, '<sub>$1</sub>');
+				//console.log(new RegExp("[\^" + allowed_regex + "]", "gu"));
+				html = html.replace(new RegExp("[\^" + allowed_regex + "]", "gu"), '');
+				//var html = html.replace(/[^\p{L}\p{N}\s&^_<>\- ()=+;\/]/gu, "");
+				//console.log(html);
+				//allowed_regex = allowed_regex.replace(/[\^_&]/g, '');
+				var sup_regex = new RegExp("\\^([" + allowed_sub_regex + "]+)", "g");
+				var sub_regex = new RegExp("_([" + allowed_sub_regex + "]+)", "g");
+				html = html.replace(sup_regex, '<sup>$1</sup>').replace(sub_regex, '<sub>$1</sub>');
 
 				html = html.replace('&nbsp;</sup>', '</sup>&nbsp;');
 				html = html.replace(' </sup>', '</sup> ');
@@ -175,6 +187,40 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 					'tab' => 'advanced',
 					'inner_tab' => 'form_fields_advanced_tab',
 					'tabs_wrapper' => 'form_fields_tabs',
+				],
+			'regex' =>
+				[
+					'name' => 'regex',
+					'label' => esc_html__('Regex', 'elementor-pro'),
+					'type' => Controls_Manager::TEXT,
+					'condition' => [
+						'field_type' => $this->get_type(),
+
+					],
+					'dynamic' => [
+						'active' => true,
+					],
+					'default' => esc_html__('', 'OR'),
+					'tab' => 'advanced',
+					'inner_tab' => 'form_fields_advanced_tab',
+					'tabs_wrapper' => 'form_fields_tabs'
+				],
+			'sub_regex' =>
+				[
+					'name' => 'sub_regex',
+					'label' => esc_html__('Sub/Sup Regex', 'elementor-pro'),
+					'type' => Controls_Manager::TEXT,
+					'condition' => [
+						'field_type' => $this->get_type(),
+
+					],
+					'dynamic' => [
+						'active' => true,
+					],
+					'default' => esc_html__('', 'OR'),
+					'tab' => 'advanced',
+					'inner_tab' => 'form_fields_advanced_tab',
+					'tabs_wrapper' => 'form_fields_tabs'
 				],
 		];
 
