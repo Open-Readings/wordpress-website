@@ -119,7 +119,7 @@ function generate_abstract()
             $i = 1;
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
-                $name = preg_replace('/[^\p{L}\-\s]/u', '', $name);
+                $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
                 $aff_ref = $_POST['aff_ref'][$i - 1];
                 $aff_ref = trim($aff_ref);
                 //replace everything that is not a digit or ,
