@@ -29,6 +29,7 @@ if(is_wp_error($registration_data)){
     if (isset($_SESSION['update'])){
         session_unset();
         $_SESSION['id'] = 1;
+        $_SESSION['exists'] = 0;
     }
 
     if (!isset($_SESSION['file'])) {
@@ -51,5 +52,6 @@ if(is_wp_error($registration_data)){
     $_SESSION['update'] = 1;
     $_SESSION['hash'] = $id;
     $_SESSION['presentation_id'] = $registration_data->presentation_id;
+    $_SESSION['exists'] = 1;
 }
 ?>

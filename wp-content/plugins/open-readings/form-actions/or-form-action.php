@@ -105,10 +105,10 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         }
         $registration->images = $img_array;
         $pdf = $generated_files_dir . '/abstract.pdf';
-        if (!file_exists($pdf)) {
-            $ajax_handler->add_error_message('Please generate your abstract before submitting');
-            return;
-        }
+        // if (!file_exists($pdf) || $_SESSION['exists'] == 0) {
+        //     $ajax_handler->add_error_message('Please generate your abstract before submitting');
+        //     return;
+        // }
         $pdf = str_replace(WP_CONTENT_DIR, WP_CONTENT_URL, $pdf);
         $registration->pdf = $pdf;
 

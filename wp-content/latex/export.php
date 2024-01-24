@@ -111,11 +111,12 @@ function generate_abstract()
         \makeatletter
         \renewcommand{\fnum@figure}{Fig. \thefigure :}
         \makeatother
+        \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
         \begin{document}
         ';
 
 
-            $authors = '\begin{center} ';
+            $authors = '\begin{center} \fontsize{12}{13}\selectfont ';
             $i = 1;
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
@@ -140,7 +141,7 @@ function generate_abstract()
         ';
 
 
-            $affiliations = '\begin{center} {\small ';
+            $affiliations = '\begin{center} \fontsize{10}{11}\selectfont ';
             $i = 1;
             foreach ($_POST['affiliation'] as $aff) {
                 $affiliations = $affiliations . '$^{' . $i . '}$' . $aff . '
@@ -149,7 +150,7 @@ function generate_abstract()
                 $i++;
             }
             $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
-        } \end{center}
+         \end{center}
 
         ';
 
@@ -241,11 +242,11 @@ function generate_abstract()
 
             $titleField = str_replace('&nbsp;', '', $titleField);
 
-            $title = "\begin{center}  {\large \\textbf{" . $titleField . "}} \\end{center}
+            $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
         \\vspace{-0.8cm}";
 
 
-            $abstractContent = $_POST["textArea"];
+            $abstractContent = '\fontsize{10}{11}\selectfont ' . $_POST["textArea"];
 
 
             $endOfDocument = '
@@ -263,6 +264,7 @@ function generate_abstract()
             }
             $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
             $_SESSION['generating'] = 0;
+            $_SESSION['exists'] = 1;
 
             if (file_exists(__DIR__ . '/' . $folder . '/abstract.pdf'))
                 echo 'Export completed::0';
