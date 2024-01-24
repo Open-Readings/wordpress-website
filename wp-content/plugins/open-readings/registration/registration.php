@@ -374,7 +374,7 @@ class OpenReadingsRegistration
             ['institution', 'Institution', 200, '/[^\\p{L}(),.\- ]/u'],
             ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
             ['department', 'Department', 200, '/[^\\p{L}()-,. ]/u'],
-            ['research_area', 'Research area', 200, '/[^\\p{L} ]/u'],
+            ['research_area', 'Research area', 200, '/[^\\p{L} ,]/u'],
             ['person_title', 'Person title', 200, ''],
             ['title', 'Presentation title', 300, ''],
             ['affiliations', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
@@ -635,12 +635,12 @@ class OpenReadingsRegistration
     }
 
 
-
-
-
-
-
 }
+
+
+
+
+
 
 
 
