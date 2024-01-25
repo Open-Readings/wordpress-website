@@ -12,7 +12,7 @@ function check_abstract_fields()
         ['email-author', 'Corresponding author email', 100, ''],
         ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
         ['textArea', 'Abstract content', 3000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>.,()\-&:;!$]/u']
+        ['references', 'Reference', 350, '/[^\\p{L}0-9 <>.,()\-&:;!$]/u']
     ];
 
 
@@ -46,7 +46,7 @@ function check_abstract_fields()
     $title = $_POST['form_fields']['abstract_title'];
     if (mb_strlen($title) > $title_length) {
         return "Title field input too long";
-    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;()*\-.\/]/u', $title)) {
+    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;:()*\-.\/]/u', $title)) {
         return "Title field: special characters not allowed in field.";
     } else if (trim($title) == '') {
         return "Abstact title: detected empty field.";
@@ -174,7 +174,7 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=<>;\/]/', '', $titleField);
+            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=.:,<>;\/]/', '', $titleField);
 
 
             //find fist <sup> or <sub> tag
@@ -241,6 +241,7 @@ function generate_abstract()
 
 
             $titleField = str_replace('&nbsp;', '', $titleField);
+
 
             $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
         \\vspace{-0.8cm}";

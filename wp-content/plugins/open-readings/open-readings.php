@@ -141,7 +141,9 @@ function add_new_form_actions($form_actions_registrar)
 
   require_once(__DIR__ . '/form-actions/or-form-action.php');
   require_once(__DIR__ . '/form-actions/custom-form.php');
+  require_once(__DIR__ . '/form-actions/or-update-form.php');
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
+  $form_actions_registrar->register(new \ORUpdateFormAction());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
 
@@ -193,18 +195,30 @@ add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
 // add_action('init', 'populate_registration_form');
 
-function enqueue_form_fill_script() {
-  if (did_action('wp_loaded') > 1){
+function register_or_mailer_admin()
+{
+  require_once(__DIR__ . '/mailer/admin.php');
+  $admin = new ORmailerAdmin();
+
+
+}
+add_action('init', 'register_or_mailer_admin');
+
+
+function enqueue_form_fill_script()
+{
+  if (did_action('wp_loaded') > 1) {
     return;
   }
   if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
     require_once(__DIR__ . '/registration/begin-session.php');
   }
 }
-  
+
 add_action('wp_loaded', 'enqueue_form_fill_script');
 
-function my_custom_function() {
+function my_custom_function()
+{
   if (did_action('wp_footer') > 1)
     return;
   require_once(__DIR__ . '/registration/populate-form-fields.php');
