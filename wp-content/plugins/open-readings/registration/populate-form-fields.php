@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         personField.innerHTML = `
         <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" class="author-width form-padding" name="name[]" placeholder="(e.g. John Smith)" value="<?=$author[0]?>" required>
         <input type="text" pattern="[0-9, ]*" class="narrow form-padding" name="aff_ref[]" placeholder="(e.g. 1,2)" value="<?=$author[1]?>" required>
-        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="${divCount + 1}" <?php echo (isset($author[2])) ? 'checked' : ''; ?>>
+        <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="<?=$i?>" <?php echo (isset($author[2])) ? 'checked' : ''; ?>>
         <?php echo isset($author[2]) ? ('<input id="email-author" class="form-padding" style="display:inline;" type="email" name="email-author" placeholder="john.smith@example.edu" value="' . $author[2] . '" required>') : (''); ?>
 
         `;
