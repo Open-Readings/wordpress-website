@@ -275,6 +275,7 @@ function generate_abstract()
                 echo 'Export completed::0';
             else
                 echo 'Export failed::1';
+            
         }
     }
 }

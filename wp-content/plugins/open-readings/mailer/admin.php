@@ -18,6 +18,7 @@ class ORmailerAdmin
         add_action('admin_menu', array($this, 'add_admin_pages'));
 
         add_action('admin_init', array($this, 'add_option_groups'));
+
     }
 
 
@@ -35,6 +36,7 @@ class ORmailerAdmin
 
     function add_option_groups()
     {
+        register_setting('or_mailer_options', 'or_mailer_api_key');
     }
 
     function admin_index()
@@ -54,9 +56,5 @@ class ORmailerAdmin
     }
 
 }
-
-
-
-
 
 ?>
