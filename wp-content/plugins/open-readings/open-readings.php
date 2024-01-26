@@ -197,11 +197,8 @@ function enqueue_form_fill_script() {
   if (did_action('wp_loaded') > 1){
     return;
   }
-  if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
-    require_once(__DIR__ . '/registration/begin-session.php');
-  }
+  require_once(__DIR__ . '/registration/begin-session.php');
 }
-  
 add_action('wp_loaded', 'enqueue_form_fill_script');
 
 function my_custom_function() {

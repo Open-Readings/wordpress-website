@@ -5,6 +5,8 @@ error_reporting(0);
 
 function check_abstract_fields()
 {
+    
+
     $title_length = 200;
     $field_group = [
         ['name', 'Author name', 200, '/[^\\p{L}\-.,;() ]/u'],
@@ -12,7 +14,7 @@ function check_abstract_fields()
         ['email-author', 'Corresponding author email', 100, ''],
         ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
         ['textArea', 'Abstract content', 3000, ''],
-        ['references', 'Reference', 200, '/[^\\p{L}0-9 <>.,()\-&:;!$]/u']
+        ['references', 'Reference', 1000, '']
     ];
 
 
@@ -32,7 +34,7 @@ function check_abstract_fields()
             }
         } else {
             $field = $_POST[$item[0]];
-            if (mb_strlen($field) > $item[2]) {
+            if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
                 return $item[1] . ": field input too long";
             }
             if ($item[3] != '') if (preg_match($item[3], $field)) {
@@ -46,7 +48,7 @@ function check_abstract_fields()
     $title = $_POST['form_fields']['abstract_title'];
     if (mb_strlen($title) > $title_length) {
         return "Title field input too long";
-    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;()*\-.\/]/u', $title)) {
+    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;:()*\-.\/]/u', $title)) {
         return "Title field: special characters not allowed in field.";
     } else if (trim($title) == '') {
         return "Abstact title: detected empty field.";
@@ -94,9 +96,11 @@ function generate_abstract()
             $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
 
         \usepackage{amsmath}
+        
         \usepackage{lmodern}
         \usepackage{graphicx}
         \usepackage[utf8]{inputenc}
+        \usepackage[T1]{fontenc}
         \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
         \usepackage{tikz}
         \usepackage{float}
@@ -174,7 +178,7 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=<>;\/]/', '', $titleField);
+            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=.:,<>;\/]/', '', $titleField);
 
 
             //find fist <sup> or <sub> tag
@@ -185,55 +189,55 @@ function generate_abstract()
             $sup_ending_tag = '</sup>';
             $layers = 0;
             $is_in_math_mode = false;
-            for ($i = 0; $i < strlen($titleField); $i++) {
-                if (substr($titleField, $i, strlen($sup_starting_tag)) == $sup_starting_tag) {
+            for ($i = 0; $i < mb_strlen($titleField); $i++) {
+                if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
                     $sup_starting_tag_index = $i;
                     $layers++;
                     if ($layers == 1) {
-                        $titleField = substr_replace($titleField, '$^{', $sup_starting_tag_index, strlen($sup_starting_tag));
+                        $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
                     } else {
                         //replace <sup> with $^{
-                        $titleField = substr_replace($titleField, '^{', $sup_starting_tag_index, strlen($sup_starting_tag));
+                        $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
                     }
-                    $i -= strlen($sup_starting_tag);
+                    $i -= mb_strlen($sup_starting_tag);
                 }
-                if (substr($titleField, $i, strlen($sub_starting_tag)) == $sub_starting_tag) {
+                if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
                     $sub_starting_tag_index = $i;
                     $layers++;
                     if ($layers == 1) {
-                        $titleField = substr_replace($titleField, '$_{', $sub_starting_tag_index, strlen($sub_starting_tag));
+                        $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
                     } else {
                         //replace <sub> with $_{
-                        $titleField = substr_replace($titleField, '_{', $sub_starting_tag_index, strlen($sub_starting_tag));
+                        $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
                     }
-                    $i -= strlen($sup_starting_tag);
+                    $i -= mb_strlen($sup_starting_tag);
 
                 }
 
-                if (substr($titleField, $i, strlen($sub_ending_tag)) == $sub_ending_tag) {
+                if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
                     $sub_ending_tag_index = $i;
                     $layers--;
                     if ($layers == 0) {
                         //replace </sub> with }$
-                        $titleField = substr_replace($titleField, '}$', $sub_ending_tag_index, strlen($sub_ending_tag));
+                        $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
                     } else {
                         //replace </sub> with }$
-                        $titleField = substr_replace($titleField, '}', $sub_ending_tag_index, strlen($sub_ending_tag));
+                        $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
                     }
                     //replace </sub> with }$
-                    $i -= strlen($sup_starting_tag);
+                    $i -= mb_strlen($sup_starting_tag);
                 }
-                if (substr($titleField, $i, strlen($sup_ending_tag)) == $sup_ending_tag) {
+                if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
                     $sup_ending_tag_index = $i;
                     $layers--;
                     if ($layers == 0) {
                         //replace </sup> with }$
-                        $titleField = substr_replace($titleField, '}$', $sup_ending_tag_index, strlen($sup_ending_tag));
+                        $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
                     } else {
                         //replace </sup> with }$
-                        $titleField = substr_replace($titleField, '}', $sup_ending_tag_index, strlen($sup_ending_tag));
+                        $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
                     }
-                    $i -= strlen($sup_starting_tag);
+                    $i -= mb_strlen($sup_starting_tag);
                 }
 
             }
@@ -241,6 +245,7 @@ function generate_abstract()
 
 
             $titleField = str_replace('&nbsp;', '', $titleField);
+
 
             $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
         \\vspace{-0.8cm}";

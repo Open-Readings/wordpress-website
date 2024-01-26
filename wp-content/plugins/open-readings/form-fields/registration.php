@@ -319,9 +319,9 @@ class OpenReadingsRegistration
         global $wpdb;
         $table_name = $wpdb->prefix . get_option('or_registration_database_table');
 
-        $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, presentation_id = %s, agrees_to_email = %d WHERE hash_id = %s';
+        $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, presentation_id = %s, agrees_to_email = %d, title = %s WHERE hash_id = %s';
 
-        $query = $wpdb->prepare($query, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $hash_id);
+        $query = $wpdb->prepare($query, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $person_data->title, $hash_id);
 
         $result = $wpdb->query($query);
         if ($result === false) {
@@ -433,6 +433,12 @@ class OpenReadingsRegistration
         }
         if ($contact_exists == false)
             return "Corresponding author email not set";
+
+        $generated_files_dir = WP_CONTENT_DIR . '/latex/' . $session_id . '';
+        $pdf = $generated_files_dir . '/abstract.pdf';
+        if (!file_exists($pdf) || $_SESSION['exists'] == 0) {
+            return 'Please generate your abstract before submitting';
+        }
 
         return true;
     }

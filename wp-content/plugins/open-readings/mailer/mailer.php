@@ -33,9 +33,8 @@ class ORmailer
         }
         $message = str_replace('[content]', $content, $template);
         $headers = array('
-        Content-Type: text/html; charset=UTF-8
-        From: Open Readings 2024 <info@openreadings.eu>
-        '
+        Content-Type: text/html; charset=UTF-8',
+        'From: Open Readings 2024 <it@openreadings.eu>'
         );
         return wp_mail($to, $subject, $message, $headers);
 

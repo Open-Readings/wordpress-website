@@ -368,17 +368,17 @@ class OpenReadingsRegistration
             ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
             ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
             ['email', 'Email', 100, ''],
+            ['institution', 'Institution', 300, '/[^\\p{L}(),.\- ]/u'],
+            ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
+            ['department', 'Department', 300, '/[^\\p{L}()-,. ]/u'],
             ['institution', 'Institution', 200, '/[^\\p{L}(),.\- ]/u'],
             ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
             ['department', 'Department', 200, '/[^\\p{L}()-,. ]/u'],
-            ['institution', 'Institution', 200, '/[^\\p{L}(),.\- ]/u'],
-            ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
-            ['department', 'Department', 200, '/[^\\p{L}()-,. ]/u'],
-            ['research_area', 'Research area', 200, '/[^\\p{L} ,]/u'],
+            ['research_area', 'Research area', 300, '/[^\\p{L} ,]/u'],
             ['person_title', 'Person title', 200, ''],
             ['title', 'Presentation title', 300, ''],
-            ['affiliations', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
-            ['references', 'Abstract references', 200, '/[^\\p{L}0-9 .,<>()\-&:;!$]/u'],
+            ['affiliations', 'Affiliation', 300, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
+            ['references', 'Abstract references', 1000, ''],
             ['abstract', 'Abstract content', 3000, '']
         ];
         foreach ($field_group_one as $item) {
@@ -396,7 +396,7 @@ class OpenReadingsRegistration
                 }
             } else {
                 $field = $registration_data->{$item[0]};
-                if (mb_strlen($field) > $item[2]) {
+                if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
                     return $item[1] . ": field input too long";
                 }
                 if ($item[3] != '') if (preg_match($item[3], $field)) {
