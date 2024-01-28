@@ -224,3 +224,21 @@ function my_custom_function()
   require_once(__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'my_custom_function');
+
+function first_evaluation_page() {
+  // Include the file with your HTML content
+  include plugin_dir_path(__FILE__) . 'registration/admin/registration-first-evaluation.php';
+}
+
+function registration_first_evaluation_menu() {
+	add_menu_page( 'First Evaluation', 'First Evaluation', 'manage_options', 'registration/admin/registration-first-evaluation.php', 'first_evaluation_page', 'dashicons-trash', 6  );
+	// add_submenu_page( 'registration/registration-first-evaluation.php', 'My Sub Level Menu Example', 'Sub Level Menu', 'manage_options', 'myplugin/myplugin-admin-sub-page.php', 'myplguin_admin_sub_page' ); 
+}
+
+add_action( 'admin_menu', 'registration_first_evaluation_menu' );
+
+include_once(__DIR__ . '/registration/admin/registration-functions.php');
+
+
+add_action('wp_ajax_evaluation', 'evaluation');
+// Add more action registrations as needed

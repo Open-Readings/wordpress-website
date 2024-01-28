@@ -16,6 +16,11 @@ registration_settings();
     populate_database_button();
     ?>
 </form>
+<form method="POST">
+    <?php
+    update_evaluation_table_button();
+    ?>
+</form>
 
 
 <?php
@@ -24,7 +29,7 @@ registration_settings();
 
 function populate_database_button()
 {
-    echo '<button type="submit" name="populate-database" class="button button-primary">Populate Database</button>';
+    echo '<button type="submit" name="populate-database" class="button button-primary">Populate Database</button><br><br>';
 
 }
 
@@ -183,6 +188,84 @@ function populate_database()
 
 }
 
+function update_evaluation_table_button()
+{
+    echo '<button type="submit" name="update-evaluation-table" class="button button-primary">Update Evaluation Table</button>';
+
+}
+
+if (isset($_POST['update-evaluation-table'])) {
+    update_evaluation_table();
+}
+
+function update_evaluation_table()
+{
+    global $wpdb;
+    $evaluation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_evaluation';
+
+    $evaluation_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$evaluation_table_name'") == $evaluation_table_name;
+
+    $evaluation_fields = [
+        'evaluation_hash_id',
+        'evaluation_id',
+        'status'
+    ];
+
+
+    $evaluation_data_sql = [
+        "evaluation_hash_id" => "varchar(255) NOT NULL, PRIMARY KEY (hash_id)",
+        "evaluation_id" => "varchar(255) NOT NULL",
+        "status" => "int(11) NOT NULL",
+    ];
+    $presentation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
+    if (!$evaluation_table_exists) {
+        $wpdb->query("CREATE TABLE $evaluation_table_name (
+            evaluation_hash_id varchar(255) NOT NULL, 
+            evaluation_id varchar(255) NOT NULL, 
+            PRIMARY KEY (evaluation_id),
+            status int(11) NOT NULL
+            )");
+    } else {
+        //check if the person table has the correct columns
+        $evaluation_columns = $wpdb->get_col("DESC $evaluation_table_name", 0);
+
+        $evaluation__columns = array_map('strtolower', $evaluation_columns);
+        $evaluation_fields = array_map('strtolower', $evaluation_fields);
+        foreach ($evaluation_fields as $field) {
+            if (!in_array($field, $evaluation_columns)) {
+                $wpdb->query("ALTER TABLE $evaluation_table_name ADD `$field` $evaluation_data_sql[$field]");
+            } else {
+                $wpdb->query("ALTER TABLE $evaluation_name MODIFY `$field` $evaluation_data_sql[$field]");
+            }
+
+
+        }
+        $presentation_table_results = $wpdb->get_col("SELECT presentation_id FROM $presentation_table_name");
+
+        foreach($presentation_table_results as $result){
+            $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE presentation_id = %s", $result));
+
+            if (!$exists_in_evaluation_table) {
+                $asd;
+                $evaluation_id = md5($result);
+                $query = '
+                INSERT INTO ' . $evaluation_table_name . '
+                (evaluation_hash_id, evaluation_id, status, checker_name)
+                VALUES (%s, %s, %d, %s)
+                ';
+        
+                $query = $wpdb->prepare($query, $result, $evaluation_id, 0, 'rimantas');
+                $_ = $wpdb->query($query);
+            }
+        }
+    }
+    // $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $presentation_table_name (presentation_id)");
+
+    echo '<div class="notice notice-success"><p>Evaluation table populated</p></div>';
+
+}
+
+
 function registration_settings()
 {
 
@@ -198,7 +281,7 @@ function registration_settings()
         'or_registration_database_table',
         'or_registration_max_images'
     );
-    add_allowed_options($allowed_options);
+    add_allowed_options(array($allowed_options));
 
 
 }
