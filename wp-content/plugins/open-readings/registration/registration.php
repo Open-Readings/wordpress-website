@@ -377,7 +377,7 @@ class OpenReadingsRegistration
             ['research_area', 'Research area', 300, '/[^\\p{L} ,]/u'],
             ['person_title', 'Person title', 200, ''],
             ['title', 'Presentation title', 300, ''],
-            ['affiliations', 'Affiliation', 300, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
+            ['affiliations', 'Affiliation', 300, ''],
             ['references', 'Abstract references', 1000, ''],
             ['abstract', 'Abstract content', 3000, '']
         ];

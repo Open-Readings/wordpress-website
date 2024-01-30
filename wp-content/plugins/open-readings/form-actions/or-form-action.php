@@ -60,12 +60,12 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
 
 
 
-        $registration->first_name = preg_replace('/[^\\p{L} ]/u', '', $fields['firstname']);
-        $registration->last_name = preg_replace('/[^\\p{L} ]/u', '', $fields['lastname']);
+        $registration->first_name = preg_replace('/[^\\p{L}.\- ]/u', '', $fields['firstname']);
+        $registration->last_name = preg_replace('/[^\\p{L}.\- ]/u', '', $fields['lastname']);
         $registration->email = $fields['email'];
-        $registration->institution = preg_replace('/[^\\p{L} ]/u', '', $fields['institution']);
+        $registration->institution = preg_replace('/[^\\p{L},.()\- ]/u', '', $fields['institution']);
         $registration->country = $fields['country'];
-        $registration->department = preg_replace('/[^\\p{L} ]/u', '', $fields['department']);
+        $registration->department = preg_replace('/[^\\p{L},.()\- ]/u', '', $fields['department']);
 
         $registration->title = $fields['abstract_title'];
         $registration->person_title = $fields['person_title'];
@@ -112,19 +112,18 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $pdf = str_replace(WP_CONTENT_DIR, WP_CONTENT_URL, $pdf);
         $registration->pdf = $pdf;
 
-        if(isset($_POST['references'])){
+        if (isset($_POST['references'])) {
             $reference_array = $_POST['references']; //array su reference'ais is eiles
             $references = [];
             foreach ($reference_array as $reference) {
                 $references[] = $reference;
-        }
-        }
-        else{
+            }
+        } else {
             $reference_array = [];
             $references = [];
         }
 
-        
+
         $registration->references = $references;
 
         $aggregated_authors_array = array();
@@ -144,11 +143,10 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $registration->session_id = $session_id;
 
         global $or_registration_controller;
-        if(isset($_SESSION['update'])){
+        if (isset($_SESSION['update'])) {
             $registration->presentation_id = $_SESSION['presentation_id'];
             $result = $or_registration_controller->update($registration, $_SESSION['hash']);
-        }
-        else{
+        } else {
             $result = $or_registration_controller->register($registration);
         }
         if (is_wp_error($result)) {

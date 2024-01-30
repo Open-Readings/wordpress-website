@@ -1,91 +1,90 @@
 <?php
-use MailerSend\MailerSend;
-use MailerSend\Helpers\Builder\Attachment;
-use MailerSend\Helpers\Builder\Recipient;
-use MailerSend\Helpers\Builder\EmailParams;
 
 
 
-require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
 
-function sendBulkEmail($apiKey, $recipients, $subject, $content, $attachments)
+
+if (isset($_POST['send_emails'])) {
+    SendEmails();
+}
+
+
+
+
+
+
+function fetch_registered_emails()
 {
-    $mailersend = new MailerSend(['api_key' => $apiKey]);
 
-    $email = (new EmailParams())
-        ->setFrom('info@openreadings.eu')
-        ->setFromName('Open Readings 2024')
-        ->setRecipients($recipients)
-        ->setSubject($subject)
-        ->setHtml($content);
-    if (!empty($attachments)) {
-        $email->setAttachments($attachments);
+    global $wpdb;
+    $table_name = $wpdb->prefix . get_option('or_registration_database_table');
+    ;
+    $query_result = $wpdb->get_results("SELECT DISTINCT email FROM $table_name");
+    $emails = array();
+    foreach ($query_result as $row) {
+        array_push($emails, $row->email);
     }
-    $bulkEmailParams[] = $email;
+    return $emails;
 
-    $mailersend->bulkEmail->send($bulkEmailParams);
+
 
 }
 
-// Function to get bulk email status
-function getBulkEmailStatus($apiKey, $bulkEmailId)
-{
-    $mailersend = new MailerSend(['api_key' => $apiKey]);
 
-    $status = $mailersend->bulkEmail->getStatus($bulkEmailId);
-
-    // Process the status as needed
-    // For example, you can echo the status or return it for further use
-    echo 'Bulk Email Status: ' . $status;
-}
 
 
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+function SendEmails()
+{
     // Process the form data
     $subject = $_POST["subject"];
     $recipients = $_POST["recipients"];
-    $attachmentName = $_POST["attachment_name"];
-    $attachmentList = $_POST["attachment_list"];
-    $replaceWith = $_POST["replace_with"];
     $message = $_POST["message"];
-    $attachment = $_POST["attachment"];
+
+    // transform the string to remove any \ characters
     $useTemplate = isset($_POST["use_template"]) ? $_POST["use_template"] : "No"; // Default to "No" if not set
 
     // Extracted from the provided code snippets
-    $apiKey = get_option("or_mailer_api_key");
     $all_recipients = explode('\n', $_POST['recipients']);  // Replace with your actual API key
-    $recipients = [];
-    for ($i = 0; $i < count($all_recipients); $i++) {
-        $recipients[] = (new Recipient($all_recipients[$i], $all_recipients));
-    }
-    $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_email_template.html');
-    $attachments = [];
-    if ($useTemplate == "Yes") {
-        // Replace the placeholders in the template with the actual values
-        $content = str_replace("[content]", $message, $template);
-    } else {
-        $content = $message;
+
+    global $or_mailer;
+    global $wpdb;
+
+
+    $sent_counter = 0;
+
+    if (!empty($_POST['send_to_registered']) && $_POST['send_to_registered'] == 'Yes') {
+        $registered_emails = fetch_registered_emails();
+        $all_recipients = array_merge($all_recipients, $registered_emails);
     }
 
-    echo '<script>alert("Sending email...")</script>';
-    // Handle file uploads
-    if (!empty($_FILES['attachments']['name'][0])) {
-        foreach ($_FILES['attachments']['name'] as $key => $file_name) {
-            $file_tmp = $_FILES['attachments']['tmp_name'][$key];
-            $file_size = $_FILES['attachments']['size'][$key];
+    foreach ($all_recipients as $email) {
+        $email = trim($email);
+        $query_result = $wpdb->query("SELECT * FROM wp_or_mailer WHERE mail = '$email'");
+        if ($query_result == 0) {
 
-            $attachment = new Attachment(file_get_contents($file_tmp), $file_name);
-            $attachments[] = $attachment;
+            $wpdb->insert('wp_or_mailer', array('mail' => $email));
         }
+        $email_was_sent = $wpdb->get_results("SELECT is_sent FROM wp_or_mailer WHERE mail = '$email'");
+        if ($email_was_sent[0]->is_sent == 0) {
+            $result = $or_mailer->send_OR_mail($email, $subject, stripslashes($message));
+            if ($result) {
+                $wpdb->update('wp_or_mailer', array('is_sent' => 1), array('mail' => $email));
+                $sent_counter++;
+            } else {
+                $wpdb->update('wp_or_mailer', array('is_sent' => 0), array('mail' => $email));
+            }
+        }
+
+
+
+
+
+
     }
 
-    // Assuming you want to send bulk email on form submission
-    //sendBulkEmail($apiKey, $recipients, $subject, $content, $attachments);
+    echo '<script>alert("Sent ' . $sent_counter . ' emails out of ' . count($all_recipients) . '")</script>';
 
-    echo '<script>alert("Email sent successfully")</script>';
-    // You can also get the status of the bulk email if needed
-    //getBulkEmailStatus($apiKey, 'bulk_email_id');
 }
 ?>
 
@@ -159,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    <form method="post">
         <h2>Mailer Admin</h2>
 
         <label for="subject">Subject:</label>
@@ -171,14 +170,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="message">Message:</label>
         <textarea name="message" required></textarea>
 
-        <label for="attachment">Attachment:</label>
-        <input type="file" name="attachment">
-
         <label for="use_template">Use Template?</label>
         <input type="checkbox" name="use_template" value="Yes">
 
+        <label for="send_to_registered">Send to all registered?</label>
+        <input type="checkbox" name="send_to_registered" value="Yes">
 
-        <button type="submit">Send</button>
+        <button type="submit" name="send_emails">Send</button>
     </form>
 
 </body>

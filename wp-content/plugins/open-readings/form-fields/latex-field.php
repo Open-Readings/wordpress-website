@@ -53,7 +53,7 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
         <input class="hidden" value= "' . $folder . '" name="session_id"/>
         <div class="latex-half-div">   
                     <textarea id="textArea" spellcheck="false" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '" required>' . $item['latex_default_value'] . '</textarea>
-                    <pre class="pre-style"><code class="language-latex code-style" id="display-latex-code">
+                    <pre id="latexResult" class="pre-style"><code class="language-latex code-style" id="display-latex-code">
 \begin{equation}
 \int = abc
 \end{equation}
@@ -72,6 +72,50 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
             <iframe class="pdf-frame" id="abstract" src="' . content_url() . '/latex/abstract.pdf#toolbar=0' . '"></iframe>
         </div>
         </div>';
+        ?>
+        <script>
+
+            var pre_element = document.getElementById("latexResult");
+            var text_area = document.getElementById("textArea");
+
+            // Store the original size of the text_area
+            var originalSize = {
+                width: text_area.offsetWidth,
+                height: text_area.offsetHeight
+            };
+
+            // Create a new ResizeObserver instance
+            var resizeObserver = new ResizeObserver(function (entries) {
+                // Loop over the entries
+                entries.forEach(function (entry) {
+                    // If the size has not changed, do nothing
+                    if (entry.contentRect.width === originalSize.width && entry.contentRect.height === originalSize.height) {
+                        return;
+                    }
+
+                    // Get the computed style of the text_area
+                    var style = window.getComputedStyle(text_area);
+
+                    // Calculate the scrollbar width
+
+                    var marginLeft = parseFloat(style.paddingLeft);
+                    var marginRight = parseFloat(style.paddingRight);
+                    var marginTop = parseFloat(style.paddingTop);
+                    var marginBottom = parseFloat(style.paddingBottom);
+
+                    // Update the size of pre_element to match text_area, excluding margins
+                    pre_element.style.width = (entry.contentRect.width + marginLeft + marginRight + 2) + "px";
+                    pre_element.style.height = (entry.contentRect.height + marginTop + marginBottom + 2) + "px";
+                });
+            });
+
+            // Start observing the text_area element
+            resizeObserver.observe(text_area);
+
+        </script>
+
+
+        <?php
     }
 
     public function update_controls($widget)
