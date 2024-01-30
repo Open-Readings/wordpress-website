@@ -36,7 +36,11 @@ function register_or_dependencies()
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
-  wp_register_style('latex-field-style', plugins_url('assets/css/latex-field-style.css', __FILE__));
+
+  $css_path = plugin_dir_path(__FILE__) . 'assets/css/latex-field-style.css';
+  wp_register_style('latex-field-style', plugins_url('assets/css/latex-field-style.css', __FILE__), array(), filemtime($css_path));
+
+
   wp_register_script('highlight-js', plugins_url('assets/js/highlight.js', __FILE__));
   wp_register_script('latex-min-js', plugins_url('assets/js/latex.min.js', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
@@ -141,9 +145,9 @@ function add_new_form_actions($form_actions_registrar)
 
   require_once(__DIR__ . '/form-actions/or-form-action.php');
   require_once(__DIR__ . '/form-actions/custom-form.php');
-  require_once(__DIR__ . '/form-actions/or-update-form.php');
+  //require_once(__DIR__ . '/form-actions/or-update-form.php');
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
-  $form_actions_registrar->register(new \ORUpdateFormAction());
+  //$form_actions_registrar->register(new \ORUpdateFormAction());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
 

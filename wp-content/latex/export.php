@@ -5,14 +5,14 @@ error_reporting(0);
 
 function check_abstract_fields()
 {
-    
+
 
     $title_length = 200;
     $field_group = [
         ['name', 'Author name', 200, '/[^\\p{L}\-.,;() ]/u'],
         ['aff_ref', 'Affiliation number', 200, '[0-9, ]*'],
         ['email-author', 'Corresponding author email', 100, ''],
-        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*:;!$]/u'],
+        ['affiliation', 'Affiliation', 200, '/[^\\p{L}0-9 <>.,()\-&*":;!$]/u'],
         ['textArea', 'Abstract content', 3000, ''],
         ['references', 'Reference', 1000, '']
     ];
@@ -48,7 +48,7 @@ function check_abstract_fields()
     $title = $_POST['form_fields']['abstract_title'];
     if (mb_strlen($title) > $title_length) {
         return "Title field input too long";
-    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;:()*\-.\/]/u', $title)) {
+    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;:(){}$*\-.\/]/u', $title)) {
         return "Title field: special characters not allowed in field.";
     } else if (trim($title) == '') {
         return "Abstact title: detected empty field.";
@@ -178,7 +178,6 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&\-+()=.:,<>;\/]/', '', $titleField);
 
 
             //find fist <sup> or <sub> tag
@@ -268,6 +267,7 @@ function generate_abstract()
                 error_log($filename . " creation failed");
             }
             $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+
             $_SESSION['generating'] = 0;
             $_SESSION['exists'] = 1;
 
@@ -275,7 +275,7 @@ function generate_abstract()
                 echo 'Export completed::0';
             else
                 echo 'Export failed::1';
-            
+
         }
     }
 }

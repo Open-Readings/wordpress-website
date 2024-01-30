@@ -32,9 +32,9 @@ class ORmailer
             $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_email_template.html');
         }
         $message = str_replace('[content]', $content, $template);
-        $headers = array('
-        Content-Type: text/html; charset=UTF-8',
-        'From: Open Readings 2024 <it@openreadings.eu>'
+        $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+            'From: Open Readings 2024 <it@openreadings.eu>'
         );
         return wp_mail($to, $subject, $message, $headers);
 

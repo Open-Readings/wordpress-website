@@ -1,5 +1,5 @@
 .abc {
-    color:red;
+    color: red;
 }
 
 .registration-selection {
@@ -9,13 +9,16 @@
     width: 500px;
 }
 
-.registration-dropdown-element, .registration-dropdown-element:hover, .registration-dropdown-element:active , .registration-dropdown-element:focus {
+.registration-dropdown-element,
+.registration-dropdown-element:hover,
+.registration-dropdown-element:active,
+.registration-dropdown-element:focus {
     background-color: transparent;
     color: #555;
 }
 
 .registration-li:nth-child(n+5) {
-    display:none;
+    display: none;
 }
 
 .latex-flex {
@@ -23,77 +26,93 @@
 }
 
 .latex-half-div {
-    width:100%;
+    width: 100%;
 }
 
 .latex-abstract-content {
-    height:1000px;
+    height: 1000px;
 }
 
 .generate-button {
     display: flex;
 }
 
-.flex-div{
-    display:inline-flex;
+.flex-div {
+    display: inline-flex;
     vertical-align: middle;
 }
 
 .latex-error {
-    color:white;
+    color: white;
     font-weight: bold;
     background-color: #272727;
     max-height: 600px;
-    display:none;
+    display: none;
 }
 
 .pre-style {
-    padding:0;
+    padding: 0;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
     position: absolute;
     top: 0;
+    /* padding: 3px 5px; */
     left: 0;
     width: 100%;
-    height:500px;
+    height: 500px;
     z-index: 1;
     background-color: white;
-    margin:0;
-    margin:5px;
+    font-size: 0.8rem;
+    margin: 0;
 }
 
 .code-style {
-    padding:3px 5px;
+    /* padding: 3px 5px; */
     margin: 0;
     white-space: pre-wrap;
+
     overflow-wrap: break-word;
     overflow: auto;
-    height:500px;
-    margin:0px;
+    font-size: 0.8rem;
+    width: 100%;
+    /* height: 500px; */
     margin: 0;
 }
 
-.test-style{
+
+code span {
+    font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+}
+
+.test-style {
     font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
     white-space: pre-wrap;
     overflow-wrap: break-word;
+    overflow: auto;
     font-size: 0.8rem;
     position: absolute;
     top: 0;
     left: 0;
+    min-width: 300px;
+    min-height: 100px;
+    max-width: 1000px;
+    max-height: 1000px;
     width: 100%;
     height: 500px;
     background-color: transparent;
     z-index: 2;
-    caret-color: black; /* Set the cursor color */
+    caret-color: black;
+    /* Set the cursor color */
     cursor: text;
-    padding:3px 5px;
-    margin:5px;
-    color:transparent;
-    padding-right: 17px;
+    padding: 3px 5px;
+    margin: 0;
+    color: transparent;
+    padding-right: 15px;
 
 }
-.test-style:focus{
-    color:transparent;
+
+.test-style:focus {
+    color: transparent;
 }
 
 .margin-absolute {
@@ -107,17 +126,29 @@
     border-top: 5px solid #2386f3;
     width: 33px;
     height: 33px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
+    -webkit-animation: spin 2s linear infinite;
+    /* Safari */
     animation: spin 2s linear infinite;
-    vertical-align:middle;
-    display:none;
-  }
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+    vertical-align: middle;
+    display: none;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
