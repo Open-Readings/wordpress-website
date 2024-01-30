@@ -19,6 +19,7 @@ registration_settings();
 
 <?php
 
+
 function registration_settings()
 {
 

@@ -60,6 +60,13 @@ function register_or_dependencies()
 
 add_action('wp_enqueue_scripts', 'register_or_dependencies');
 
+function register_evaluation_styles(){
+  wp_register_style('registration-evaluation-style', plugins_url('assets/css/evaluation-style.css', __FILE__));
+}
+
+add_action('admin_enqueue_scripts', 'register_evaluation_styles');
+
+
 function register_faq_controls($controls_manager)
 {
   require_once(__DIR__ . '/controls/faq-controls.php');

@@ -208,7 +208,8 @@ function update_evaluation_table()
     $evaluation_fields = [
         'evaluation_hash_id',
         'evaluation_id',
-        'status'
+        'status',
+        'checker_name'
     ];
 
 
@@ -216,6 +217,8 @@ function update_evaluation_table()
         "evaluation_hash_id" => "varchar(255) NOT NULL, PRIMARY KEY (hash_id)",
         "evaluation_id" => "varchar(255) NOT NULL",
         "status" => "int(11) NOT NULL",
+        "checker_name" => "varchar(255)",
+
     ];
     $presentation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
     if (!$evaluation_table_exists) {
@@ -223,7 +226,8 @@ function update_evaluation_table()
             evaluation_hash_id varchar(255) NOT NULL, 
             evaluation_id varchar(255) NOT NULL, 
             PRIMARY KEY (evaluation_id),
-            status int(11) NOT NULL
+            status int(11) NOT NULL,
+            checker_name varchar(255)
             )");
     } else {
         //check if the person table has the correct columns
