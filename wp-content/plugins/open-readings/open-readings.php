@@ -52,6 +52,8 @@ function register_or_dependencies()
   wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
   wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__));
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
+  wp_register_script('jquery-js', plugins_url('assets/js/jquery-3.6.4.min.js', __FILE__));
+
 
   $data_to_pass = array(
     'path' => content_url(),

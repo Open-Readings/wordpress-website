@@ -105,6 +105,7 @@ function generate_abstract()
         \usepackage{tikz}
         \usepackage{float}
         \usepackage{blindtext}
+        \usepackage{microtype}
         \usepackage[1]{pagesel}
         \graphicspath{ {images/} }
         \usepackage{indentfirst}
