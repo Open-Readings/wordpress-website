@@ -94,7 +94,7 @@ function generate_abstract()
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
-
+        
         \usepackage{amsmath}
         
         \usepackage{lmodern}
@@ -117,6 +117,7 @@ function generate_abstract()
         \renewcommand{\fnum@figure}{Fig. \thefigure :}
         \makeatother
         \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
+        \captionsetup{font=footnotesize}
         \begin{document}
         ';
 
@@ -160,12 +161,28 @@ function generate_abstract()
         ';
 
 
-            $references = '';
+        if(isset($_POST['references'])){
+            $references = '
+            \vfill
+            \hrule
+            \begingroup
+        \renewcommand{\section}[2]{}%
+            \begin{thebibliography}{}
+            
+            
+            ';
             $i = 1;
             foreach ($_POST['references'] as $ref) {
-                $references = $references . '\setcounter{footnote}{' . $i . '} ' . '\footnotetext{' . $ref . '}
+               $references .= '\bibitem{' . $i . '} ' . $ref . '
+               
+               ';
+               $i++;
+            }
+            $references .= '\end{thebibliography}
+            \endgroup
             ';
-                $i++;
+        } else{
+                $references = '';
             }
 
 

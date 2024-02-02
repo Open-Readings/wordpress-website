@@ -209,7 +209,11 @@ function update_evaluation_table()
         'evaluation_hash_id',
         'evaluation_id',
         'status',
-        'checker_name'
+        'email_content',
+        'checker_name',
+        'current_user',
+        'evaluation_date',
+        'update_date'
     ];
 
 
@@ -217,7 +221,12 @@ function update_evaluation_table()
         "evaluation_hash_id" => "varchar(255) NOT NULL, PRIMARY KEY (hash_id)",
         "evaluation_id" => "varchar(255) NOT NULL",
         "status" => "int(11) NOT NULL",
+        "email_content" => "varchar(255)",
         "checker_name" => "varchar(255)",
+        "current_user" => "varchar(255)",
+        "evaluation_date" => "GETDATE()",
+        "update_date" => "GETDATE()",
+        "latex_error" => "varchar(255)"
 
     ];
     $presentation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
@@ -227,7 +236,12 @@ function update_evaluation_table()
             evaluation_id varchar(255) NOT NULL, 
             PRIMARY KEY (evaluation_id),
             status int(11) NOT NULL,
-            checker_name varchar(255)
+            email_content varchar(255),
+            checker_name varchar(255),
+            `current_user` varchar(255),
+            evaluation_date datetime,
+            update_date datetime,
+            latex_error varchar(255)
             )");
     } else {
         //check if the person table has the correct columns
@@ -254,16 +268,16 @@ function update_evaluation_table()
                 $evaluation_id = md5($result);
                 $query = '
                 INSERT INTO ' . $evaluation_table_name . '
-                (evaluation_hash_id, evaluation_id, status, checker_name)
-                VALUES (%s, %s, %d, %s)
+                (evaluation_hash_id, evaluation_id, status)
+                VALUES (%s, %s, %d)
                 ';
         
-                $query = $wpdb->prepare($query, $result, $evaluation_id, 0, 'rimantas');
+                $query = $wpdb->prepare($query, $result, $evaluation_id, 0);
                 $_ = $wpdb->query($query);
             }
         }
     }
-    // $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $presentation_table_name (presentation_id)");
+    $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $presentation_table_name (presentation_id)");
 
     echo '<div class="notice notice-success"><p>Evaluation table populated</p></div>';
 

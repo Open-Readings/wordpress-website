@@ -1,0 +1,41 @@
+\documentclass[12pt, twoside, a4paper, hidelinks]{article}
+
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{blindtext}
+\usepackage[1]{pagesel}
+\graphicspath{ {images/} }
+\usepackage{indentfirst}
+\usepackage{caption}
+\usepackage{microtype}
+\captionsetup[table]{labelsep=period}
+\captionsetup[figure]{labelsep=space}
+\pagestyle{empty}
+\makeatletter
+\renewcommand{\fnum@figure}{Fig. \thefigure :}
+\makeatother
+\renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
+\captionsetup{font=footnotesize}
+
+\begin{document}
+
+\begin{center} \fontsize{14}{15}\selectfont \textbf{ ${title} } \end{center}
+\vspace{-0.8cm}
+
+\begin{center} \fontsize{12}{13}\selectfont ${authors} \end{center}
+\vspace{-.5cm}
+
+\begin{center} \fontsize{10}{11}\selectfont ${affiliations} \end{center}
+
+\fontsize{10}{11}\selectfont
+${content}
+
+${references}
+
+\end{document}
