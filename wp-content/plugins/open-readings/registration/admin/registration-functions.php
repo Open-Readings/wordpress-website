@@ -115,7 +115,7 @@ where email in
 (SELECT email
 FROM wp_or_registration
 GROUP BY email
-HAVING COUNT(email) > 0) and `current_user` is NULL and `status` = 0
+HAVING COUNT(email) = 1) and `current_user` is NULL and `status` = 0
 ORDER BY RAND()
 ");
 
