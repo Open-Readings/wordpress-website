@@ -93,7 +93,7 @@ function generate_abstract()
         $folder = $_SESSION['file'];
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
+            $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{amsart}
         
         \usepackage{amsmath}
         
@@ -142,7 +142,6 @@ function generate_abstract()
                 $i++;
             }
             $authors = $authors . ' \end{center}
-        \vspace{-.5cm}
 
         ';
 
@@ -157,7 +156,7 @@ function generate_abstract()
             }
             $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
          \end{center}
-
+        \vspace{.3cm}
         ';
 
 
@@ -265,10 +264,12 @@ function generate_abstract()
 
 
             $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
-        \\vspace{-0.8cm}";
+        ";
 
 
-            $abstractContent = '\fontsize{10}{11}\selectfont ' . $_POST["textArea"];
+            $abstractContent = '\fontsize{10}{11}\selectfont 
+            
+            ' . $_POST["textArea"];
 
 
             $endOfDocument = '

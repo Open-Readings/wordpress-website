@@ -115,7 +115,7 @@ where email in
 (SELECT email
 FROM wp_or_registration
 GROUP BY email
-HAVING COUNT(email) = 1) and `current_user` is NULL and `status` = 0
+HAVING COUNT(email) > 0) and `current_user` is NULL and `status` = 0
 ORDER BY RAND()
 ");
 
@@ -160,9 +160,9 @@ $wpdb->query(
     $_SESSION['e_saved'] = 0;
     $_SESSION['e_sent'] = 0;
 
-    $result['response'] = '<h1 class="red">' . $registration_row['first_name'] . ' ' . $registration_row['last_name'] . '</h1>';
+    $result['response'] = '<h1>' . $registration_row['first_name'] . ' ' . $registration_row['last_name'] . '</h1>';
     
-    $result['response'] .= '<div class="abstract-flex"><div class="abstract-left-div">';
+    $result['response'] .= '<div class="abstract-flex"><div class="abstract-left-div div-margin">';
 
    
 
@@ -202,11 +202,11 @@ $wpdb->query(
     }
 
     $reference_index = 0;
-    $result['response'] .= '<p>References<p>';
-    // if($presentation_row['references'] != NULL and count($presentation_row['references']) > 0) foreach(json_decode($presentation_row['references']) as $item){
-    //     $reference_index++;
-    //     $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="'. $item . '"></input></b><br>';
-    // }
+    $result['response'] .= '<p>References [if there are any]<p>';
+    if(json_decode($presentation_row['references']) != NULL) {foreach(json_decode($presentation_row['references']) as $item){
+        $reference_index++;
+        $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="'. $item . '"></input></b><br>';
+    }}
     $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">'. stripslashes($presentation_row['content']) . '</textarea><br>';
 
     $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail"></textarea><br>';
@@ -214,17 +214,17 @@ $wpdb->query(
 
     $result['response'] .= '</form>';
 
-    $result['response'] .= '<button class="button-style" id="send-accept">Accept & Email</button>';
-    $result['response'] .= '<button class="button-style" id="send-update">Ask to update</button>';
-    $result['response'] .= '<button class="button-style" id="send-reject">Reject & Email</button>';
+    $result['response'] .= '<button class="button-style g-button" id="send-accept">Accept & Email</button>';
+    $result['response'] .= '<button class="button-style b-button" id="send-update">Ask to update</button>';
+    $result['response'] .= '<button class="button-style r-button" id="send-reject">Reject & Email</button>';
 
-    $result['response'] .= '<div id="send-email"></div>';
+    $result['response'] .= '<div id="send-email" class="message-div"></div>';
 
 
 
-    $result['response'] .= '</div><div class="abstract-right-div">';
-    $result['response'] .= '<button class="button-style" id="generateButton">Generate</button>';
-    $result['response'] .= '<button class="button-style" id="saveButton">Save</button><div id="errorContainer"></div><div id="save-message"></div>';
+    $result['response'] .= '</div><div class="abstract-right-div div-margin">';
+    $result['response'] .= '<button class="button-style r-button" id="generateButton">Generate</button>';
+    $result['response'] .= '<button class="button-style r-button" id="saveButton">Save</button><div id="errorContainer"></div><div id="save-message"></div>';
 
     
 
@@ -344,7 +344,7 @@ function generate_abstract(){
     \vfill
     \hrule
     \begingroup
-\renewcommand{\section}[2]{}%
+    \renewcommand{\section}[2]{}%
     \begin{thebibliography}{}
     
     
@@ -359,7 +359,7 @@ function generate_abstract(){
     $references .= '\end{thebibliography}
     \endgroup
     ';
-} else{
+    } else{
         $references = '';
     }
 
@@ -481,16 +481,16 @@ function generate_abstract(){
 
     $logContent = file_get_contents($folder . '/abstract.log');
 
-// Check if '!' exists in the log content
+    // Check if '!' exists in the log content
     if (strpos($logContent, '!') !== false) {
         $position = mb_strpos($logContent, '!', 0, 'UTF-8');
 
         $cutString = mb_substr($logContent, $position, null, 'UTF-8');
         $result['error'] = '<pre id="pre-container" class="error-pre">' . htmlspecialchars($cutString) . '</pre>';
         $_SESSION['e_error'] = 1;
-} else {
-    $_SESSION['e_error'] = 0;
-}
+    } else {
+        $_SESSION['e_error'] = 0;
+    }
 
         return $result;
 
@@ -514,6 +514,28 @@ function send_update(){
         return $result;
     }
 
+    $update_text ='
+    <tr>
+    <td align="justify" style="padding:25px;">
+        <p>
+            Dear participant,<br><br>
+            You must make the following adjustments to your submission before we can send it to our programme committee for further evaluation: <br><br>
+            ' . $_POST['sendMail'] . '<br><br>
+
+            The reference ID of your registration:<br>
+            ' . $_SESSION['e_hash'] . '<br>
+            To update your submission please click <strong><a href="https://openreadings.eu/registration?id=' . $_SESSION['e_hash'] . '">HERE</a></strong><br><br>
+
+            Best regards, <br>
+            Open Readings team
+            <br>
+            <br>
+        </p>
+    </td>
+    </tr>
+    ';
+
+    global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
     $query = $wpdb->prepare($query, '2', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
@@ -525,7 +547,7 @@ function send_update(){
     }
     $_SESSION['e_sent'] = 1;
 
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Waiting for update', $_POST['sendMail']);
+    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Please Update Your Registration Details', $update_text);
 
     if($sent){
         $result['response'] = '<p class="e-green">Update email sent</p>';
@@ -552,6 +574,22 @@ function send_reject(){
         return $result;
     }
 
+    $rejected_text ='
+    <tr>
+    <td align="justify" style="padding:25px;">
+        <p>
+            Dear participant,<br><br>
+            We regret to inform you that your submission has not been accepted for the following reason:<br><br>' . $_POST['sendMail'] . '<br><br>
+
+            Best regards, <br>
+            Open Readings team
+            <br>
+            <br>
+        </p>
+    </td>
+    </tr>
+    ';
+
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
@@ -564,7 +602,7 @@ function send_reject(){
     }
     $_SESSION['e_sent'] = 1;
 
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Abstract rejected', $_POST['sendMail']);
+    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Registration Update', $rejected_text);
 
 
     if($sent){
@@ -588,18 +626,40 @@ function send_accept(){
         $result['response'] = '<p class="e-red">Please generate abstract</p>';
         return $result;
     } else if($_SESSION['e_saved'] == 0){
-        $result['response'] = '<p class="e-green">Please save the generated abstract</p>';
+        $result['response'] = '<p class="e-red">Please save the generated abstract</p>';
         return $result;
     }
 
-    $accepted_text = '<h1>nice work.</h1>';
+    $accepted_text ='
+    <tr>
+    <td align="justify" style="padding:25px;">
+        <p>
+            Dear participant,<br><br>
+            We would like to inform you that your submission has successfully passed our initial inspection and is now scheduled for review by our programme committee. We kindly request you to refrain from making any further modifications to your submission unless absolutely necessary.
+            Thank you for your contribution to our event.<br><br>
 
+            Best regards, <br>
+            Open Readings team
+            <br>
+            <br>
+        </p>
+    </td>
+    </tr>
+    ';
+
+    // $accepted_text = '
+    // <h1>Registration update</h1>
+    // <p>Dear participant,</p><br>
+    // <p>We would like to inform you that your submission has successfully passed our initial inspection and is now scheduled for review by our program committee. We kindly request you to refrain from making any further modifications to your submission unless absolutely necessary.</p>
+    // <p>Thank you for your contribution to our event.</p><br>
+    // <p>Best regards,</p>
+    // <p>Open Readings team</p>';
 
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
     
-    $query = $wpdb->prepare($query, '1', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
+    $query = $wpdb->prepare($query, '1', '', wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
     $db_result = $wpdb->query($query);
 
     if ($db_result === false){
@@ -607,7 +667,7 @@ function send_accept(){
         return $result;
     }
     $_SESSION['e_sent'] = 1;
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Abstract rejected', $accepted_text);
+    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Registration Update', $accepted_text);
 
     if($sent){
         $result['response'] = '<p class="e-green">Accept email sent</p>';

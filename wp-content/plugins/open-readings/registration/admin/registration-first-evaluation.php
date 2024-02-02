@@ -24,8 +24,8 @@ $institutions = $wpdb->get_col($sql);
 <body>
 
 <h1>First Evaluation System</h1>
-<button class="button-style" id="evaluationButton">EVALUATE</button>
-<button class="button-style" id="mainButton">MAIN</button>
+<button class="button-style r-button" id="evaluationButton">EVALUATE</button>
+<button class="button-style hidden" id="mainButton">MAIN</button>
 <div id=displayContainer>
 
     
@@ -35,35 +35,35 @@ $institutions = $wpdb->get_col($sql);
         global $wpdb;
         $results = $wpdb->get_results("SELECT * FROM wp_or_registration", ARRAY_A);
 
-        echo '
-        <form class="abstract-half-div" id="statusForm" action="evaluation" method="post">
-        <label for="selectOption">Select an option:</label>
-        <select id="selectOption" name="selectedOption">
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-        </select>
-        <input type="hidden" name="action" value="evaluation">
-        <input type="hidden" name="function" value="fetch_data">
-        <input type="submit" value="Submit">
-        </form>
-        <div id="resultContainer">
-        ';
+        // echo '
+        // <form class="abstract-half-div" id="statusForm" action="evaluation" method="post">
+        // <label for="selectOption">Select an option:</label>
+        // <select id="selectOption" name="selectedOption">
+        //     <option value="option1">Option 1</option>
+        //     <option value="option2">Option 2</option>
+        //     <option value="option3">Option 3</option>
+        // </select>
+        // <input type="hidden" name="action" value="evaluation">
+        // <input type="hidden" name="function" value="fetch_data">
+        // <input type="submit" value="Submit">
+        // </form>
+        // <div id="resultContainer">
+        // ';
 
-        echo '<table border="1">';
-        echo '<tr><th>ID</th><th>Name</th></tr>';
-        // Process the fetched data
-        foreach ($results as $result) {
-            echo '<tr>';
-            echo '<td>' . $result['first_name'] . '</td>';
-            echo '<td>' . $result['last_name'] . '</td>';
-            echo '<td>' . $result['email'] . '</td>';
-            echo '</tr>';
-        }
-        echo '
-        </table>
-        </div>
-        ';
+        // echo '<table border="1">';
+        // echo '<tr><th>ID</th><th>Name</th></tr>';
+        // // Process the fetched data
+        // foreach ($results as $result) {
+        //     echo '<tr>';
+        //     echo '<td>' . $result['first_name'] . '</td>';
+        //     echo '<td>' . $result['last_name'] . '</td>';
+        //     echo '<td>' . $result['email'] . '</td>';
+        //     echo '</tr>';
+        // }
+        // echo '
+        // </table>
+        // </div>
+        // ';
 
 ?>
     </div>

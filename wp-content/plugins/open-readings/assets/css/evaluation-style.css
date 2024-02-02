@@ -26,6 +26,26 @@
 .button-style{
     padding:30px;
     margin:20px;
+    border-width: 3px;
+    font-weight: 600;
+    font-size: 15px;
+    color:#111;
+}
+.b-button{
+    background-color: #88f;
+    border-color: #00c;
+}
+.r-button{
+    background-color: #f66;
+    border-color: #900;
+}
+.g-button{
+    background-color: #5c5;
+    border-color: #080;
+}
+
+.div-margin{
+    margin:5px;
 }
 
 .error-pre{
@@ -42,8 +62,15 @@
 .e-red{
     color:red;
     font-weight: 500;
+    font-size: 15px;
 }
 .e-green{
     color:green;
     font-weight: 500;
+    font-size:15px;
+}
+
+.message-div{
+    text-align: center;
+    font-size: 18px;
 }

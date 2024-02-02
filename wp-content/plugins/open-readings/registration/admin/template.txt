@@ -1,4 +1,4 @@
-\documentclass[12pt, twoside, a4paper, hidelinks]{article}
+\documentclass[12pt, twoside, a4paper, hidelinks]{amsart}
 
 \usepackage{amsmath}
 \usepackage{lmodern}
@@ -26,12 +26,11 @@
 \begin{document}
 
 \begin{center} \fontsize{14}{15}\selectfont \textbf{ ${title} } \end{center}
-\vspace{-0.8cm}
 
 \begin{center} \fontsize{12}{13}\selectfont ${authors} \end{center}
-\vspace{-.5cm}
 
 \begin{center} \fontsize{10}{11}\selectfont ${affiliations} \end{center}
+\vspace{.3cm}
 
 \fontsize{10}{11}\selectfont
 ${content}
