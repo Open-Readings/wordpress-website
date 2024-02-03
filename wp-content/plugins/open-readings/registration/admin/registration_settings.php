@@ -72,7 +72,8 @@ function populate_database()
         'content',
         'images',
         'pdf',
-        'session_id'
+        'session_id',
+        'display_title'
     ];
 
     $person_data_sql = [
@@ -104,6 +105,7 @@ function populate_database()
         'images' => "varchar(1000) NOT NULL",
         'pdf' => "varchar(255) NOT NULL",
         'session_id' => "varchar(255) NOT NULL",
+        'display_title' => "varchar(255) NOT NULL"
 
     ];
     if (!$table_exists) {
@@ -157,7 +159,8 @@ function populate_database()
             content varchar(4000) NOT NULL,
             images varchar(1000) NOT NULL,
             pdf varchar(255) NOT NULL,
-            session_id varchar(255) NOT NULL
+            session_id varchar(255) NOT NULL,
+            display_title varchar(255) NOT NULL
             )");
 
     } else {
