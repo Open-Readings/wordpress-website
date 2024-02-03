@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1eb7643e0957094d21d35beee5e41b17",
+    "content-hash": "db18beed386badbd44e4814c3a6bdabb",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1501,6 +1501,67 @@
             "time": "2023-01-26T09:26:14+00:00"
         },
         {
+            "name": "symfony/process",
+            "version": "v6.0.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "2114fd60f26a296cc403a7939ab91478475a33d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/2114fd60f26a296cc403a7939ab91478475a33d4",
+                "reference": "2114fd60f26a296cc403a7939ab91478475a33d4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Executes commands in sub-processes",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/process/tree/v6.0.19"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-01-01T08:36:10+00:00"
+        },
+        {
             "name": "symfony/var-dumper",
             "version": "v6.0.19",
             "source": {
@@ -1641,12 +1702,116 @@
                 "source": "https://github.com/tighten/collect/tree/v8.83.27"
             },
             "time": "2023-01-13T18:05:42+00:00"
+        },
+        {
+            "name": "ueberdosis/pandoc",
+            "version": "0.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ueberdosis/pandoc.git",
+                "reference": "c5f16d52170e0622d6d3ef8350e08d0799809049"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ueberdosis/pandoc/zipball/c5f16d52170e0622d6d3ef8350e08d0799809049",
+                "reference": "c5f16d52170e0622d6d3ef8350e08d0799809049",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0",
+                "symfony/process": ">4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0 || ^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pandoc\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hans Pagel",
+                    "email": "hans.pagel@ueber.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Pandoc PHP Package",
+            "homepage": "https://github.com/ueberdosis/pandoc",
+            "keywords": [
+                "pandoc",
+                "ueberdosis"
+            ],
+            "support": {
+                "issues": "https://github.com/ueberdosis/pandoc/issues",
+                "source": "https://github.com/ueberdosis/pandoc/tree/0.9.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/ueberdosis/",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-02-28T08:00:44+00:00"
+        },
+        {
+            "name": "xemlock/php-latex",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xemlock/php-latex.git",
+                "reference": "7bbd8a1605181648243868b7b1b3b9f34255dd79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xemlock/php-latex/zipball/7bbd8a1605181648243868b7b1b3b9f34255dd79",
+                "reference": "7bbd8a1605181648243868b7b1b3b9f34255dd79",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=5.7 <10.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PhpLatex_": "library"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "xemlock",
+                    "email": "xemlock@gmail.com"
+                }
+            ],
+            "description": "LaTeX parser and renderer",
+            "support": {
+                "issues": "https://github.com/xemlock/php-latex/issues",
+                "source": "https://github.com/xemlock/php-latex/tree/master"
+            },
+            "time": "2023-09-14T19:51:41+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "xemlock/php-latex": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

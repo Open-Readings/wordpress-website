@@ -45,11 +45,14 @@ function check_abstract_fields()
             }
         }
     }
-    $title = $_POST['form_fields']['abstract_title'];
+    $title = json_encode($_POST['form_fields']['abstract_title'], JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT);
+    $title = str_replace('\/', '/', $title);
+    $title = str_replace('"', '', $title);
+
     if (mb_strlen($title) > $title_length) {
         return "Title field input too long";
-    } else if (preg_match('/[^\p{L}\p{N}, +=<>^;:(){}$*\-.\/]/u', $title)) {
-        return "Title field: special characters not allowed in field.";
+    } else if (preg_match('/[^\p{L}\p{N}, \\\\+=<>^;:(){}$*\-.\/]/u', $title)) {
+        return "Title field: special characters not allowed in field. " . $title;
     } else if (trim($title) == '') {
         return "Abstact title: detected empty field.";
     }
@@ -169,7 +172,9 @@ function generate_abstract()
 
 
 
+
             $titleField = $_POST['form_fields']['abstract_title'];
+            //$titleField = str_replace('"', '', $title);
 
             // Add missing </sup> tags
             $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
@@ -178,16 +183,13 @@ function generate_abstract()
             $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
-
-
-            //find fist <sup> or <sub> tag
-
             $sup_starting_tag = '<sup>';
             $sub_starting_tag = '<sub>';
             $sub_ending_tag = '</sub>';
             $sup_ending_tag = '</sup>';
             $layers = 0;
             $is_in_math_mode = false;
+
             for ($i = 0; $i < mb_strlen($titleField); $i++) {
                 if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
                     $sup_starting_tag_index = $i;
@@ -240,10 +242,9 @@ function generate_abstract()
                 }
 
             }
+            $titleField = str_replace('&nbsp;', ' ', $titleField);
 
-
-
-            $titleField = str_replace('&nbsp;', '', $titleField);
+            //find fist <sup> or <sub> tag
 
 
             $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
@@ -266,7 +267,7 @@ function generate_abstract()
                 echo 'Export failed::failed to create abstract.tex::end';
                 error_log($filename . " creation failed");
             }
-            $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $abcd = shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
 
             $_SESSION['generating'] = 0;
             $_SESSION['exists'] = 1;

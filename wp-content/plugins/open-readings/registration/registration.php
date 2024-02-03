@@ -31,6 +31,8 @@ class RegistrationData
     public string $pdf;
     public string $session_id;
 
+    public string $display_title;
+
 
     function map_from_person_data(PersonData $personData)
     {
@@ -49,6 +51,7 @@ class RegistrationData
         $this->agrees_to_email = $personData->agrees_to_email;
 
 
+
     }
 
     function map_from_presentation_data(PresentationData $presentationData)
@@ -62,6 +65,7 @@ class RegistrationData
         $this->pdf = $presentationData->pdf;
         $this->hash_id = $presentationData->person_hash_id;
         $this->session_id = $presentationData->session_id;
+        $this->display_title = $presentationData->title;
 
     }
 
@@ -138,6 +142,8 @@ class PresentationData
     public string $pdf;
     public string $person_hash_id;
 
+    public string $display_title;
+
 
     public string $session_id;
     function map_from_query($result)
@@ -151,6 +157,7 @@ class PresentationData
         $this->pdf = $result['pdf'];
         $this->person_hash_id = $result['person_hash_id'];
         $this->session_id = $result['session_id'];
+        $this->display_title = $result['display_title'];
 
     }
 
@@ -166,6 +173,7 @@ class PresentationData
         $this->session_id = $data->session_id;
         $this->presentation_id = $presentation_id;
         $this->person_hash_id = $hash_id;
+        $this->display_title = $data->display_title;
 
     }
 
@@ -235,12 +243,12 @@ class OpenReadingsRegistration
 
         $query = '
         INSERT INTO ' . $table_name . '
-        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id, display_title)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ';
 
 
-        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id);
+        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id, $presentation_data->display_title);
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
@@ -346,9 +354,9 @@ class OpenReadingsRegistration
         global $wpdb;
         $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
 
-        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s WHERE presentation_id = %s';
+        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s WHERE presentation_id = %s';
 
-        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_id);
+        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->display_title, $presentation_id);
 
         $result = $wpdb->query($query);
         if ($result === false) {
@@ -546,7 +554,7 @@ class OpenReadingsRegistration
             '${hash}' => $hash_id,
             '${authors_list}' => implode(', ', $authors_list),
             '${title}' => $registration_data->title,
-
+            '${display_title}' => $registration_data->display_title
         );
         return $vars;
 

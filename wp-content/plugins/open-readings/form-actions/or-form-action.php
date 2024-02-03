@@ -27,18 +27,19 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
 
         $fields = [];
         foreach ($raw_fields as $field) {
-            $fields[$field['id']] = $field['raw_value'];
+            if ($field['id'] != 'abstract_title')
+                $fields[$field['id']] = $field['raw_value'];
+            else {
+                $fields['display_title'] = $field['value'];
+                $fields['abstract_title'] = $field['raw_value'];
 
+            }
 
 
         }
 
 
-        foreach ($fields as $key => $value) {
 
-
-
-        }
 
         $registration = new RegistrationData();
 
@@ -74,7 +75,7 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $registration->agrees_to_email = $fields['email_agree'];
         $registration->research_area = $fields['research_area'];
         $registration->presentation_type = $fields['presentation_type'];
-
+        $registration->display_title = $fields['display_title'];
         $author_name_array = $_POST['name']; //array su vardais is eiles
         $author_affiliation_reference_array = $_POST['aff_ref']; //array su nuorodomis i affiliacijas is eiles
         $author_radio = $_POST['contact_author']; //grazina skaiciu (autoriaus eiles nr)
