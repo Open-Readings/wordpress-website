@@ -22,6 +22,8 @@
 \makeatother
 \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
 \captionsetup{font=footnotesize}
+\DeclareUnicodeCharacter{2212}{--}
+
 
 \begin{document}
 

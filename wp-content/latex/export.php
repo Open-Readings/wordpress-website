@@ -121,6 +121,7 @@ function generate_abstract()
         \makeatother
         \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
         \captionsetup{font=footnotesize}
+        \DeclareUnicodeCharacter{2212}{--}
         \begin{document}
         ';
 
@@ -286,7 +287,7 @@ function generate_abstract()
                 echo 'Export failed::failed to create abstract.tex::end';
                 error_log($filename . " creation failed");
             }
-            $abcd = shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
 
             $_SESSION['generating'] = 0;
             $_SESSION['exists'] = 1;
