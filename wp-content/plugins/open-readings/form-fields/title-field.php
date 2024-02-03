@@ -5,6 +5,11 @@ use ElementorPro\Modules\Forms\Classes\Form_Record;
 use ElementorPro\Plugin;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 
+
+// add autoloader
+require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
+
+
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly
 }
@@ -59,11 +64,11 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				var field_id = "<?php echo $field_id ?>";
 				var allowed_regex = "<?php echo $item['regex'] ?>"
 				if (allowed_regex == "") {
-					allowed_regex = "\\p{L}\\p{N}\\s&_^<>\\- ()=+;\\/";
+					allowed_regex = "\\p{L}\\p{N}\\s&_^<>\\-\\\\(){}$=+;\\/";
 				}
 				var allowed_sub_regex = "<?php echo $item['sub_regex'] ?>"
 				if (allowed_sub_regex == "") {
-					allowed_sub_regex = "A-Za-z0-9+\\-=()";
+					allowed_sub_regex = "A-Za-z0-9+$\\-=()";
 				}
 				var regex_string = '<(?!sub\\s*\\/?)(?!sup\\s*\\/?)(?!/sup\\s*\\/?)(?!/sub\\s*\\/?)[^>]+>';
 				var regex = new RegExp(regex_string, "g");
@@ -133,7 +138,100 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 	{
 
 		$record->update_field($field['id'], 'value', $field['raw_value']);
-		$record->update_field($field['id'], 'raw_value', $field['raw_value']);
+		$titleField = $field['raw_value'];
+		$sup_starting_tag = '<sup>';
+		$sub_starting_tag = '<sub>';
+		$sub_ending_tag = '</sub>';
+		$sup_ending_tag = '</sup>';
+		$layers = 0;
+		$is_in_math_mode = false;
+
+		for ($i = 0; $i < mb_strlen($titleField); $i++) {
+			if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
+				$sup_starting_tag_index = $i;
+				$layers++;
+				if ($layers == 1) {
+					$titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
+				} else {
+					//replace <sup> with $^{
+					$titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
+				}
+				$i -= mb_strlen($sup_starting_tag);
+			}
+			if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
+				$sub_starting_tag_index = $i;
+				$layers++;
+				if ($layers == 1) {
+					$titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+				} else {
+					//replace <sub> with $_{
+					$titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+				}
+				$i -= mb_strlen($sup_starting_tag);
+
+			}
+
+			if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
+				$sub_ending_tag_index = $i;
+				$layers--;
+				if ($layers == 0) {
+					//replace </sub> with }$
+					$titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+				} else {
+					//replace </sub> with }$
+					$titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+				}
+				//replace </sub> with }$
+				$i -= mb_strlen($sup_starting_tag);
+			}
+			if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
+				$sup_ending_tag_index = $i;
+				$layers--;
+				if ($layers == 0) {
+					//replace </sup> with }$
+					$titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+				} else {
+					//replace </sup> with }$
+					$titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+				}
+				$i -= mb_strlen($sup_starting_tag);
+			}
+
+		}
+		$titleField = str_replace('&nbsp;', ' ', $titleField);
+
+
+
+
+		$html = (new \Pandoc\Pandoc)
+			->from('latex')
+			->input($titleField)
+			->to('html')
+			->run();
+
+
+		//find the first <p> tag
+		$first_p_tag_index = strpos($html, '<p>');
+		//find the last </p> tag
+		$last_p_tag_index = strrpos($html, '</p>');
+
+		$html = substr($html, $first_p_tag_index + 3, $last_p_tag_index - $first_p_tag_index - 3);
+
+
+		$display_title = $html;
+
+
+
+
+
+		$record->update_field($field['id'], 'value', $display_title);
+
+		$raw_value = $field['raw_value'];
+		$raw_value = str_replace('\\\\\\\\', '\\', $raw_value);
+
+
+
+		$record->update_field($field['id'], 'raw_value', $raw_value);
 	}
 
 	public function update_controls($widget)
