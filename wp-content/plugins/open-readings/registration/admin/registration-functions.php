@@ -4,7 +4,6 @@
 // require_once('../../../../../wp-load.php'); // Adjust the path as needed
 $registration_functions_url = plugins_url('', __FILE__) . '/registration-functions.php';
 
-
 function evaluation(){
     
 if (isset($_POST['function']) && !empty($_POST['function'])) {
@@ -110,7 +109,7 @@ select evaluation_hash_id from wp_or_registration as r
 left join wp_or_registration_presentations 
 as p on r.hash_id = p.person_hash_id 
 left join wp_or_registration_evaluation 
-as e on p.presentation_id = e.evaluation_hash_id
+as e on p.person_hash_id = e.evaluation_hash_id
 where email in
 (SELECT email
 FROM wp_or_registration
@@ -134,7 +133,7 @@ $wpdb->query(
     $evaluation_row = $wpdb->get_row($query, ARRAY_A);
 
     $query = $wpdb->prepare(
-        "SELECT * FROM wp_or_registration_presentations WHERE presentation_id = %s",
+        "SELECT * FROM wp_or_registration_presentations WHERE person_hash_id = %s",
         $evaluation_row['evaluation_hash_id']
     );
     $presentation_row = $wpdb->get_row($query, ARRAY_A);
@@ -145,14 +144,14 @@ $wpdb->query(
     );
     $registration_row = $wpdb->get_row($query, ARRAY_A);
 
-    if(!isset($_SESSION['pdf'])){
+    if(!isset($_SESSION['e_pdf'])){
         session_start();
         
     }
 
-    $_SESSION['pdf'] = $presentation_row['pdf'];
-    $_SESSION['file'] = $presentation_row['session_id'];
-    $_SESSION['email'] = $registration_row['email'];
+    $_SESSION['e_pdf'] = $presentation_row['pdf'];
+    $_SESSION['e_file'] = $presentation_row['session_id'];
+    $_SESSION['e_email'] = $registration_row['email'];
     $_SESSION['e_hash'] = $registration_row['hash_id'];
     $_SESSION['e_presentation_id'] = $presentation_row['presentation_id'];
     $_SESSION['e_error'] = 0;
@@ -161,8 +160,8 @@ $wpdb->query(
     $_SESSION['e_sent'] = 0;
 
     $result['response'] = '<h1>' . $registration_row['first_name'] . ' ' . $registration_row['last_name'] . '</h1>';
-    
     $result['response'] .= '<div class="abstract-flex"><div class="abstract-left-div div-margin">';
+    $result['response'] .= '<p>HASH ID:<br> ' . $_SESSION['e_hash'] . '</p>';
 
    
 
@@ -262,8 +261,11 @@ $wpdb->query(
 
 function display_main_page(){
     global $wpdb;
-        $results = $wpdb->get_results("SELECT * FROM wp_or_registration", ARRAY_A);
-
+    $results = $wpdb->get_results("SELECT * FROM wp_or_registration AS r LEFT JOIN wp_or_registration_evaluation AS e ON r.hash_id = e.evaluation_hash_id", ARRAY_A);
+    $status = [0, 0, 0, 0, 0];
+    foreach($results as $db_result){
+        $status[$db_result['status']]++;
+    }
         $result['response'] = '
         <form id="statusForm" action="evaluation" method="post">
         <label for="selectOption">Select an option:</label>
@@ -275,18 +277,23 @@ function display_main_page(){
         <input type="hidden" name="action" value="evaluation">
         <input type="hidden" name="function" value="fetch_data">
         <input type="submit" value="Submit">
+        <p> Not checked: ' . $status[0] . ', Accepted: ' . $status[1] . ', Waiting for update: ' . $status[2] . ', Rejected: ' . $status[3] . '</p>
         </form>
         <div id="resultContainer">
         ';
 
         $result['response'] .= '<table border="1">';
-        $result['response'] .= '<tr><th>ID</th><th>Name</th></tr>';
+        $result['response'] .= '<tr><th>Status</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Research area</th><th>Presentation type</th><th>Hash ID</th></tr>';
         // Process the fetched data
         foreach ($results as $db_result) {
             $result['response'] .= '<tr>';
+            $result['response'] .= '<td>' . $db_result['status'] . '</td>';
             $result['response'] .= '<td>' . $db_result['first_name'] . '</td>';
             $result['response'] .= '<td>' . $db_result['last_name'] . '</td>';
             $result['response'] .= '<td>' . $db_result['email'] . '</td>';
+            $result['response'] .= '<td>' . $db_result['research_area'] . '</td>';
+            $result['response'] .= '<td>' . $db_result['presentation_type'] . '</td>';
+            $result['response'] .= '<td>' . $db_result['hash_id'] . '</td>';
             $result['response'] .= '</tr>';
         }
         $result['response'] .= '
@@ -432,7 +439,7 @@ function generate_abstract(){
 
     $abstractContent = stripslashes($_POST["textArea"]);
 
-    if(!isset($_SESSION['pdf'])){
+    if(!isset($_SESSION['e_pdf'])){
         session_start();
     }
     if($_SESSION['e_sent'] == 1){
@@ -440,7 +447,7 @@ function generate_abstract(){
         return $result;
     }
 
-    $result['pdf'] = $_SESSION['pdf'];
+    $result['pdf'] = $_SESSION['e_pdf'];
 
     $result['response'] = '
     <script>
@@ -470,7 +477,7 @@ function generate_abstract(){
 
 
     // Write the modified content to the abstract file
-    $folder = WP_CONTENT_DIR . '/latex/' . $_SESSION['file'];
+    $folder = WP_CONTENT_DIR . '/latex/' . $_SESSION['e_file'];
     $abstractFilePath = $folder . '/abstract.tex';
     file_put_contents($abstractFilePath, $templateContent);
     // $folder = '../wp-content/latex/' . $_SESSION['file'];
@@ -499,7 +506,7 @@ function generate_abstract(){
 function send_update(){
     
     global $or_mailer;
-    if(!isset($_SESSION['email'])){
+    if(!isset($_SESSION['e_email'])){
         session_start();
     }
     if($_SESSION['e_sent'] == 1){
@@ -538,7 +545,7 @@ function send_update(){
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
-    $query = $wpdb->prepare($query, '2', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
+    $query = $wpdb->prepare($query, '2', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
     if ($db_result === false){
@@ -547,7 +554,7 @@ function send_update(){
     }
     $_SESSION['e_sent'] = 1;
 
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Please Update Your Registration Details', $update_text);
+    $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Please Update Your Registration Details', $update_text);
 
     if($sent){
         $result['response'] = '<p class="e-green">Update email sent</p>';
@@ -559,7 +566,7 @@ function send_update(){
 
 function send_reject(){
     global $or_mailer;
-    if(!isset($_SESSION['email'])){
+    if(!isset($_SESSION['e_email'])){
         session_start();
     }
     if($_SESSION['e_sent'] == 1){
@@ -593,7 +600,7 @@ function send_reject(){
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
-    $query = $wpdb->prepare($query, '3', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
+    $query = $wpdb->prepare($query, '3', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
     if ($db_result === false){
@@ -602,7 +609,7 @@ function send_reject(){
     }
     $_SESSION['e_sent'] = 1;
 
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Registration Update', $rejected_text);
+    $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $rejected_text);
 
 
     if($sent){
@@ -615,7 +622,7 @@ function send_reject(){
 
 function send_accept(){
     global $or_mailer;
-    if(!isset($_SESSION['email'])){
+    if(!isset($_SESSION['e_email'])){
         session_start();
     }
     if($_SESSION['e_sent'] == 1){
@@ -659,7 +666,7 @@ function send_accept(){
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
     
-    $query = $wpdb->prepare($query, '1', '', wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_presentation_id']);
+    $query = $wpdb->prepare($query, '1', '', wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
     if ($db_result === false){
@@ -667,7 +674,7 @@ function send_accept(){
         return $result;
     }
     $_SESSION['e_sent'] = 1;
-    $sent = $or_mailer->send_OR_mail($_SESSION['email'], 'Registration Update', $accepted_text);
+    $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $accepted_text);
 
     if($sent){
         $result['response'] = '<p class="e-green">Accept email sent</p>';

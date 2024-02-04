@@ -68,6 +68,9 @@ add_action('wp_enqueue_scripts', 'register_or_dependencies');
 
 function register_evaluation_styles(){
   wp_register_style('registration-evaluation-style', plugins_url('assets/css/evaluation-style.css', __FILE__));
+  wp_register_script('institutions-list-js', plugins_url('assets/js/evaluation-js.js', __FILE__));
+  wp_register_script('evaluation-js', plugins_url('assets/js/evaluation-js.js', __FILE__));
+
 }
 
 add_action('admin_enqueue_scripts', 'register_evaluation_styles');

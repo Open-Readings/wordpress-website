@@ -205,6 +205,7 @@ function update_evaluation_table()
 {
     global $wpdb;
     $evaluation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_evaluation';
+    $registration_table_name = $wpdb->prefix . get_option('or_registration_database_table');
 
     $evaluation_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$evaluation_table_name'") == $evaluation_table_name;
 
@@ -261,7 +262,7 @@ function update_evaluation_table()
 
 
         }
-        $presentation_table_results = $wpdb->get_col("SELECT presentation_id FROM $presentation_table_name");
+        $presentation_table_results = $wpdb->get_col("SELECT person_hash_id FROM $presentation_table_name");
 
         foreach($presentation_table_results as $result){
             $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE presentation_id = %s", $result));
@@ -280,7 +281,7 @@ function update_evaluation_table()
             }
         }
     }
-    $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $presentation_table_name (presentation_id)");
+    $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $registration_table_name (hash_id)");
 
     echo '<div class="notice notice-success"><p>Evaluation table populated</p></div>';
 
