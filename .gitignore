@@ -51,6 +51,8 @@ wp-config.php
 # uncomment the next line
 
 /wp-content/plugins/*
+/wp-content/plugins/
+wp-content/plugins/**
 !/wp-content/plugins/open-readings/
 #ignore composer:
 /wp-content/plugins/open-readings/vendor/
