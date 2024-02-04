@@ -277,7 +277,7 @@ function display_main_page(){
         <input type="hidden" name="action" value="evaluation">
         <input type="hidden" name="function" value="fetch_data">
         <input type="submit" value="Submit">
-        <p> Not checked: ' . $status[0] . ', Accepted: ' . $status[1] . ', Waiting for update: ' . $status[2] . ', Rejected: ' . $status[3] . '</p>
+        <p> Not checked: ' . $status[0] . ', Accepted: ' . $status[1] . ', Waiting for update: ' . $status[2] + $status[4] . ', Rejected: ' . $status[3] . '</p>
         </form>
         <div id="resultContainer">
         ';

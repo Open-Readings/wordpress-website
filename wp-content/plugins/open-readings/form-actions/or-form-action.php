@@ -158,7 +158,7 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $query = $wpdb->prepare("SELECT presentation_id FROM wp_or_registration_presentations WHERE person_hash_id = %s", $_SESSION['hash']);
         $result_id = $wpdb->get_row($query);
 
-        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s WHERE evaluation_hash_id = %s', current_time('mysql', 1), $_SESSION['hash']);
+        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s, `status` WHERE evaluation_hash_id = %s', current_time('mysql', 1), '4', $_SESSION['hash']);
         $wpdb->query($query);
         session_unset();
         session_destroy();
