@@ -52,6 +52,8 @@ function register_or_dependencies()
   wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
   wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__));
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
+  wp_register_script('jquery-js', plugins_url('assets/js/jquery-3.6.4.min.js', __FILE__));
+
 
   $data_to_pass = array(
     'path' => content_url(),
@@ -63,6 +65,13 @@ function register_or_dependencies()
 }
 
 add_action('wp_enqueue_scripts', 'register_or_dependencies');
+
+function register_evaluation_styles(){
+  wp_register_style('registration-evaluation-style', plugins_url('assets/css/evaluation-style.css', __FILE__));
+}
+
+add_action('admin_enqueue_scripts', 'register_evaluation_styles');
+
 
 function register_faq_controls($controls_manager)
 {
@@ -228,3 +237,21 @@ function my_custom_function()
   require_once(__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'my_custom_function');
+
+function first_evaluation_page() {
+  // Include the file with your HTML content
+  include plugin_dir_path(__FILE__) . 'registration/admin/registration-first-evaluation.php';
+}
+
+function registration_first_evaluation_menu() {
+	add_menu_page( 'First Evaluation', 'First Evaluation', 'manage_options', 'registration/admin/registration-first-evaluation.php', 'first_evaluation_page', 'dashicons-trash', 6  );
+	// add_submenu_page( 'registration/registration-first-evaluation.php', 'My Sub Level Menu Example', 'Sub Level Menu', 'manage_options', 'myplugin/myplugin-admin-sub-page.php', 'myplguin_admin_sub_page' ); 
+}
+
+add_action( 'admin_menu', 'registration_first_evaluation_menu' );
+
+include_once(__DIR__ . '/registration/admin/registration-functions.php');
+
+
+add_action('wp_ajax_evaluation', 'evaluation');
+// Add more action registrations as needed

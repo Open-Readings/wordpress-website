@@ -12,6 +12,9 @@
 /wp-content/themes/index.php
 /wp-content/backups-dup-lite/
 /wp-content/abstracts/
+/wp-content/latex/**
+!/wp-content/latex/export.php
+!/wp-content/latex/upload.php
 /dup-installer/
 /wiki/
 /wp-includes/
@@ -63,3 +66,6 @@ wp-config.php
 #/wp-content/themes
 20230927_openreadings2024_603d5937a826f9d21987_20230927161505_installer-backup.php
 local-xdebuginfo.php
+
+
+

@@ -96,8 +96,8 @@ function generate_abstract()
         $folder = $_SESSION['file'];
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{article}
-
+            $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{amsart}
+        
         \usepackage{amsmath}
         
         \usepackage{lmodern}
@@ -108,6 +108,7 @@ function generate_abstract()
         \usepackage{tikz}
         \usepackage{float}
         \usepackage{blindtext}
+        \usepackage{microtype}
         \usepackage[1]{pagesel}
         \graphicspath{ {images/} }
         \usepackage{indentfirst}
@@ -119,6 +120,8 @@ function generate_abstract()
         \renewcommand{\fnum@figure}{Fig. \thefigure :}
         \makeatother
         \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
+        \captionsetup{font=footnotesize}
+        \DeclareUnicodeCharacter{2212}{--}
         \begin{document}
         ';
 
@@ -143,7 +146,6 @@ function generate_abstract()
                 $i++;
             }
             $authors = $authors . ' \end{center}
-        \vspace{-.5cm}
 
         ';
 
@@ -158,16 +160,32 @@ function generate_abstract()
             }
             $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
          \end{center}
-
+        \vspace{.3cm}
         ';
 
 
-            $references = '';
+        if(isset($_POST['references'])){
+            $references = '
+            \vfill
+            \hrule
+            \begingroup
+        \renewcommand{\section}[2]{}%
+            \begin{thebibliography}{}
+            
+            
+            ';
             $i = 1;
             foreach ($_POST['references'] as $ref) {
-                $references = $references . '\setcounter{footnote}{' . $i . '} ' . '\footnotetext{' . $ref . '}
+               $references .= '\bibitem{' . $i . '} ' . $ref . '
+               
+               ';
+               $i++;
+            }
+            $references .= '\end{thebibliography}
+            \endgroup
             ';
-                $i++;
+        } else{
+                $references = '';
             }
 
 
@@ -248,10 +266,12 @@ function generate_abstract()
 
 
             $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
-        \\vspace{-0.8cm}";
+        ";
 
 
-            $abstractContent = '\fontsize{10}{11}\selectfont ' . $_POST["textArea"];
+            $abstractContent = '\fontsize{10}{11}\selectfont 
+            
+            ' . $_POST["textArea"];
 
 
             $endOfDocument = '
@@ -267,7 +287,7 @@ function generate_abstract()
                 echo 'Export failed::failed to create abstract.tex::end';
                 error_log($filename . " creation failed");
             }
-            $abcd = shell_exec('pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
+            $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
 
             $_SESSION['generating'] = 0;
             $_SESSION['exists'] = 1;

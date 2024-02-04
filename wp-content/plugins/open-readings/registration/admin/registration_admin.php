@@ -19,6 +19,7 @@ registration_settings();
 
 <?php
 
+
 function registration_settings()
 {
 
@@ -46,7 +47,7 @@ function registration_settings()
         'or_registration_email_success_template',
         'or_registration_email_update_template'
     );
-    add_allowed_options($allowed_options);
+    add_allowed_options(array($allowed_options));
 
 }
 
