@@ -52,8 +52,12 @@ wp-config.php
 
 /wp-content/plugins/*
 /wp-content/plugins/
-wp-content/plugins/**
+wp-content/plugins/*
 !/wp-content/plugins/open-readings/
+!/wp-content/plugins/open-readings/**
+!/wp-content/plugins/open-readings/*
+!/wp-content/plugins/open-readings/evaluation/
+!/wp-content/plugins/open-readings/assets/
 #ignore composer:
 /wp-content/plugins/open-readings/vendor/
 /wp-content/plugins/open-readings/composer.phar
