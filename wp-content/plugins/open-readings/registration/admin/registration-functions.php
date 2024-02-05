@@ -340,31 +340,23 @@ function generate_abstract(){
     $affiliations = '';
     $i = 1;
     foreach ($_POST['affiliation'] as $aff) {
-        $affiliations = $affiliations . '$^{' . $i . '}$' . $aff . '
-    
+        $affiliations = $affiliations . '\address{$^{' . $i . '}$' . $aff . '}
     ';
         $i++;
     }
-    $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}';
+    $affiliations = $affiliations . '\rightaddress{' . $_POST['email-author'] . '}';
     if(isset($_POST['references'])){
     $references = '
-    \vfill
-    \hrule
-    \begingroup
-    \renewcommand{\section}[2]{}%
+    \vfill    
     \begin{thebibliography}{}
-    
-    
     ';
     $i = 1;
     foreach ($_POST['references'] as $ref) {
        $references .= '\bibitem{' . $i . '} ' . $ref . '
-       
        ';
        $i++;
     }
     $references .= '\end{thebibliography}
-    \endgroup
     ';
     } else{
         $references = '';
