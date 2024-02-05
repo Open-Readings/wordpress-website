@@ -21,6 +21,7 @@ class OREvaluationAdmin
 
 
         add_action('wp_ajax_evaluation', 'evaluation');
+
     }
 
 
@@ -35,6 +36,16 @@ class OREvaluationAdmin
 
     function add_admin_pages()
     {
+
+
+        global $eval_status_codes;
+        $eval_status_codes = array(
+            0 => 'Not checked',
+            1 => 'Accepted',
+            2 => 'Waiting for update',
+            3 => 'Rejected',
+            4 => 'Waiting for review'
+        );
 
         add_menu_page('Open Readings Evaluation', 'OR evaluation', 'manage_options', 'or_evaluation', array($this, 'admin_index'), 'dashicons-trash', 6);
         if (current_user_can('manage_options')) {
