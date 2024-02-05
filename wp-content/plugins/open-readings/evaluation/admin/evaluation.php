@@ -25,6 +25,24 @@ wp_enqueue_script('evaluation-js', '');
 <body>
 
     <h1>Open Readings First Evaluation System</h1>
+
+    <?php
+    global $wpdb;
+    $results = $wpdb->get_results("SELECT * FROM wp_or_registration AS r LEFT JOIN wp_or_registration_evaluation AS e ON r.hash_id = e.evaluation_hash_id", ARRAY_A);
+
+    //calculate the number of each status
+    
+    $number_of_not_checked = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 0");
+    $number_of_accepted = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 1");
+    $number_of_waiting_for_update = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 2");
+    $number_of_rejected = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 3");
+    $number_of_waiting_for_review = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 4");
+    echo ' Number of not checked: ' . $number_of_not_checked . ', Accepted: ' . $number_of_accepted . ', Waiting for update: ' . $number_of_waiting_for_update + $number_of_waiting_for_review . ', Rejected: ' . $number_of_rejected . '</p>';
+
+
+    ?>
+
+
     <button class="button-style r-button" id="evaluationButton">NEXT</button>
     <div id=displayContainer></div>
     <div id="scriptContainer"></div>

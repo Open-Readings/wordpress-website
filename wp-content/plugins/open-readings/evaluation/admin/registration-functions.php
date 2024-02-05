@@ -4,60 +4,61 @@
 // require_once('../../../../../wp-load.php'); // Adjust the path as needed
 $registration_functions_url = plugins_url('', __FILE__) . '/registration-functions.php';
 
-function evaluation(){
-    
-if (isset($_POST['function']) && !empty($_POST['function'])) {
-    $function = $_POST['function'];
+function evaluation()
+{
 
-    // Perform different actions based on the value of the action parameter
-    switch ($function) {
-        case 'fetch_data':
-            $result = display_status_list();
-            break;
-        case 'show_evaluation':
-            $result = display_evaluation_page();
-            break;
-        case 'show_main':
-            $result = display_main_page();
-            break;
-        case 'generate_abstract':
-            $result = generate_abstract();
-            break;
-        case 'send_update':
-            $result = send_update();
-            break;
-        case 'send_reject':
-            $result = send_reject();
-            break;
-        case 'send_accept':
-            $result = send_accept();
-            break;
-        case 'save_changes':
-            $result = save_changes();
-            break;
+    if (isset($_POST['function']) && !empty($_POST['function'])) {
+        $function = $_POST['function'];
 
-        default:
-            // Handle unknown action
-            $result['response'] = 'Unknown action.';
-            break;
-    }
-        } else {
-            // Handle case where action parameter is not set
-            $result['response'] = 'Action parameter is missing.';
+        // Perform different actions based on the value of the action parameter
+        switch ($function) {
+            case 'fetch_data':
+                $result = display_status_list();
+                break;
+            case 'show_evaluation':
+                $result = display_evaluation_page();
+                break;
+            case 'show_main':
+                $result = display_main_page();
+                break;
+            case 'generate_abstract':
+                $result = generate_abstract();
+                break;
+            case 'send_update':
+                $result = send_update();
+                break;
+            case 'send_reject':
+                $result = send_reject();
+                break;
+            case 'send_accept':
+                $result = send_accept();
+                break;
+            case 'save_changes':
+                $result = save_changes();
+                break;
+
+            default:
+                // Handle unknown action
+                $result['response'] = 'Unknown action.';
+                break;
         }
-
-        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            $result = json_encode($result);
-            echo $result;
-        }
-        else {
-            header("Location: ".$_SERVER["HTTP_REFERER"]);
-        }
-
-        die();
+    } else {
+        // Handle case where action parameter is not set
+        $result['response'] = 'Action parameter is missing.';
     }
 
-function display_status_list(){
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        $result = json_encode($result);
+        echo $result;
+    } else {
+        header("Location: " . $_SERVER["HTTP_REFERER"]);
+    }
+
+    die();
+}
+
+function display_status_list()
+{
     global $wpdb;
 
     // Example query to fetch data from a custom table
@@ -78,33 +79,38 @@ function display_status_list(){
         $result['response'] .= '</tr>';
     }
     $result['response'] .= '</table>';
+
+
+
     return $result;
+
 }
 
-function display_evaluation_page(){
+function display_evaluation_page()
+{
 
     global $wpdb;
 
     $table_name = 'wp_or_registration_evaluation';
     $column_name = `current_user`;
 
-// Update rows in the specified table where the column has the value 'example' to NULL
-$wpdb->query(
-    $wpdb->prepare(
-        "UPDATE wp_or_registration_evaluation AS t1
+    // Update rows in the specified table where the column has the value 'example' to NULL
+    $wpdb->query(
+        $wpdb->prepare(
+            "UPDATE wp_or_registration_evaluation AS t1
         JOIN wp_or_registration_evaluation AS t2 ON t1.current_user = t2.current_user
         SET t1.current_user = NULL
         WHERE t1.current_user = %s",
-        wp_get_current_user()->user_login
+            wp_get_current_user()->user_login
 
-    )
-);
+        )
+    );
 
-$registration_table = $wpdb->prefix . 'or_registration';
-$presentations_table = $wpdb->prefix . 'or_registration_presentations';
-$evaluation_table = $wpdb->prefix . 'or_registration_evaluation';
+    $registration_table = $wpdb->prefix . 'or_registration';
+    $presentations_table = $wpdb->prefix . 'or_registration_presentations';
+    $evaluation_table = $wpdb->prefix . 'or_registration_evaluation';
 
-$query = $wpdb->prepare("
+    $query = $wpdb->prepare("
 select evaluation_hash_id from wp_or_registration as r 
 left join wp_or_registration_presentations 
 as p on r.hash_id = p.person_hash_id 
@@ -118,13 +124,19 @@ HAVING COUNT(email) = 1) and `current_user` is NULL and `status` = 0
 ORDER BY RAND()
 ");
 
-$evaluation_hash = $wpdb->get_row($query, ARRAY_A)['evaluation_hash_id'];
 
-$wpdb->query(
-    $wpdb->prepare(
-        "UPDATE wp_or_registration_evaluation SET `current_user` = %s WHERE evaluation_hash_id = %s", wp_get_current_user()->user_login, $evaluation_hash
-    )
-);
+    $evaluation_hash = $wpdb->get_row($query, ARRAY_A)['evaluation_hash_id'];
+    if ($evaluation_hash == NULL) {
+        $result['response'] = '<h1>No more evaluations are needed for now.</h1>';
+        return $result;
+    }
+    $wpdb->query(
+        $wpdb->prepare(
+            "UPDATE wp_or_registration_evaluation SET `current_user` = %s WHERE evaluation_hash_id = %s",
+            wp_get_current_user()->user_login,
+            $evaluation_hash
+        )
+    );
 
     $query = $wpdb->prepare(
         "SELECT * FROM wp_or_registration_evaluation WHERE evaluation_hash_id = %s",
@@ -144,9 +156,9 @@ $wpdb->query(
     );
     $registration_row = $wpdb->get_row($query, ARRAY_A);
 
-    if(!isset($_SESSION['e_pdf'])){
+    if (!isset($_SESSION['e_pdf'])) {
         session_start();
-        
+
     }
 
     $_SESSION['e_pdf'] = $presentation_row['pdf'];
@@ -163,7 +175,17 @@ $wpdb->query(
     $result['response'] .= '<div class="abstract-flex"><div class="abstract-left-div div-margin">';
     $result['response'] .= '<p>HASH ID:<br> ' . $_SESSION['e_hash'] . '</p>';
 
-   
+
+    $status_text = [
+        0 => 'Not checked',
+        1 => 'Accepted',
+        2 => 'Waiting for update',
+        3 => 'Rejected',
+        4 => 'Waiting for review'
+    ];
+    $result['response'] .= '<p>Status:<br> ' . $status_text[$evaluation_row['status']] . '</p>';
+
+
 
     $print_registration_text_fields = [
         ['Email: ', 'email'],
@@ -172,41 +194,43 @@ $wpdb->query(
         ['Presentation type: ', 'presentation_type']
     ];
 
-    foreach($print_registration_text_fields as $field){
+    foreach ($print_registration_text_fields as $field) {
         $result['response'] .= '<p>' . $field[0] . '<b>' . $registration_row[$field[1]] . '</b>' . '</p>';
     }
 
-    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution: </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="'. $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
-    $result['response'] .= '<label for="department">Department: </label><b><input class="evaluation-input" name="department" type=text value="'. $registration_row['department'] . '"></input></b><br>';
+    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution: </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
+    $result['response'] .= '<label for="department">Department: </label><b><input class="evaluation-input" name="department" type=text value="' . $registration_row['department'] . '"></input></b><br>';
 
-    $result['response'] .= '<label for="abstract_title">Title: </label><b><input class="evaluation-input" name="abstract_title" type=text value="'. stripslashes($presentation_row['title']) . '"></input></b><br><br>';
+    $result['response'] .= '<label for="abstract_title">Title: </label><b><input class="evaluation-input" name="abstract_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
 
     $contact_index = 0;
-    foreach(json_decode($presentation_row['authors']) as $item){
+    foreach (json_decode($presentation_row['authors']) as $item) {
         $contact_index++;
-        $result['response'] .= '<label for="name[]">Author name: </label><b><input class="evaluation-input" name="name[]" type=text value="'. $item[0] . '"></input></b>';
-        $result['response'] .= '<div><label for="aff_ref[]">Affiliation nr.: </label><b><input class="evaluation-input" name="aff_ref[]" type=text value="'. $item[1] . '"></input></b></div>';
-        if(isset($item[2])){
+        $result['response'] .= '<label for="name[]">Author name: </label><b><input class="evaluation-input" name="name[]" type=text value="' . $item[0] . '"></input></b>';
+        $result['response'] .= '<div><label for="aff_ref[]">Affiliation nr.: </label><b><input class="evaluation-input" name="aff_ref[]" type=text value="' . $item[1] . '"></input></b></div>';
+        if (isset($item[2])) {
             $email = $item[2];
             $contact = $contact_index;
         }
     }
-    $result['response'] .= '<br><label for="email-author">Contact email: </label><b><input class="evaluation-input" name="email-author" type=text value="'. $email . '"></input></b>';
-    $result['response'] .= '<div><label for="contact_author">Contact nr.: </label><b><input class="evaluation-input" name="contact_author" type=text value="'. $contact . '"></input></b></div><br>';
+    $result['response'] .= '<br><label for="email-author">Contact email: </label><b><input class="evaluation-input" name="email-author" type=text value="' . $email . '"></input></b>';
+    $result['response'] .= '<div><label for="contact_author">Contact nr.: </label><b><input class="evaluation-input" name="contact_author" type=text value="' . $contact . '"></input></b></div><br>';
 
     $affiliation_index = 0;
-    foreach(json_decode($presentation_row['affiliations']) as $item){
+    foreach (json_decode($presentation_row['affiliations']) as $item) {
         $affiliation_index++;
-        $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="'. $item . '"></input></b><br>';
+        $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="' . $item . '"></input></b><br>';
     }
 
     $reference_index = 0;
     $result['response'] .= '<p>References [if there are any]<p>';
-    if(json_decode($presentation_row['references']) != NULL) {foreach(json_decode($presentation_row['references']) as $item){
-        $reference_index++;
-        $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="'. $item . '"></input></b><br>';
-    }}
-    $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">'. stripslashes($presentation_row['content']) . '</textarea><br>';
+    if (json_decode($presentation_row['references']) != NULL) {
+        foreach (json_decode($presentation_row['references']) as $item) {
+            $reference_index++;
+            $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="' . $item . '"></input></b><br>';
+        }
+    }
+    $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
 
     $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail"></textarea><br>';
 
@@ -225,7 +249,7 @@ $wpdb->query(
     $result['response'] .= '<button class="button-style r-button" id="generateButton">Generate</button>';
     $result['response'] .= '<button class="button-style r-button" id="saveButton">Save</button><div id="errorContainer"></div><div id="save-message"></div>';
 
-    
+
 
     $result['response'] .= '<iframe id="abstract" class="pdf-frame" id="abstract" src="' . $presentation_row['pdf'] . '#toolbar=0&view=fit' . '"></iframe>';
 
@@ -259,14 +283,15 @@ $wpdb->query(
     return $result;
 }
 
-function display_main_page(){
+function display_main_page()
+{
     global $wpdb;
     $results = $wpdb->get_results("SELECT * FROM wp_or_registration AS r LEFT JOIN wp_or_registration_evaluation AS e ON r.hash_id = e.evaluation_hash_id", ARRAY_A);
     $status = [0, 0, 0, 0, 0];
-    foreach($results as $db_result){
+    foreach ($results as $db_result) {
         $status[$db_result['status']]++;
     }
-        $result['response'] = '
+    $result['response'] = '
         <form id="statusForm" action="evaluation" method="post">
         <label for="selectOption">Select an option:</label>
         <select id="selectOption" name="selectedOption">
@@ -282,28 +307,29 @@ function display_main_page(){
         <div id="resultContainer">
         ';
 
-        $result['response'] .= '<table border="1">';
-        $result['response'] .= '<tr><th>Status</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Research area</th><th>Presentation type</th><th>Hash ID</th></tr>';
-        // Process the fetched data
-        foreach ($results as $db_result) {
-            $result['response'] .= '<tr>';
-            $result['response'] .= '<td>' . $db_result['status'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['first_name'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['last_name'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['email'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['research_area'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['presentation_type'] . '</td>';
-            $result['response'] .= '<td>' . $db_result['hash_id'] . '</td>';
-            $result['response'] .= '</tr>';
-        }
-        $result['response'] .= '
+    $result['response'] .= '<table border="1">';
+    $result['response'] .= '<tr><th>Status</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Research area</th><th>Presentation type</th><th>Hash ID</th></tr>';
+    // Process the fetched data
+    foreach ($results as $db_result) {
+        $result['response'] .= '<tr>';
+        $result['response'] .= '<td>' . $db_result['status'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['first_name'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['last_name'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['email'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['research_area'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['presentation_type'] . '</td>';
+        $result['response'] .= '<td>' . $db_result['hash_id'] . '</td>';
+        $result['response'] .= '</tr>';
+    }
+    $result['response'] .= '
         </table>
         </div>
         ';
     return $result;
 }
 
-function fixUnclosedTags($text, $tagOpen, $tagClose){
+function fixUnclosedTags($text, $tagOpen, $tagClose)
+{
     $countOpen = substr_count($text, $tagOpen);
     $countClose = substr_count($text, $tagClose);
 
@@ -495,25 +521,26 @@ function generate_abstract(){
 
 }
 
-function send_update(){
-    
+function send_update()
+{
+
     global $or_mailer;
-    if(!isset($_SESSION['e_email'])){
+    if (!isset($_SESSION['e_email'])) {
         session_start();
     }
-    if($_SESSION['e_sent'] == 1){
-        $result['response'] ='<p class="e-red">Already sent</p>';
+    if ($_SESSION['e_sent'] == 1) {
+        $result['response'] = '<p class="e-red">Already sent</p>';
         return $result;
     }
-    if($_SESSION['e_generated'] == 0){
+    if ($_SESSION['e_generated'] == 0) {
         $result['response'] = '<p class="e-red">Please generate abstract</p>';
         return $result;
-    } else if($_SESSION['e_saved'] == 0){
+    } else if ($_SESSION['e_saved'] == 0) {
         $result['response'] = '<p class="e-red">Please save the generated abstract</p>';
         return $result;
     }
 
-    $update_text ='
+    $update_text = '
     <tr>
     <td align="justify" style="padding:25px;">
         <p>
@@ -537,10 +564,10 @@ function send_update(){
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
-    $query = $wpdb->prepare($query, '2', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
+    $query = $wpdb->prepare($query, '2', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'], $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
-    if ($db_result === false){
+    if ($db_result === false) {
         $result['response'] = '<p class="e-red">database fail</p>';
         return $result;
     }
@@ -548,7 +575,7 @@ function send_update(){
 
     $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Please Update Your Registration Details', $update_text);
 
-    if($sent){
+    if ($sent) {
         $result['response'] = '<p class="e-green">Update email sent</p>';
     } else {
         $result['response'] = '<p class="e-green">Failed to send update email, database ok</p>';
@@ -556,24 +583,25 @@ function send_update(){
     return $result;
 }
 
-function send_reject(){
+function send_reject()
+{
     global $or_mailer;
-    if(!isset($_SESSION['e_email'])){
+    if (!isset($_SESSION['e_email'])) {
         session_start();
     }
-    if($_SESSION['e_sent'] == 1){
-        $result['response'] ='<p class="e-red">Already sent</p>';
+    if ($_SESSION['e_sent'] == 1) {
+        $result['response'] = '<p class="e-red">Already sent</p>';
         return $result;
     }
-    if($_SESSION['e_generated'] == 0){
+    if ($_SESSION['e_generated'] == 0) {
         $result['response'] = '<p class="e-red">Please generate abstract</p>';
         return $result;
-    } else if($_SESSION['e_saved'] == 0){
+    } else if ($_SESSION['e_saved'] == 0) {
         $result['response'] = '<p class="e-red">Please save the generated abstract</p>';
         return $result;
     }
 
-    $rejected_text ='
+    $rejected_text = '
     <tr>
     <td align="justify" style="padding:25px;">
         <p>
@@ -592,10 +620,10 @@ function send_reject(){
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
-    $query = $wpdb->prepare($query, '3', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
+    $query = $wpdb->prepare($query, '3', $_POST['sendMail'], wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'], $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
-    if ($db_result === false){
+    if ($db_result === false) {
         $result['response'] = '<p class="e-red">database fail</p>';
         return $result;
     }
@@ -604,7 +632,7 @@ function send_reject(){
     $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $rejected_text);
 
 
-    if($sent){
+    if ($sent) {
         $result['response'] = '<p class="e-green">Reject email sent</p>';
     } else {
         $result['response'] = '<p class="e-green">Failed to send reject email, database ok</p>';
@@ -612,24 +640,25 @@ function send_reject(){
     return $result;
 }
 
-function send_accept(){
+function send_accept()
+{
     global $or_mailer;
-    if(!isset($_SESSION['e_email'])){
+    if (!isset($_SESSION['e_email'])) {
         session_start();
     }
-    if($_SESSION['e_sent'] == 1){
-        $result['response'] ='<p class="e-red">Already sent</p>';
+    if ($_SESSION['e_sent'] == 1) {
+        $result['response'] = '<p class="e-red">Already sent</p>';
         return $result;
     }
-    if($_SESSION['e_generated'] == 0){
+    if ($_SESSION['e_generated'] == 0) {
         $result['response'] = '<p class="e-red">Please generate abstract</p>';
         return $result;
-    } else if($_SESSION['e_saved'] == 0){
+    } else if ($_SESSION['e_saved'] == 0) {
         $result['response'] = '<p class="e-red">Please save the generated abstract</p>';
         return $result;
     }
 
-    $accepted_text ='
+    $accepted_text = '
     <tr>
     <td align="justify" style="padding:25px;">
         <p>
@@ -657,18 +686,18 @@ function send_accept(){
     global $wpdb;
     $query = 'UPDATE wp_or_registration_evaluation SET `status` = %s, email_content = %s, checker_name = %s, evaluation_date = %s, latex_error = %s WHERE evaluation_hash_id = %s';
 
-    
-    $query = $wpdb->prepare($query, '1', '', wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'],  $_SESSION['e_hash']);
+
+    $query = $wpdb->prepare($query, '1', '', wp_get_current_user()->user_login, current_time('mysql', 1), $_SESSION['e_error'], $_SESSION['e_hash']);
     $db_result = $wpdb->query($query);
 
-    if ($db_result === false){
+    if ($db_result === false) {
         $result['response'] = '<p class="e-red">database fail</p>';
         return $result;
     }
     $_SESSION['e_sent'] = 1;
     $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $accepted_text);
 
-    if($sent){
+    if ($sent) {
         $result['response'] = '<p class="e-green">Accept email sent</p>';
     } else {
         $result['response'] = '<p class="e-green">Failed to send accept email, database ok</p>';
@@ -678,40 +707,41 @@ function send_accept(){
 }
 
 
-function save_changes(){
-    if(!isset($_SESSION['e_hash'])){
+function save_changes()
+{
+    if (!isset($_SESSION['e_hash'])) {
         session_start();
     }
-    if($_SESSION['e_generated'] == 0){
+    if ($_SESSION['e_generated'] == 0) {
         $result['response'] = '<p class="e-red">Please generate first</p>';
         return $result;
     }
-    if($_SESSION['e_sent'] == 1){
-        $result['response'] ='<p class="e-red">Already sent</p>';
+    if ($_SESSION['e_sent'] == 1) {
+        $result['response'] = '<p class="e-red">Already sent</p>';
         return $result;
     }
 
     $authors_array = array();
-        for ($i = 0; $i < count($_POST['name']); $i++) {
-            if ($_POST['contact_author'] == $i + 1)
-                $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i], $_POST['email-author']);
-            else {
-                $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i]);
-            }
+    for ($i = 0; $i < count($_POST['name']); $i++) {
+        if ($_POST['contact_author'] == $i + 1)
+            $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i], $_POST['email-author']);
+        else {
+            $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i]);
         }
+    }
 
     $title = $_POST['abstract_title'];
     $authors = json_encode($authors_array);
     $affiliations = json_encode($_POST['affiliation']);
     $content = $_POST['textArea'];
-    if(isset($_POST['references'])){
+    if (isset($_POST['references'])) {
         $references = json_encode($_POST['references']);
-    }else{
+    } else {
         $references = [];
-    }   
+    }
 
     global $wpdb;
-    
+
     $presentation_table_name = 'wp_or_registration_presentations';
 
     $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s WHERE person_hash_id = %s';
