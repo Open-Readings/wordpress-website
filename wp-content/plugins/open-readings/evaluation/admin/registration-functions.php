@@ -171,9 +171,11 @@ ORDER BY RAND()
     $_SESSION['e_saved'] = 0;
     $_SESSION['e_sent'] = 0;
 
+    $needs_visa = $registration_row['needs_visa'] == 1 ? 'Yes' : 'No';
     $result['response'] = '<h1>' . $registration_row['first_name'] . ' ' . $registration_row['last_name'] . '</h1>';
     $result['response'] .= '<div class="abstract-flex"><div class="abstract-left-div div-margin">';
     $result['response'] .= '<p>HASH ID:<br> ' . $_SESSION['e_hash'] . '</p>';
+    $result['response'] .= '<p>Needs VISA?:<br> <strong> ' . $needs_visa . '</strong></p>';
 
 
     $status_text = [
@@ -192,6 +194,7 @@ ORDER BY RAND()
         ['Country: ', 'country'],
         ['Research area: ', 'research_area'],
         ['Presentation type: ', 'presentation_type']
+
     ];
 
     foreach ($print_registration_text_fields as $field) {
@@ -201,43 +204,43 @@ ORDER BY RAND()
     $result['response'] .= '<form id="presentationForm"><label for="institution">Institution: </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
     $result['response'] .= '<label for="department">Department: </label><b><input class="evaluation-input" name="department" type=text value="' . $registration_row['department'] . '"></input></b><br>';
 
-    $result['response'] .= '<label for="abstract_title">Title: </label><b><input class="evaluation-input" name="abstract_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
+    // $result['response'] .= '<label for="abstract_title">Title: </label><b><input class="evaluation-input" name="abstract_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
 
-    $contact_index = 0;
-    foreach (json_decode($presentation_row['authors']) as $item) {
-        $contact_index++;
-        $result['response'] .= '<label for="name[]">Author name: </label><b><input class="evaluation-input" name="name[]" type=text value="' . $item[0] . '"></input></b>';
-        $result['response'] .= '<div><label for="aff_ref[]">Affiliation nr.: </label><b><input class="evaluation-input" name="aff_ref[]" type=text value="' . $item[1] . '"></input></b></div>';
-        if (isset($item[2])) {
-            $email = $item[2];
-            $contact = $contact_index;
-        }
-    }
-    $result['response'] .= '<br><label for="email-author">Contact email: </label><b><input class="evaluation-input" name="email-author" type=text value="' . $email . '"></input></b>';
-    $result['response'] .= '<div><label for="contact_author">Contact nr.: </label><b><input class="evaluation-input" name="contact_author" type=text value="' . $contact . '"></input></b></div><br>';
+    // $contact_index = 0;
+    // foreach (json_decode($presentation_row['authors']) as $item) {
+    //     $contact_index++;
+    //     $result['response'] .= '<label for="name[]">Author name: </label><b><input class="evaluation-input" name="name[]" type=text value="' . $item[0] . '"></input></b>';
+    //     $result['response'] .= '<div><label for="aff_ref[]">Affiliation nr.: </label><b><input class="evaluation-input" name="aff_ref[]" type=text value="' . $item[1] . '"></input></b></div>';
+    //     if (isset($item[2])) {
+    //         $email = $item[2];
+    //         $contact = $contact_index;
+    //     }
+    // }
+    // $result['response'] .= '<br><label for="email-author">Contact email: </label><b><input class="evaluation-input" name="email-author" type=text value="' . $email . '"></input></b>';
+    // $result['response'] .= '<div><label for="contact_author">Contact nr.: </label><b><input class="evaluation-input" name="contact_author" type=text value="' . $contact . '"></input></b></div><br>';
 
-    $affiliation_index = 0;
-    foreach (json_decode($presentation_row['affiliations']) as $item) {
-        $affiliation_index++;
-        $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="' . $item . '"></input></b><br>';
-    }
+    // $affiliation_index = 0;
+    // foreach (json_decode($presentation_row['affiliations']) as $item) {
+    //     $affiliation_index++;
+    //     $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="' . $item . '"></input></b><br>';
+    // }
 
-    $reference_index = 0;
-    $result['response'] .= '<p>References [if there are any]<p>';
-    if (json_decode($presentation_row['references']) != NULL) {
-        foreach (json_decode($presentation_row['references']) as $item) {
-            $reference_index++;
-            $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="' . $item . '"></input></b><br>';
-        }
-    }
-    $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
+    // $reference_index = 0;
+    // $result['response'] .= '<p>References [if there are any]<p>';
+    // if (json_decode($presentation_row['references']) != NULL) {
+    //     foreach (json_decode($presentation_row['references']) as $item) {
+    //         $reference_index++;
+    //         $result['response'] .= '<label for="references[]"> Reference: </label><b><input class="evaluation-input" name="references[]" type=text value="' . $item . '"></input></b><br>';
+    //     }
+    // }
+    // $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
 
     $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail"></textarea><br>';
 
 
     $result['response'] .= '</form>';
 
-    $result['response'] .= '<button class="button-style g-button" id="send-accept">Accept & Email</button>';
+    $result['response'] .= '<button class="button-style g-button" id="send-accept">Accept</button>';
     $result['response'] .= '<button class="button-style b-button" id="send-update">Ask to update</button>';
     $result['response'] .= '<button class="button-style r-button" id="send-reject">Reject & Email</button>';
 
@@ -342,126 +345,177 @@ function fixUnclosedTags($text, $tagOpen, $tagClose)
     return $text;
 }
 
-function generate_abstract(){
+function generate_abstract()
+{
+    session_start();
+
     $i = 1;
     $authors = '';
-    foreach ($_POST['name'] as $name) {
+
+
+    $id = $_SESSION['e_hash'];
+    echo $id;
+
+    global $wpdb;
+
+    $query = $wpdb->prepare(
+        "SELECT * FROM wp_or_registration WHERE hash_id = %s",
+        $id
+    );
+
+    $registration_row = $wpdb->get_row($query, ARRAY_A);
+
+    $query = $wpdb->prepare(
+        "SELECT * FROM wp_or_registration_presentations WHERE person_hash_id = %s",
+        $id
+    );
+
+    $presentation_row = $wpdb->get_row($query, ARRAY_A);
+    $raw_names = json_decode($presentation_row['authors']);
+
+    $aff_ref = [];
+    $i = 1;
+    $names = [];
+    foreach ($raw_names as $raw_name) {
+        $names[] = $raw_name[0];
+        $aff_ref[] = $raw_name[1];
+        if (isset($raw_name[2])) {
+            $email = $raw_name[2];
+            $contact = $i;
+        }
+
+        $i++;
+    }
+
+
+    $affiliations_raw = json_decode($presentation_row['affiliations']);
+
+    $i = 1;
+    foreach ($names as $name) {
+
         $name = trim($name);
         $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
-        $aff_ref = $_POST['aff_ref'][$i - 1];
-        $aff_ref = trim($aff_ref);
+        $aff_ref = trim($aff_ref[$i - 1]);
         //replace everything that is not a digit or ,
         $aff_ref = preg_replace('/[^\d,]/', '', $aff_ref);
 
-        if ($_POST['contact_author'] == $i)
+        if ($contact == $i)
             $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref . '}$';
         else
             $authors = $authors . $name . '$^{' . $aff_ref . '}$';
 
-        if ($i < count($_POST['name']))
+        if ($i < count($names))
             $authors = $authors . ', ';
         $i++;
     }
 
     $affiliations = '';
     $i = 1;
-    foreach ($_POST['affiliation'] as $aff) {
+    foreach ($affiliations_raw as $aff) {
         $affiliations = $affiliations . '\address{$^{' . $i . '}$' . $aff . '}
     ';
         $i++;
     }
-    $affiliations = $affiliations . '\rightaddress{' . $_POST['email-author'] . '}';
-    if(isset($_POST['references'])){
-    $references = '
+
+    $affiliations = $affiliations . '\rightaddress{' . $email . '}';
+
+    $raw_references = $presentation_row['references'];
+
+    if ($raw_references != NULL && $raw_references != '') {
+        $raw_references = json_decode($raw_references);
+        $references = '
     \vfill    
     \begin{thebibliography}{}
     ';
-    $i = 1;
-    foreach ($_POST['references'] as $ref) {
-       $references .= '\bibitem{' . $i . '} ' . $ref . '
+        $i = 1;
+        foreach ($raw_references as $ref) {
+            $references .= '\bibitem{' . $i . '} ' . $ref . '
        ';
-       $i++;
-    }
-    $references .= '\end{thebibliography}
+            $i++;
+        }
+        $references .= '\end{thebibliography}
     ';
-    } else{
+    } else {
         $references = '';
     }
 
-    $titleField = stripslashes($_POST['abstract_title']);
 
-            $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
-            $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
-            $titleField = preg_replace('/[^\p{L}\p{N}\s&-+()=.:,<>;\/]/', '', $titleField);
 
-            $sup_starting_tag = '<sup>';
-            $sub_starting_tag = '<sub>';
-            $sub_ending_tag = '</sub>';
-            $sup_ending_tag = '</sup>';
-            $layers = 0;
-            $is_in_math_mode = false;
-            for ($i = 0; $i < mb_strlen($titleField); $i++) {
-                if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
-                    $sup_starting_tag_index = $i;
-                    $layers++;
-                    if ($layers == 1) {
-                        $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
-                    } else {
-                        //replace <sup> with $^{
-                        $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
-                    }
-                    $i -= mb_strlen($sup_starting_tag);
-                }
-                if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
-                    $sub_starting_tag_index = $i;
-                    $layers++;
-                    if ($layers == 1) {
-                        $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
-                    } else {
-                        //replace <sub> with $_{
-                        $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
-                    }
-                    $i -= mb_strlen($sup_starting_tag);
+    $titleField = $presentation_row['title'];
 
-                }
 
-                if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
-                    $sub_ending_tag_index = $i;
-                    $layers--;
-                    if ($layers == 0) {
-                        //replace </sub> with }$
-                        $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
-                    } else {
-                        //replace </sub> with }$
-                        $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
-                    }
-                    //replace </sub> with }$
-                    $i -= mb_strlen($sup_starting_tag);
-                }
-                if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
-                    $sup_ending_tag_index = $i;
-                    $layers--;
-                    if ($layers == 0) {
-                        //replace </sup> with }$
-                        $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
-                    } else {
-                        //replace </sup> with }$
-                        $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
-                    }
-                    $i -= mb_strlen($sup_starting_tag);
-                }
 
+    $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
+    $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
+
+    $sup_starting_tag = '<sup>';
+    $sub_starting_tag = '<sub>';
+    $sub_ending_tag = '</sub>';
+    $sup_ending_tag = '</sup>';
+    $layers = 0;
+    $is_in_math_mode = false;
+    for ($i = 0; $i < mb_strlen($titleField); $i++) {
+        if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
+            $sup_starting_tag_index = $i;
+            $layers++;
+            if ($layers == 1) {
+                $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
+            } else {
+                //replace <sup> with $^{
+                $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
             }
+            $i -= mb_strlen($sup_starting_tag);
+        }
+        if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
+            $sub_starting_tag_index = $i;
+            $layers++;
+            if ($layers == 1) {
+                $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+            } else {
+                //replace <sub> with $_{
+                $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+            }
+            $i -= mb_strlen($sup_starting_tag);
 
-            $titleField = str_replace('&nbsp;', '', $titleField);
+        }
 
-    $abstractContent = stripslashes($_POST["textArea"]);
+        if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
+            $sub_ending_tag_index = $i;
+            $layers--;
+            if ($layers == 0) {
+                //replace </sub> with }$
+                $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+            } else {
+                //replace </sub> with }$
+                $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+            }
+            //replace </sub> with }$
+            $i -= mb_strlen($sup_starting_tag);
+        }
+        if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
+            $sup_ending_tag_index = $i;
+            $layers--;
+            if ($layers == 0) {
+                //replace </sup> with }$
+                $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+            } else {
+                //replace </sup> with }$
+                $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+            }
+            $i -= mb_strlen($sup_starting_tag);
+        }
 
-    if(!isset($_SESSION['e_pdf'])){
+    }
+
+    $titleField = str_replace('&nbsp;', '', $titleField);
+
+    $abstractContent = stripslashes($presentation_row['content']);
+
+    if (!isset($_SESSION['e_pdf'])) {
         session_start();
     }
-    if($_SESSION['e_sent'] == 1){
-        $result['response'] ='<p class="e-red">Already sent</p>';
+    if ($_SESSION['e_sent'] == 1) {
+        $result['response'] = '<p class="e-red">Already sent</p>';
         return $result;
     }
 
@@ -496,7 +550,7 @@ function generate_abstract(){
 
     // Write the modified content to the abstract file
     $folder = WP_CONTENT_DIR . '/latex/' . $_SESSION['e_file'];
-    if(!file_exists($folder . '/orstylet.sty')){
+    if (!file_exists($folder . '/orstylet.sty')) {
         copy(WP_CONTENT_DIR . '/latex/orstylet.sty', $folder . '/orstylet.sty');
     }
     $abstractFilePath = $folder . '/abstract.tex';
@@ -520,7 +574,7 @@ function generate_abstract(){
         $_SESSION['e_error'] = 0;
     }
 
-        return $result;
+    return $result;
 
 }
 
@@ -725,38 +779,38 @@ function save_changes()
         return $result;
     }
 
-    $authors_array = array();
-    for ($i = 0; $i < count($_POST['name']); $i++) {
-        if ($_POST['contact_author'] == $i + 1)
-            $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i], $_POST['email-author']);
-        else {
-            $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i]);
-        }
-    }
+    // $authors_array = array();
+    // for ($i = 0; $i < count($_POST['name']); $i++) {
+    //     if ($_POST['contact_author'] == $i + 1)
+    //         $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i], $_POST['email-author']);
+    //     else {
+    //         $authors_array[$i] = array($_POST['name'][$i], $_POST['aff_ref'][$i]);
+    //     }
+    // }
 
-    $title = $_POST['abstract_title'];
-    $authors = json_encode($authors_array);
-    $affiliations = json_encode($_POST['affiliation']);
-    $content = $_POST['textArea'];
-    if (isset($_POST['references'])) {
-        $references = json_encode($_POST['references']);
-    } else {
-        $references = [];
-    }
+    // $title = $_POST['abstract_title'];
+    // $authors = json_encode($authors_array);
+    // $affiliations = json_encode($_POST['affiliation']);
+    // $content = $_POST['textArea'];
+    // if (isset($_POST['references'])) {
+    //     $references = json_encode($_POST['references']);
+    // } else {
+    //     $references = [];
+    // }
 
     global $wpdb;
 
-    $presentation_table_name = 'wp_or_registration_presentations';
+    // $presentation_table_name = 'wp_or_registration_presentations';
 
-    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s WHERE person_hash_id = %s';
+    // $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s WHERE person_hash_id = %s';
 
-    $query = $wpdb->prepare($query, $title, $authors, $affiliations, $content, $references, $_SESSION['e_hash']);
+    // $query = $wpdb->prepare($query, $title, $authors, $affiliations, $content, $references, $_SESSION['e_hash']);
 
-    $db_result = $wpdb->query($query);
-    if ($db_result === false) {
-        $result['response'] = '<p class="e-red">error</p>';
-        return $result;
-    }
+    // $db_result = $wpdb->query($query);
+    // if ($db_result === false) {
+    //     $result['response'] = '<p class="e-red">error</p>';
+    //     return $result;
+    // }
     $registration_table_name = 'wp_or_registration';
 
     $query = 'UPDATE ' . $registration_table_name . ' SET institution = %s, department = %s WHERE hash_id = %s';
