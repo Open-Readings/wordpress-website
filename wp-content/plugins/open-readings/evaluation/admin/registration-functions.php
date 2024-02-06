@@ -698,13 +698,14 @@ function send_accept()
         return $result;
     }
     $_SESSION['e_sent'] = 1;
-    $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $accepted_text);
+    // $sent = $or_mailer->send_OR_mail($_SESSION['e_email'], 'Registration Update', $accepted_text);
 
-    if ($sent) {
-        $result['response'] = '<p class="e-green">Accept email sent</p>';
-    } else {
-        $result['response'] = '<p class="e-green">Failed to send accept email, database ok</p>';
-    }
+    // if ($sent) {
+    //     $result['response'] = '<p class="e-green">Accept email sent</p>';
+    // } else {
+    //     $result['response'] = '<p class="e-green">Failed to send accept email, database ok</p>';
+    // }
+    $result['response'] = '<p class="e-green">Accepted</p>';
 
     return $result;
 }
