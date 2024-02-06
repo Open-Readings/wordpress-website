@@ -129,10 +129,25 @@ function add_menu_roles()
   $role = get_role('administrator');
   $role->add_cap('manage_or_registration');
   $role->add_cap('manage_or_mailer');
+  $role->add_cap('manage_evaluations');
   //add new capability
   $role = get_role('editor');
   $role->add_cap('manage_or_registration');
   $role->add_cap('manage_or_mailer');
+  $role->add_cap('manage_evaluations');
+  // create new role
+  $role = add_role(
+    'or_evaluator',
+    'Open Readings Abstract Evaluator',
+    array(
+      'read' => true, // True allows that capability
+      'manage_or_registration' => false,
+      'manage_or_mailer' => false,
+      'manage_evaluations' => true,
+    )
+  );
+
+
 }
 
 

@@ -43,6 +43,17 @@ wp_enqueue_script('evaluation-js', '');
     ?>
 
 
+
+
+    <div>
+        <h2>Instrukcijos</h2>
+        <p>
+            Pradėkite vertinimą paspaudę NEXT mygtuką.
+            Į ką atkreipti dėmesį
+
+
+        </p>
+    </div>
     <button class="button-style r-button" id="evaluationButton">NEXT</button>
     <div id=displayContainer></div>
     <div id="scriptContainer"></div>
