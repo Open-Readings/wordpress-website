@@ -49,7 +49,31 @@ wp_enqueue_script('evaluation-js', '');
         <h2>Instrukcijos</h2>
         <p>
             Pradėkite vertinimą paspaudę NEXT mygtuką.
-            Į ką atkreipti dėmesį
+            Į ką atkreipti dėmesį:
+        <ul>
+            <li> Ar pranešimas atitinka temą</li>
+            <li> Ar tesingai nurodyta Įstaiga, jeigu laukelis yra <span style="color:red;"> raudonos</span> spalvos,
+                vadinasi reikėtų pakeisti.
+            </li>
+            <li> Ar Tema yra išvis pasirinkta</li>
+            <li> Ar tinkamai suformatuotas literatūros sąrašas</li>
+            <li> Ar darbas yra 'original research'</li>
+            <li> Ar viskas telpa į vieną A4 formato puslapį</li>
+            <li> Ar teisingai nurodytos afiliacijos ir autorių sąrašas </li>
+        </ul>
+        <ul>
+            <li>Jeigu norite atmesti pranešimą, paspauskite REJECT mygtuką ir įrašykite atmetimo priežastį (Bus
+                išsiųstas
+                dalyviui laiškas).</li>
+            <li>Jeigu norite priimti pranešimą, paspauskite ACCEPT mygtuką.</li>
+            <li>Jeigu norite paprašyti atnaujinimo, paspauskite UPDATE mygtuką, su priežastimi (Bus išsiųstas dalyviui
+                laiškas).</li>
+            <li>Jeigu norite išsaugoti pakeitimus, paspauskite SAVE mygtuką (Tą darykite pakeitę afiliaciją).</li>
+            <li>Prieš išsaugant, jums reikės paspausti 'Generate' mygtuką, kad sugeneruotų PDF failą iš naujo, pagal
+                atitinkamą
+                šabloną.</li>
+            Norėdami tikrinti kitą dalyvį, paspauskite 'NEXT' mygtuką.
+        </ul>
 
 
         </p>
