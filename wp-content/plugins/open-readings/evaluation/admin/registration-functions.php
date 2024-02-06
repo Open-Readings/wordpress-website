@@ -496,6 +496,9 @@ function generate_abstract(){
 
     // Write the modified content to the abstract file
     $folder = WP_CONTENT_DIR . '/latex/' . $_SESSION['e_file'];
+    if(!file_exists($folder . '/orstylet.sty')){
+        copy(WP_CONTENT_DIR . '/latex/orstylet.sty', $folder . '/orstylet.sty');
+    }
     $abstractFilePath = $folder . '/abstract.tex';
     file_put_contents($abstractFilePath, $templateContent);
     // $folder = '../wp-content/latex/' . $_SESSION['file'];
