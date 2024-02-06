@@ -347,11 +347,14 @@ function fixUnclosedTags($text, $tagOpen, $tagClose)
 
 function generate_abstract()
 {
+    session_start();
+
     $i = 1;
     $authors = '';
 
-    $id = $_SESSION['e_hash'];
 
+    $id = $_SESSION['e_hash'];
+    echo $id;
 
     global $wpdb;
 
@@ -368,24 +371,40 @@ function generate_abstract()
     );
 
     $presentation_row = $wpdb->get_row($query, ARRAY_A);
-    $names = json_decode($presentation_row['authors']);
+    $raw_names = json_decode($presentation_row['authors']);
+
+    $aff_ref = [];
+    $i = 1;
+    $names = [];
+    foreach ($raw_names as $raw_name) {
+        $names[] = $raw_name[0];
+        $aff_ref[] = $raw_name[1];
+        if (isset($raw_name[2])) {
+            $email = $raw_name[2];
+            $contact = $i;
+        }
+
+        $i++;
+    }
+
+
     $affiliations_raw = json_decode($presentation_row['affiliations']);
 
-
+    $i = 1;
     foreach ($names as $name) {
+
         $name = trim($name);
         $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
-        $aff_ref = $_POST['aff_ref'][$i - 1];
-        $aff_ref = trim($aff_ref);
+        $aff_ref = trim($aff_ref[$i - 1]);
         //replace everything that is not a digit or ,
         $aff_ref = preg_replace('/[^\d,]/', '', $aff_ref);
 
-        if ($_POST['contact_author'] == $i)
+        if ($contact == $i)
             $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref . '}$';
         else
             $authors = $authors . $name . '$^{' . $aff_ref . '}$';
 
-        if ($i < count($_POST['name']))
+        if ($i < count($names))
             $authors = $authors . ', ';
         $i++;
     }
@@ -397,11 +416,13 @@ function generate_abstract()
     ';
         $i++;
     }
-    $affiliations = $affiliations . '\rightaddress{' . $_POST['email-author'] . '}';
 
-    $raw_references = json_decode($presentation_row['references']);
+    $affiliations = $affiliations . '\rightaddress{' . $email . '}';
 
-    if (isset($_POST['references'])) {
+    $raw_references = $presentation_row['references'];
+
+    if ($raw_references != NULL && $raw_references != '') {
+        $raw_references = json_decode($raw_references);
         $references = '
     \vfill    
     \begin{thebibliography}{}
@@ -488,7 +509,7 @@ function generate_abstract()
 
     $titleField = str_replace('&nbsp;', '', $titleField);
 
-    $abstractContent = $presentation_row['content'];
+    $abstractContent = stripslashes($presentation_row['content']);
 
     if (!isset($_SESSION['e_pdf'])) {
         session_start();
