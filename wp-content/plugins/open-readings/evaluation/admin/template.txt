@@ -21,7 +21,8 @@
 
 \usepackage{orstylet}
 \makeatother
-\begin{document}
+\usepackage{microtype}
+\begin{document}\sloppy
 
 \renewcommand{\figurename}{Fig.} 
 
