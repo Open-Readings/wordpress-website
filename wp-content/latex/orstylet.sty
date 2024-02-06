@@ -21,10 +21,12 @@
 \renewcommand\vec[1]{\ensuremath{\mathbf{#1}}}
 
 \renewcommand\title[1]{\gdef\@title{\reset@font\Large\bfseries #1}}
-\renewcommand\author[1]{\gdef\@author{\reset@font\large #1}}
+\renewcommand\author[1]{\gdef\@author{\reset@font\large \parbox{\linewidth}{ \centering #1}}}
 
 \setlength{\pdfpagewidth}{210mm}
 \setlength{\pdfpageheight}{297mm}
+
+
 
    \def\@maketitle{%
      \begin{center}%

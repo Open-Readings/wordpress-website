@@ -354,7 +354,6 @@ function generate_abstract()
 
 
     $id = $_SESSION['e_hash'];
-    echo $id;
 
     global $wpdb;
 
@@ -373,12 +372,14 @@ function generate_abstract()
     $presentation_row = $wpdb->get_row($query, ARRAY_A);
     $raw_names = json_decode($presentation_row['authors']);
 
-    $aff_ref = [];
+    $aff_ref = array();
     $i = 1;
-    $names = [];
+    $names = array();
     foreach ($raw_names as $raw_name) {
+
         $names[] = $raw_name[0];
         $aff_ref[] = $raw_name[1];
+
         if (isset($raw_name[2])) {
             $email = $raw_name[2];
             $contact = $i;
@@ -389,20 +390,20 @@ function generate_abstract()
 
 
     $affiliations_raw = json_decode($presentation_row['affiliations']);
-
+    // echo var_dump($raw_names);
     $i = 1;
     foreach ($names as $name) {
 
         $name = trim($name);
         $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
-        $aff_ref = trim($aff_ref[$i - 1]);
+        $aff_ref_var = trim($aff_ref[$i - 1]);
         //replace everything that is not a digit or ,
-        $aff_ref = preg_replace('/[^\d,]/', '', $aff_ref);
+        $aff_ref_var = preg_replace('/[^\d,]/', '', $aff_ref_var);
 
         if ($contact == $i)
-            $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref . '}$';
+            $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref_var . '}$';
         else
-            $authors = $authors . $name . '$^{' . $aff_ref . '}$';
+            $authors = $authors . $name . '$^{' . $aff_ref_var . '}$';
 
         if ($i < count($names))
             $authors = $authors . ', ';
