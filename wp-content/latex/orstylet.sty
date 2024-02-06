@@ -1,0 +1,67 @@
+\NeedsTeXFormat{LaTeX2e}
+%\ProvidesPackage{orstyle}[OpenReadings abstract style]
+
+
+\RequirePackage{setspace}
+\RequirePackage{vmargin}
+\RequirePackage{ulem}
+\RequirePackage{nopageno}
+\usepackage{bm}
+\setpapersize[portrait]{A4}
+\usepackage[labelsep=period]{caption}
+
+\setmarginsrb{2cm}{2cm}{2cm}{2cm}{0cm}{0cm}{0pt}{0pt}
+\pagestyle{plain}%
+
+   
+\setlength{\parindent}{7.5mm}
+\setlength{\parskip}{0cm plus0mm minus0mm}
+
+\renewcommand\imath{\ensuremath{\mathrm{i}}}
+\renewcommand\vec[1]{\ensuremath{\mathbf{#1}}}
+
+\renewcommand\title[1]{\gdef\@title{\reset@font\Large\bfseries #1}}
+\renewcommand\author[1]{\gdef\@author{\reset@font\large #1}}
+
+\setlength{\pdfpagewidth}{210mm}
+\setlength{\pdfpageheight}{297mm}
+
+   \def\@maketitle{%
+     \begin{center}%
+       {\LARGE \@title \par}%
+       {\large
+         \begin{tabular}[t]{c}%
+           \@author
+         \end{tabular}\par}%
+     \end{center}%
+     }
+     
+\newcommand{\address}[1]{
+\par {\centering #1
+\noindent\par}
+}
+
+\newcommand{\rightaddress}[1]{
+\par {\centering \uline{#1}
+\noindent\par\vspace{12pt}}
+}
+
+\renewenvironment{thebibliography}[1]{%
+	\footnotesize\medskip
+	\par\par\noindent\rule[0.5ex]{1\columnwidth}{0.5pt}\vspace{-0.2cm}
+	\list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin10pt
+            \advance\leftmargin\labelsep 
+            \itemsep\z@skip    % should this be commented out?
+            \parsep\z@skip     % should this be commented out?
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy\clubpenalty4000\widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+          
