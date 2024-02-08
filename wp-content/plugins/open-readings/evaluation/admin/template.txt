@@ -11,7 +11,7 @@
 \graphicspath{ {images/} }
 \usepackage{microtype}
 \DeclareUnicodeCharacter{2212}{--}
-
+\DeclareUnicodeCharacter{2032}{$^\prime$}
 
 
 \usepackage{mathptmx}
