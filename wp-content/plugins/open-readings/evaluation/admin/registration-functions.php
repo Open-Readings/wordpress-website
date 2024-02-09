@@ -430,7 +430,7 @@ function generate_abstract()
     ';
         $i = 1;
         foreach ($raw_references as $ref) {
-            $references .= '\bibitem{' . $i . '} ' . $ref . '
+            $references .= '\bibitem{' . $i . '} ' . stripslashes($ref) . '
        ';
             $i++;
         }
