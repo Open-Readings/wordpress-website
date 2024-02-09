@@ -1,4 +1,5 @@
 var textarea = document.getElementById("textArea");
+var textDisplay = document.getElementById("latexResult");
 var charCount = document.getElementById("charCount");
 const latexButton = document.getElementById("latexButton");
 const loader = document.getElementById('loader');
@@ -7,6 +8,7 @@ const errorMessage = document.getElementById('errorMessage');
 
 
 textarea.addEventListener("input", function () { countChar(); });
+textarea.addEventListener('scroll', function() { textScroll(); });
 
 function countChar() {
     var text = textarea.value;
@@ -21,6 +23,11 @@ function countChar() {
     }
 
     charCount.innerText = count;
+    textScroll();
+}
+
+function textScroll(){
+    textDisplay.scrollTop = textarea.scrollTop;
 }
 
 function setIframeHeight() {
