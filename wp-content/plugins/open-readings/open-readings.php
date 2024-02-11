@@ -155,11 +155,11 @@ function add_menu_roles()
 function register_admin()
 {
   require_once(__DIR__ . '/registration/admin.php');
-
+  require_once(__DIR__ . '/second-evaluation/or_evaluation_admin.php');
   require_once(__DIR__ . '/evaluation/admin.php');
   $admin = new OREvaluationAdmin();
+  $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
-
 
 
 }
@@ -260,3 +260,34 @@ function my_custom_function()
   require_once(__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'my_custom_function');
+
+global $PRESENTATION_TYPE;
+$PRESENTATION_TYPE = [
+    'Oral' => 1,
+    'Poster' => 2,
+    'Rejected' => 3
+];
+
+global $RESEARCH_AREAS;
+$RESEARCH_AREAS = [
+    1 => 'Astrophysics and Astronomy',
+    2 => 'Chemistry and Chemical Physics',
+    3 => 'Nanomaterials and Nanotechnology',
+    4 => 'Materials Science and Modern Technologies',
+    5 => 'Laser Physics and Optical Technologies',
+    6 => 'Theoretical Physics',
+    7 => 'Spectroscopy and Imaging',
+    8 => 'Biochemistry, Biophysics, and Biotechnology',
+    9 => 'Biology, Genetics and Biomedical Sciences'
+];
+global $STATUS_CODES;
+$STATUS_CODES = [
+    'Submitted' => 1,
+    'Not Checked' => 2,
+    'Checked' => 3,
+    'Accepted' => 4,
+    'Rejected' => 5,
+    'Duplicate' => 6,
+    'Other' => 0,
+
+];
