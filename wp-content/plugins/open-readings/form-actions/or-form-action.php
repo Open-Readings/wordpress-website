@@ -142,7 +142,7 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
         $registration->abstract = $abstract_content;
 
         $registration->session_id = $session_id;
-        
+
         global $wpdb;
         $query = $wpdb->prepare('SELECT `status` FROM wp_or_registration_evaluation WHERE evaluation_hash_id = %s', $_SESSION['hash']);
         $evaluation_row = $wpdb->get_row($query);
@@ -162,7 +162,7 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
             return;
         }
 
-        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s, `status` WHERE evaluation_hash_id = %s', current_time('mysql', 1), '4', $_SESSION['hash']);
+        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s, `status` = %s WHERE evaluation_hash_id = %s', current_time('mysql', 1), '4', $_SESSION['hash']);
         $wpdb->query($query);
         session_unset();
         session_destroy();

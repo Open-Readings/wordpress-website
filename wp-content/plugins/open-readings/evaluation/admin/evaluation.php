@@ -37,7 +37,7 @@ wp_enqueue_script('evaluation-js', '');
     $number_of_waiting_for_update = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 2");
     $number_of_rejected = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 3");
     $number_of_waiting_for_review = $wpdb->get_var("SELECT COUNT(*) FROM wp_or_registration_evaluation WHERE status = 4");
-    echo ' Number of not checked: ' . $number_of_not_checked . ', Accepted: ' . $number_of_accepted . ', Waiting for update: ' . $number_of_waiting_for_update + $number_of_waiting_for_review . ', Rejected: ' . $number_of_rejected . '</p>';
+    echo ' Number of not checked: ' . $number_of_not_checked + $number_of_waiting_for_review . ', Accepted: ' . $number_of_accepted . ', Waiting for update: ' . $number_of_waiting_for_update . ', Rejected: ' . $number_of_rejected . '</p>';
 
 
     ?>
