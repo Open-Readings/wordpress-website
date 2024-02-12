@@ -111,16 +111,8 @@ function display_evaluation_page()
     $evaluation_table = $wpdb->prefix . 'or_registration_evaluation';
 
     $query = $wpdb->prepare("
-select evaluation_hash_id from wp_or_registration as r 
-left join wp_or_registration_presentations 
-as p on r.hash_id = p.person_hash_id 
-left join wp_or_registration_evaluation 
-as e on p.person_hash_id = e.evaluation_hash_id
-where email in
-(SELECT email
-FROM wp_or_registration
-GROUP BY email
-HAVING COUNT(email) = 1) and `current_user` is NULL and `status` = 0 or `status` = 4
+select evaluation_hash_id from wp_or_registration_evaluation 
+where `current_user` is NULL and `status` = 0 or `status` = 4
 ORDER BY RAND()
 ");
 
@@ -430,7 +422,7 @@ function generate_abstract()
     ';
         $i = 1;
         foreach ($raw_references as $ref) {
-            $references .= '\bibitem{' . $i . '} ' . $ref . '
+            $references .= '\bibitem{' . $i . '} ' . stripslashes($ref) . '
        ';
             $i++;
         }

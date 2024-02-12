@@ -12,6 +12,10 @@
 \usepackage{microtype}
 \DeclareUnicodeCharacter{2212}{--}
 \DeclareUnicodeCharacter{2032}{$^\prime$}
+\DeclareUnicodeCharacter{2265}{$\geq$}
+\DeclareUnicodeCharacter{2264}{$\leq$}
+\DeclareUnicodeCharacter{2260}{$\neq$}
+
 
 
 \usepackage{mathptmx}

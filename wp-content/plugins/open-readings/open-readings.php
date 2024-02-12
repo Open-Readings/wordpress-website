@@ -32,6 +32,7 @@ add_action('elementor/widgets/register', 'register_faq_widget');
 
 function register_or_dependencies()
 {
+  $version = '1';
   wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__));
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
@@ -46,7 +47,7 @@ function register_or_dependencies()
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
   wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
-  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__));
+  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), $version);
   wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__));
   wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__));
   wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
@@ -154,11 +155,11 @@ function add_menu_roles()
 function register_admin()
 {
   require_once(__DIR__ . '/registration/admin.php');
-
+  require_once(__DIR__ . '/second-evaluation/or_evaluation_admin.php');
   require_once(__DIR__ . '/evaluation/admin.php');
   $admin = new OREvaluationAdmin();
+  $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
-
 
 
 }
@@ -259,3 +260,34 @@ function my_custom_function()
   require_once(__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'my_custom_function');
+
+global $PRESENTATION_TYPE;
+$PRESENTATION_TYPE = [
+    'Oral' => 1,
+    'Poster' => 2,
+    'Rejected' => 3
+];
+
+global $RESEARCH_AREAS;
+$RESEARCH_AREAS = [
+    1 => 'Astrophysics and Astronomy',
+    2 => 'Chemistry and Chemical Physics',
+    3 => 'Nanomaterials and Nanotechnology',
+    4 => 'Materials Science and Modern Technologies',
+    5 => 'Laser Physics and Optical Technologies',
+    6 => 'Theoretical Physics',
+    7 => 'Spectroscopy and Imaging',
+    8 => 'Biochemistry, Biophysics, and Biotechnology',
+    9 => 'Biology, Genetics and Biomedical Sciences'
+];
+global $STATUS_CODES;
+$STATUS_CODES = [
+    'Submitted' => 1,
+    'Not Checked' => 2,
+    'Checked' => 3,
+    'Accepted' => 4,
+    'Rejected' => 5,
+    'Duplicate' => 6,
+    'Other' => 0,
+
+];
