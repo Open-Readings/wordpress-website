@@ -117,12 +117,13 @@
         global $RESEARCH_AREAS;
         $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id";
         $registration_table = "wp_or_registration";
+        $evaluation_table = 'wp_or_registration_evaluation';
         $ra_filter = 'none';
 
 
         if (isset($_POST['save_settings'])) {
             foreach ($_POST['decision'] as $id => $decision) {
-                $wpdb->update($registration_table, array('decision' => $decision), array('hash_id' => $id));
+                $wpdb->update($evaluation_table, array('decision' => $decision), array('evaluation_hash_id' => $id));
             }
         }
 

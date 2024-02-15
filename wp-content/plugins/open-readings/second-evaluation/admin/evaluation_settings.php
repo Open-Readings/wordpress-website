@@ -17,7 +17,6 @@ if (isset($_POST['expand-evaluation-table'])) {
     {
         global $wpdb;
         global $STATUS_CODES;
-        global $table_name;
         global $RESEARCH_AREAS;
         global $PRESENTATION_TYPE;
         $table_name = "wp_or_registration_evaluation";
@@ -60,7 +59,7 @@ if (isset($_POST['expand-evaluation-table'])) {
     print_eval_statistics();
     echo "</div>";
     // get all users with the or_evalutaion_member role
-    $users = get_users(array('role__in' => array('or_evaluator', 'administrator')));
+    $users = get_users(array('role__in' => array('or_main_evaluator', 'administrator')));
 
     // selection of users
     echo '<form method="POST" id="filter">';
@@ -140,10 +139,13 @@ if (isset($_POST['expand-evaluation-table'])) {
                         $wpdb->update($evaluation_table, array('checker' => 0), array('evaluation_hash_id' => $cb->evaluation_hash_id));
                     }
                 }
-                $check = $_POST['check'];
-                foreach ($check as $id) {
-                    $wpdb->update($evaluation_table, array('checker' => $user_id), array('evaluation_hash_id' => $id));
+                if(isset($_POST['check']))
+                {
+                    $check = $_POST['check'];
+                    foreach ($check as $id) {
+                        $wpdb->update($evaluation_table, array('checker' => $user_id), array('evaluation_hash_id' => $id));
                 }
+            }
             } else {
                 echo "Please select a user";
             }
@@ -212,11 +214,14 @@ if (isset($_POST['expand-evaluation-table'])) {
                 // Execute the SQL query
                 $result = $wpdb->query($sql);
             }
-            if($result){
-                return '<p>SUCCESS</p>';
-            } else {
-                return '<p>FAIL</p>';
-            }
+            if(isset($result)){
+                if($result){
+                    return '<p>SUCCESS</p>';
+                } else {
+                    return '<p>FAIL</p>';
+                }} else {
+                    return '<p>FAIL</p>';
+                }
         }
 
         ?>

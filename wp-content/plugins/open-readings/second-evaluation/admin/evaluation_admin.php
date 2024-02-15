@@ -84,7 +84,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
         $error = "";
 
         if ($is_admin) {
-            $users = get_users(array('role__in' => array('or_eval_member', 'administrator')));
+            $users = get_users(array('role__in' => array('or_main_evaluator', 'administrator')));
 
             // selection of users
             echo '<form method="POST" id="filter">';

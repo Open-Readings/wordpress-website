@@ -147,6 +147,16 @@ function add_menu_roles()
       'manage_evaluations' => true,
     )
   );
+  $role = add_role(
+    'or_main_evaluator',
+    'Abstract Evaluators',
+    array(
+      'read' => true, // True allows that capability
+      'manage_or_registration' => false,
+      'manage_or_mailer' => false,
+      'manage_evaluations' => false,
+    )
+  );
 
 
 }
@@ -282,12 +292,10 @@ $RESEARCH_AREAS = [
 ];
 global $STATUS_CODES;
 $STATUS_CODES = [
-    'Submitted' => 1,
-    'Not Checked' => 2,
-    'Checked' => 3,
-    'Accepted' => 4,
-    'Rejected' => 5,
-    'Duplicate' => 6,
-    'Other' => 0,
+    'Not Checked' => 0,
+    'Accepted' => 1,
+    'Update' => 2,
+    'Rejected' => 3,
+    'Duplicate' => 99,
 
 ];

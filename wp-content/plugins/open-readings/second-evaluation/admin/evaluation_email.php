@@ -54,7 +54,7 @@
                     '{$title}' => $presentation_title,
                 );
             $template = strtr($rej_body, $vars);
-            return $or_mailer->send_mail($email, $subj, $template);
+            return $or_mailer->send_or_mail($email, $subj, $template);
         } else {
             $vars =
                 array(
@@ -84,14 +84,15 @@
         $num_accepted = $wpdb->get_var("SELECT COUNT(*) AS NC FROM $table_name WHERE status=" . $STATUS_CODES["Accepted"] . " AND (decision=" . $PRESENTATION_TYPE['Oral'] . " OR decision=" . $PRESENTATION_TYPE['Poster'] . ")");
         $num_notchecked = $wpdb->get_var("SELECT COUNT(*) AS NU FROM $table_name WHERE status=" . $STATUS_CODES["Accepted"] . " AND decision=0");
         $num_rejected = $wpdb->get_var("SELECT COUNT(*) AS NR FROM $table_name WHERE status=" . $STATUS_CODES["Accepted"] . " AND decision=3");
-
+        $num_emailed = $wpdb->get_var("SELECT COUNT(*) AS NC FROM $table_name WHERE sent_email = 1");
 
         echo "<h2>Abstracts</h2>";
-        echo "<p>Accepted: {$num_accepted}, Not checked: {$num_notchecked}, Rejected: {$num_rejected}</p>";
+        echo "<p>Accepted: {$num_accepted}, Not checked: {$num_notchecked}, Rejected: {$num_rejected}, Emailed: {$num_emailed}</p>";
 
 
         $num_posters = $wpdb->get_var("SELECT COUNT(*) AS num_posters FROM $table_name WHERE status=" . $STATUS_CODES["Accepted"] . " AND decision=" . $PRESENTATION_TYPE['Poster']);
         $num_orals = $wpdb->get_var("SELECT COUNT(*) AS num_orals FROM $table_name WHERE status=" . $STATUS_CODES["Accepted"] . " AND decision=" . $PRESENTATION_TYPE['Oral']);
+
         echo "<p> Accepted presentations:</p>";
         echo "<p>Posters: {$num_posters}, Orals: {$num_orals}</p>";
 

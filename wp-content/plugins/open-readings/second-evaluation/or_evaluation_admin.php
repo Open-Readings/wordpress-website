@@ -23,7 +23,7 @@ class ORSecondEvaluationAdmin
     function add_admin_pages()
     {
 
-        add_menu_page('OpenReadings Evaluation System', 'OpenReadings evaluation system', 'or_evaluator', 'or_evaluation_two', array($this, 'admin_index'), 'dashicons-list-view', 4);
+        add_menu_page('OpenReadings Evaluation System', 'OpenReadings evaluation system', 'or_main_evaluator', 'or_evaluation_two', array($this, 'admin_index'), 'dashicons-list-view', 4);
         if (current_user_can('manage_options')) {
             add_submenu_page('or_evaluation_two', 'OR Evaluation List', 'Or evaluation admin', 'manage_options', 'or_evaluation_admin', array($this, 'admin_index'), 4);
             add_submenu_page('or_evaluation_two', 'OR Evaluation Settings', 'OR evaluation system settings', 'manage_options', 'or_evaluation_settings_two', array($this, 'admin_settings'), 5);
@@ -61,12 +61,14 @@ class ORSecondEvaluationAdmin
             global $PRESENTATION_TYPE;
             global $RESEARCH_AREAS;
             $registration_table = "23_registration";
+            $evaluation_table = 'wp_or_registration_evaluation';
+            $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id";
             $ra_filter = 'none';
 
 
             if (isset($_POST['save_settings'])) {
                 foreach ($_POST['decision'] as $id => $decision) {
-                    $wpdb->update($registration_table, array('decision' => $decision), array('id' => $id));
+                    $wpdb->update($evaluation_table, array('decision' => $decision), array('evaluation_hash_id' => $id));
                 }
             }
 
@@ -78,7 +80,7 @@ class ORSecondEvaluationAdmin
 
 
             global $STATUS_CODES;
-            $query = "SELECT * FROM $registration_table WHERE status=" . $STATUS_CODES["Accepted"] . "";
+            $query = "SELECT * FROM $joint_table WHERE status=" . $STATUS_CODES["Accepted"] . "";
 
 
             if ($ra_filter != 'none') {
@@ -107,7 +109,7 @@ class ORSecondEvaluationAdmin
             header('Expires: 0');
             fputcsv($fp, array('First Name', 'Last Name', 'Email', 'Affiliation','Country' , 'Presentation Title', 'Abstract PDF', 'Research Area', 'Decision'));
             foreach ($results as $result) {
-                fputcsv($fp, array($result->firstname, $result->lastname, $result->email,  explode(",",$result->affiliation)[0], $result->country, $result->presentation_title, $result->abstract_pdf, $RESEARCH_AREAS[$result->research_area], array_search($result->decision, $PRESENTATION_TYPE)));
+                fputcsv($fp, array($result->first_name, $result->last_name, $result->email, $result->institution, $result->country, $result->display_title, $result->pdf, $result->research_area, array_search($result->decision, $PRESENTATION_TYPE)));
             }
             fclose($fp);
             die;
