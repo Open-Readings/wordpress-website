@@ -149,7 +149,7 @@ function add_menu_roles()
   );
   $role = add_role(
     'or_main_evaluator',
-    'Abstract Evaluators',
+    'Abstract Evaluator (OR programme commitee)',
     array(
       'read' => true, // True allows that capability
       'manage_or_registration' => false,
@@ -273,29 +273,29 @@ add_action('wp_footer', 'my_custom_function');
 
 global $PRESENTATION_TYPE;
 $PRESENTATION_TYPE = [
-    'Oral' => 1,
-    'Poster' => 2,
-    'Rejected' => 3
+  'Oral' => 1,
+  'Poster' => 2,
+  'Rejected' => 3
 ];
 
 global $RESEARCH_AREAS;
 $RESEARCH_AREAS = [
-    1 => 'Astrophysics and Astronomy',
-    2 => 'Chemistry and Chemical Physics',
-    3 => 'Nanomaterials and Nanotechnology',
-    4 => 'Materials Science and Modern Technologies',
-    5 => 'Laser Physics and Optical Technologies',
-    6 => 'Theoretical Physics',
-    7 => 'Spectroscopy and Imaging',
-    8 => 'Biochemistry, Biophysics, and Biotechnology',
-    9 => 'Biology, Genetics and Biomedical Sciences'
+  1 => 'Astrophysics and Astronomy',
+  2 => 'Chemistry and Chemical Physics',
+  3 => 'Nanomaterials and Nanotechnology',
+  4 => 'Materials Science and Modern Technologies',
+  5 => 'Laser Physics and Optical Technologies',
+  6 => 'Theoretical Physics',
+  7 => 'Spectroscopy and Imaging',
+  8 => 'Biochemistry, Biophysics, and Biotechnology',
+  9 => 'Biology, Genetics and Biomedical Sciences'
 ];
 global $STATUS_CODES;
 $STATUS_CODES = [
-    'Not Checked' => 0,
-    'Accepted' => 1,
-    'Update' => 2,
-    'Rejected' => 3,
-    'Duplicate' => 99,
+  'Not Checked' => 0,
+  'Accepted' => 1,
+  'Update' => 2,
+  'Rejected' => 3,
+  'Duplicate' => 99,
 
 ];

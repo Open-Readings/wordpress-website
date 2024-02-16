@@ -227,7 +227,7 @@ ORDER BY RAND()
     // }
     // $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
 
-    $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail"></textarea><br>';
+    $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail">' . $evaluation_row['email_content'] . '</textarea><br>';
 
 
     $result['response'] .= '</form>';
