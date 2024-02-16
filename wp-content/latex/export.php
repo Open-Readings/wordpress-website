@@ -96,38 +96,10 @@ function generate_abstract()
         $folder = $_SESSION['file'];
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $startOfDocument = '\documentclass[12pt, twoside, a4paper, hidelinks]{amsart}
-        
-        \usepackage{amsmath}
-        
-        \usepackage{lmodern}
-        \usepackage{graphicx}
-        \usepackage[utf8]{inputenc}
-        \usepackage[T1]{fontenc}
-        \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
-        \usepackage{tikz}
-        \usepackage{float}
-        \usepackage{blindtext}
-        \usepackage{microtype}
-        \usepackage[1]{pagesel}
-        \graphicspath{ {images/} }
-        \usepackage{indentfirst}
-        \usepackage{caption}
-        \captionsetup[table]{labelsep=period}
-        \captionsetup[figure]{labelsep=space}
-        \pagestyle{empty}
-        \makeatletter
-        \renewcommand{\fnum@figure}{Fig. \thefigure :}
-        \makeatother
-        \renewcommand{\footnotesize}{\fontsize{9pt}{10pt}\selectfont}
-        \captionsetup{font=footnotesize}
-        \DeclareUnicodeCharacter{2212}{--}
-        \begin{document}
-        ';
+            
 
-
-            $authors = '\begin{center} \fontsize{12}{13}\selectfont ';
             $i = 1;
+            $authors = '';
             foreach ($_POST['name'] as $name) {
                 $name = trim($name);
                 $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
@@ -135,59 +107,42 @@ function generate_abstract()
                 $aff_ref = trim($aff_ref);
                 //replace everything that is not a digit or ,
                 $aff_ref = preg_replace('/[^\d,]/', '', $aff_ref);
-
+        
                 if ($_POST['contact_author'] == $i)
                     $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref . '}$';
                 else
                     $authors = $authors . $name . '$^{' . $aff_ref . '}$';
-
+        
                 if ($i < count($_POST['name']))
                     $authors = $authors . ', ';
                 $i++;
-            }
-            $authors = $authors . ' \end{center}
+            }        
 
-        ';
-
-
-            $affiliations = '\begin{center} \fontsize{10}{11}\selectfont ';
+            $affiliations = '';
             $i = 1;
             foreach ($_POST['affiliation'] as $aff) {
-                $affiliations = $affiliations . '$^{' . $i . '}$' . $aff . '
-            
+                $affiliations = $affiliations . '\address{$^{' . $i . '}$' . $aff . '}
             ';
                 $i++;
             }
-            $affiliations = $affiliations . '\underline{' . $_POST['email-author'] . '}
-         \end{center}
-        \vspace{.3cm}
-        ';
-
+            $affiliations = $affiliations . '\rightaddress{' . $_POST['email-author'] . '}';
 
         if(isset($_POST['references'])){
             $references = '
-            \vfill
-            \hrule
-            \begingroup
-        \renewcommand{\section}[2]{}%
+            \vfill    
             \begin{thebibliography}{}
-            
-            
             ';
             $i = 1;
             foreach ($_POST['references'] as $ref) {
                $references .= '\bibitem{' . $i . '} ' . $ref . '
-               
                ';
                $i++;
             }
             $references .= '\end{thebibliography}
-            \endgroup
             ';
-        } else{
+            } else{
                 $references = '';
             }
-
 
 
 
@@ -265,28 +220,30 @@ function generate_abstract()
             //find fist <sup> or <sub> tag
 
 
-            $title = "\begin{center}  \\fontsize{14}{15}\selectfont \\textbf{" . $titleField . "} \\end{center}
-        ";
+            $abstractContent = $_POST["textArea"];
 
-
-            $abstractContent = '\fontsize{10}{11}\selectfont 
-            
-            ' . $_POST["textArea"];
-
-
-            $endOfDocument = '
-        \end{document}';
-
-
-            $textData = $startOfDocument . $title . $authors . $affiliations . $abstractContent . $references . $endOfDocument;
-
+            $templateFilePath = '../plugins/open-readings/evaluation/admin/template.txt';
+            $templateContent = file_get_contents($templateFilePath);
 
             $filename = $folder . "/abstract.tex";
-            $created = file_put_contents($filename, $textData);
-            if ($created === false) {
-                echo 'Export failed::failed to create abstract.tex::end';
-                error_log($filename . " creation failed");
-            }
+            // Define your variables
+            // Add more variables as needed
+        
+            // Create an associative array of placeholders and their corresponding values
+            $replacements = array(
+                '${title}' => $titleField,
+                '${authors}' => $authors,
+                '${affiliations}' => $affiliations,
+                '${content}' => $abstractContent,
+                '${references}' => $references
+        
+                // Add more placeholders and values as needed
+            );
+        
+            // Replace placeholders in the template content
+            $templateContent = str_replace(array_keys($replacements), array_values($replacements), $templateContent);
+            $created = file_put_contents($filename, $templateContent);
+
             $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode --output-directory="' . $folder . '" "' . $folder . '/abstract.tex"');
 
             $_SESSION['generating'] = 0;

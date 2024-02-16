@@ -32,6 +32,7 @@ add_action('elementor/widgets/register', 'register_faq_widget');
 
 function register_or_dependencies()
 {
+  $version = '1';
   wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__));
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
@@ -46,7 +47,7 @@ function register_or_dependencies()
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
   wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
-  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__));
+  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), $version);
   wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__));
   wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__));
   wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
@@ -66,8 +67,12 @@ function register_or_dependencies()
 
 add_action('wp_enqueue_scripts', 'register_or_dependencies');
 
-function register_evaluation_styles(){
+function register_evaluation_styles()
+{
   wp_register_style('registration-evaluation-style', plugins_url('assets/css/evaluation-style.css', __FILE__));
+  wp_register_script('institutions-list-js', plugins_url('assets/js/evaluation-js.js', __FILE__));
+  wp_register_script('evaluation-js', plugins_url('assets/js/evaluation-js.js', __FILE__));
+
 }
 
 add_action('admin_enqueue_scripts', 'register_evaluation_styles');
@@ -125,18 +130,46 @@ function add_menu_roles()
   $role = get_role('administrator');
   $role->add_cap('manage_or_registration');
   $role->add_cap('manage_or_mailer');
+  $role->add_cap('manage_evaluations');
   //add new capability
   $role = get_role('editor');
   $role->add_cap('manage_or_registration');
   $role->add_cap('manage_or_mailer');
+  $role->add_cap('manage_evaluations');
+  // create new role
+  $role = add_role(
+    'or_evaluator',
+    'Open Readings Abstract Evaluator',
+    array(
+      'read' => true, // True allows that capability
+      'manage_or_registration' => false,
+      'manage_or_mailer' => false,
+      'manage_evaluations' => true,
+    )
+  );
+  $role = add_role(
+    'or_main_evaluator',
+    'Abstract Evaluator (OR programme commitee)',
+    array(
+      'read' => true, // True allows that capability
+      'manage_or_registration' => false,
+      'manage_or_mailer' => false,
+      'manage_evaluations' => false,
+    )
+  );
+
+
 }
 
 
 function register_admin()
 {
   require_once(__DIR__ . '/registration/admin.php');
+  require_once(__DIR__ . '/second-evaluation/or_evaluation_admin.php');
+  require_once(__DIR__ . '/evaluation/admin.php');
+  $admin = new OREvaluationAdmin();
+  $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
-
 
 
 }
@@ -238,20 +271,31 @@ function my_custom_function()
 }
 add_action('wp_footer', 'my_custom_function');
 
-function first_evaluation_page() {
-  // Include the file with your HTML content
-  include plugin_dir_path(__FILE__) . 'registration/admin/registration-first-evaluation.php';
-}
+global $PRESENTATION_TYPE;
+$PRESENTATION_TYPE = [
+  'Oral' => 1,
+  'Poster' => 2,
+  'Rejected' => 3
+];
 
-function registration_first_evaluation_menu() {
-	add_menu_page( 'First Evaluation', 'First Evaluation', 'manage_options', 'registration/admin/registration-first-evaluation.php', 'first_evaluation_page', 'dashicons-trash', 6  );
-	// add_submenu_page( 'registration/registration-first-evaluation.php', 'My Sub Level Menu Example', 'Sub Level Menu', 'manage_options', 'myplugin/myplugin-admin-sub-page.php', 'myplguin_admin_sub_page' ); 
-}
+global $RESEARCH_AREAS;
+$RESEARCH_AREAS = [
+  1 => 'Astrophysics and Astronomy',
+  2 => 'Chemistry and Chemical Physics',
+  3 => 'Nanomaterials and Nanotechnology',
+  4 => 'Materials Science and Modern Technologies',
+  5 => 'Laser Physics and Optical Technologies',
+  6 => 'Theoretical Physics',
+  7 => 'Spectroscopy and Imaging',
+  8 => 'Biochemistry, Biophysics, and Biotechnology',
+  9 => 'Biology, Genetics and Biomedical Sciences'
+];
+global $STATUS_CODES;
+$STATUS_CODES = [
+  'Not Checked' => 0,
+  'Accepted' => 1,
+  'Update' => 2,
+  'Rejected' => 3,
+  'Duplicate' => 99,
 
-add_action( 'admin_menu', 'registration_first_evaluation_menu' );
-
-include_once(__DIR__ . '/registration/admin/registration-functions.php');
-
-
-add_action('wp_ajax_evaluation', 'evaluation');
-// Add more action registrations as needed
+];

@@ -143,8 +143,15 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
 
         $registration->session_id = $session_id;
 
+        global $wpdb;
+        $query = $wpdb->prepare('SELECT `status` FROM wp_or_registration_evaluation WHERE evaluation_hash_id = %s', $_SESSION['hash']);
+        $evaluation_row = $wpdb->get_row($query);
+        $evaluation_status = $evaluation_row->status;
         global $or_registration_controller;
         if (isset($_SESSION['update'])) {
+            if ($evaluation_status == 1 or $evaluation_status == 3) {
+                return;
+            }
             $registration->presentation_id = $_SESSION['presentation_id'];
             $result = $or_registration_controller->update($registration, $_SESSION['hash']);
         } else {
@@ -154,11 +161,8 @@ class ORMainRegistrationSubmit extends ElementorPro\Modules\Forms\Classes\Action
             $ajax_handler->add_error_message($result->get_error_message());
             return;
         }
-        global $wpdb;
-        $query = $wpdb->prepare("SELECT presentation_id FROM wp_or_registration_presentations WHERE person_hash_id = %s", $_SESSION['hash']);
-        $result_id = $wpdb->get_row($query);
 
-        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s WHERE evaluation_hash_id = %s', current_time('mysql', 1), $result_id->presentation_id);
+        $query = $wpdb->prepare('UPDATE wp_or_registration_evaluation SET update_date = %s, `status` = %s WHERE evaluation_hash_id = %s', current_time('mysql', 1), '4', $_SESSION['hash']);
         $wpdb->query($query);
         session_unset();
         session_destroy();

@@ -205,6 +205,7 @@ function update_evaluation_table()
 {
     global $wpdb;
     $evaluation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_evaluation';
+    $registration_table_name = $wpdb->prefix . get_option('or_registration_database_table');
 
     $evaluation_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$evaluation_table_name'") == $evaluation_table_name;
 
@@ -246,41 +247,45 @@ function update_evaluation_table()
             update_date datetime,
             latex_error varchar(255)
             )");
-    } else {
-        //check if the person table has the correct columns
-        $evaluation_columns = $wpdb->get_col("DESC $evaluation_table_name", 0);
+    }
+    //check if the person table has the correct columns
+    $evaluation_columns = $wpdb->get_col("DESC $evaluation_table_name", 0);
 
-        $evaluation__columns = array_map('strtolower', $evaluation_columns);
-        $evaluation_fields = array_map('strtolower', $evaluation_fields);
-        foreach ($evaluation_fields as $field) {
-            if (!in_array($field, $evaluation_columns)) {
-                $wpdb->query("ALTER TABLE $evaluation_table_name ADD `$field` $evaluation_data_sql[$field]");
-            } else {
-                $wpdb->query("ALTER TABLE $evaluation_name MODIFY `$field` $evaluation_data_sql[$field]");
-            }
-
-
+    $evaluation_columns = array_map('strtolower', $evaluation_columns);
+    $evaluation_fields = array_map('strtolower', $evaluation_fields);
+    foreach ($evaluation_fields as $field) {
+        if (!in_array($field, $evaluation_columns)) {
+            $wpdb->query("ALTER TABLE $evaluation_table_name ADD `$field` $evaluation_data_sql[$field]");
+        } else {
+            $wpdb->query("ALTER TABLE $evaluation_table_name MODIFY `$field` $evaluation_data_sql[$field]");
         }
-        $presentation_table_results = $wpdb->get_col("SELECT presentation_id FROM $presentation_table_name");
 
-        foreach($presentation_table_results as $result){
-            $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE presentation_id = %s", $result));
 
-            if (!$exists_in_evaluation_table) {
-                $asd;
-                $evaluation_id = md5($result);
-                $query = '
+    }
+    $presentation_table_results = $wpdb->get_col("SELECT person_hash_id FROM $presentation_table_name");
+
+    foreach ($presentation_table_results as $result) {
+        $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE presentation_id = %s", $result));
+
+        if (!$exists_in_evaluation_table) {
+            $evaluation_id = md5($result);
+            $query = '
                 INSERT INTO ' . $evaluation_table_name . '
                 (evaluation_hash_id, evaluation_id, status)
                 VALUES (%s, %s, %d)
                 ';
-        
-                $query = $wpdb->prepare($query, $result, $evaluation_id, 0);
-                $_ = $wpdb->query($query);
+
+            $query = $wpdb->prepare($query, $result, $evaluation_id, 0);
+            $result = $wpdb->query($query);
+            if (!$result) {
+                echo '<div class="notice notice-error"><p>Error: ' . $wpdb->last_error . '</p></div>';
             }
+
+
         }
     }
-    $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $presentation_table_name (presentation_id)");
+
+    $wpdb->query("ALTER TABLE $evaluation_table_name ADD FOREIGN KEY (evaluation_hash_id) REFERENCES $registration_table_name (hash_id)");
 
     echo '<div class="notice notice-success"><p>Evaluation table populated</p></div>';
 
