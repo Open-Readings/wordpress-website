@@ -61,6 +61,5 @@ if(is_wp_error($registration_data)){
     $_SESSION['presentation_id'] = $registration_data->presentation_id;
     $_SESSION['exists'] = 1;
 }
-$a = 4;
-echo $a;
+
 ?>
