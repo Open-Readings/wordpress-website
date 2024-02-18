@@ -20,7 +20,7 @@ class RegistrationData
     public string $presentation_type;
     public string $presentation_id;
     public bool $agrees_to_email;
-
+    public string $hash_id;
     public string $person_title;
     public string $title;
     public $authors = array();
@@ -87,7 +87,7 @@ class PersonData
     public string $presentation_type;
     public string $presentation_id;
     public bool $agrees_to_email;
-
+    public string $hash_id;
     public string $session_id;
 
     function map_from_query($result)
@@ -141,7 +141,7 @@ class PresentationData
     public string $images;
     public string $pdf;
     public string $person_hash_id;
-
+    public string $presentation_id;
     public string $display_title;
 
 
@@ -462,6 +462,14 @@ class OpenReadingsRegistration
 
         $start_date = get_option('or_registration_start');
         $end_date = get_option('or_registration_end');
+        $late_end_date = get_option(('or_registration_late_end'));
+
+        if(isset($_SESSION['late_hash'])){
+            $hash_id =$_SESSION['late_hash'];
+            $late_registration = true;
+        } else {
+            $late_registration = false;
+        }
 
         $now = new DateTime();
 
@@ -480,9 +488,16 @@ class OpenReadingsRegistration
 
         }
 
+        if (!empty($late_end_date) and $late_registration){
+            $lateEndDate = new DateTime($late_end_date);
+            if ($now > $lateEndDate){
+                return new WP_Error('registration_closed', 'Registration is closed');
+            }
+        }
+
         if (!empty($end_date)) {
             $endDate = new DateTime($end_date);
-            if ($now > $endDate) {
+            if ($now > $endDate and !$late_registration) {
                 return new WP_Error('registration_closed', 'Registration is closed');
             }
         }
@@ -492,14 +507,15 @@ class OpenReadingsRegistration
             return new WP_Error('field_check_error', $field_check);
         }
 
+        if (!$late_registration){
+            $hash_id = md5($registration_data->email . $registration_data->first_name . $registration_data->last_name . rand(0, 10000));
+        }
 
-
-        $hash_id = md5($registration_data->email . $registration_data->first_name . $registration_data->last_name . rand(0, 10000));
-        $presentaion_id = md5($registration_data->title . $registration_data->email);
+        $presentation_id = md5($registration_data->title . $registration_data->email);
 
 
         $person_data = new PersonData();
-        $registration_data->presentation_id = $presentaion_id;
+        $registration_data->presentation_id = $presentation_id;
         $person_data->map_from_class($registration_data, $hash_id);
 
 
@@ -509,11 +525,16 @@ class OpenReadingsRegistration
             return $result;
         }
 
-        $presentaion_data = new PresentationData();
-        $presentaion_data->map_from_class($registration_data, $presentaion_id, $hash_id);
+        $presentation_data = new PresentationData();
+        $presentation_data->map_from_class($registration_data, $presentation_id, $hash_id);
 
 
-        $result = $this->register_presentation($presentaion_data, $presentaion_id);
+        $result = $this->register_presentation($presentation_data, $presentation_id);
+        if (is_wp_error($result)) {
+            return $result;
+        }
+
+        $result = $this->register_evaluation($hash_id);
         if (is_wp_error($result)) {
             return $result;
         }
@@ -522,15 +543,42 @@ class OpenReadingsRegistration
 
         $vars = $this->email_vars_map($registration_data, $hash_id);
 
-
+        if($late_registration){
+            global $wpdb;
+    
+            $table_name = 'wp_or_registration_late';
+            $result = $wpdb->update(
+                $table_name,
+                array(
+                    'used' => 1
+                ),
+                array(
+                    'late_hash_id' => $hash_id
+                )
+            );
+        }
         $sent = $or_mailer->send_registration_success_email($vars, $registration_data->email);
         if ($sent) {
             return true;
         } else {
             return new WP_Error('email_error', 'Your submission, was saved, but we experienced an error sending you a confirmation email. Please contact us at info@openreadings.eu');
         }
+        
 
+    }
 
+    function register_evaluation($hash_id){
+        global $wpdb;
+
+        $table_name = 'wp_or_registration_evaluation';
+        $result = $wpdb->insert(
+            $table_name,
+            array(
+                'evaluation_hash_id' => $hash_id,
+                'evaluation_id' => md5($hash_id)
+            )
+        );
+        return $result;
     }
 
     function email_vars_map($registration_data, $hash_id)
@@ -604,9 +652,9 @@ class OpenReadingsRegistration
             return $update;
         }
 
-        $presentaion_data = new PresentationData();
-        $presentaion_data->map_from_class($registration_data, $presentation_id, $hash_id);
-        $update = $this->update_presentation_data($presentaion_data, $presentation_id);
+        $presentation_data = new PresentationData();
+        $presentation_data->map_from_class($registration_data, $presentation_id, $hash_id);
+        $update = $this->update_presentation_data($presentation_data, $presentation_id);
         if (is_wp_error($update)) {
             return $update;
         }

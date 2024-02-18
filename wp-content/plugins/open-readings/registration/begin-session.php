@@ -17,6 +17,11 @@ $id = isset($_GET['id']) ? ($_GET['id']) : 0;
 $ORregistration = new OpenReadingsRegistration();
 $registration_data = $ORregistration->get($id);
 
+global $wpdb;
+$query = $wpdb->prepare("SELECT * FROM wp_or_registration_late WHERE late_hash_id = %s", $id);
+$late_registration_row = $wpdb->get_row($query, ARRAY_A);
+
+
 if (!isset($_SESSION['id'])) {
     ini_set('session.gc_maxlifetime', 3600);
     session_start();
@@ -31,7 +36,6 @@ if(is_wp_error($registration_data)){
         $_SESSION['id'] = 1;
         $_SESSION['exists'] = 0;
     }
-
     if (!isset($_SESSION['file'])) {
         $timestamp = time();
         $_SESSION['file'] = $timestamp . substr(md5(mt_rand()), 0, 8);
@@ -41,9 +45,12 @@ if(is_wp_error($registration_data)){
         mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'], 0777, true);
         mkdir(WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/images', 0777, true);
         copy(WP_CONTENT_DIR . '/latex/abstract.pdf', WP_CONTENT_DIR . '/latex/' . $_SESSION['file'] . '/abstract.pdf');
-        ?>
-<script>console.log('naujas failas');</script>
-<?php
+    }
+    unset($_SESSION['late_hash']);
+    if (isset($late_registration_row['used'])){
+        if ($late_registration_row['used'] == 0){
+            $_SESSION['late_hash'] = $id;
+        }
     }
 } else {
     session_unset();
@@ -54,4 +61,6 @@ if(is_wp_error($registration_data)){
     $_SESSION['presentation_id'] = $registration_data->presentation_id;
     $_SESSION['exists'] = 1;
 }
+$a = 4;
+echo $a;
 ?>

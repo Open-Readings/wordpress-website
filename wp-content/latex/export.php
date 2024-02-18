@@ -94,6 +94,9 @@ function generate_abstract()
 
         $_SESSION['generating'] = 1;
         $folder = $_SESSION['file'];
+        if (!file_exists($folder . '/orstylet.sty')) {
+            copy('orstylet.sty', $folder . '/orstylet.sty');
+        }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
