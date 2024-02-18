@@ -171,7 +171,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
             echo '<td>' . $eval->institution . '</td>';
             echo '<td>' . $eval->title . '</td>';
 
-            echo "<td><a href='" . $eval->pdf . "?". time() . "'><strong>" . basename($eval->pdf) . "</strong></a></td>";
+            echo "<td><a href='" . $eval->pdf . "?" . time() . "'><strong>" . basename($eval->pdf) . "</strong></a></td>";
             echo '<td>' . $ra . '</td>';
 
             echo '<td> preffered presentation type: <strong>' . $eval->presentation_type . '</strong> <br>';
@@ -184,7 +184,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
 
             echo '<td>
                 <select name="grade" checked=' . $eval->evaluation . '>
-                    <option value="0">unnasigned</option>
+                    <option value="0">unassigned</option>
                     ';
             for ($i = 1; $i <= 10; $i++) {
                 echo '<option value="' . $i . '" ' . (($eval->evaluation == $i) ? "selected>" : ">") . $i . '</option>';
