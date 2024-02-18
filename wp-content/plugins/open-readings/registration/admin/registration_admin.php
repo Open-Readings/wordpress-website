@@ -136,7 +136,7 @@ function or_generate_late_hash(){
             'used' => 0
         ));
         if ($result){
-            echo '<p style="background-color:#fff; color:red; font-size:30px"><strong>' . $late_id . '</strong></p>';
+            echo '<p style="background-color:#fff; color:red; font-size:30px"><strong>'. home_url( '/registration' ). '?id=' . $late_id . '</strong></p>';
         }
     }
 }
