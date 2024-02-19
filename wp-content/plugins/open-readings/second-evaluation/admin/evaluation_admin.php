@@ -58,6 +58,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
     <table cellspacing=0 cellpadding=1 border=1 bordercolor=black width=100%>
 
         <tr>
+            <th style="width: 50 px">Nr</th>
             <th>Study level</th>
             <th>First Name</th>
             <th>Last Name</th>
@@ -148,8 +149,9 @@ function send_emails($email, $comment, $decision, $presentation_title)
 
         }
         $evals = $wpdb->get_results("SELECT * FROM $joint_table WHERE checker = '$user_id'");
-
+        $person_index = 0;
         foreach ($evals as $eval) {
+            $person_index++;
 
             $ra = $eval->research_area;
             $decision = $eval->decision;
@@ -166,6 +168,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
 
             echo '<tr style="background-color:' . $color . '">';
             echo '<form method="post">';
+            echo '<td style="width:30px;padding:7px">' . $person_index . '</td>';
             echo '<td>' . $eval->person_title . '</td>';
             echo '<td>' . $eval->first_name . '</td>';
             echo '<td>' . $eval->last_name . '</td>';
