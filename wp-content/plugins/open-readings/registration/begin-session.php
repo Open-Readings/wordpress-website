@@ -23,7 +23,7 @@ $late_registration_row = $wpdb->get_row($query, ARRAY_A);
 
 
 if (!isset($_SESSION['id'])) {
-    ini_set('session.gc_maxlifetime', 3600);
+    ini_set('session.gc_maxlifetime', 14400);
     session_start();
     $_SESSION['id'] = 1;
 }
