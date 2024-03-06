@@ -4,6 +4,7 @@ registration_settings();
 <h1>
     <?php esc_html_e('Advanced Registration Settings (Devs only)', 'OR'); ?>
 </h1>
+
 <form method="POST" action="options.php">
     <?php
     settings_fields('or_registration_advanced');

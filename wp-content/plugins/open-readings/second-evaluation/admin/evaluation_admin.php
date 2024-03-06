@@ -58,6 +58,8 @@ function send_emails($email, $comment, $decision, $presentation_title)
     <table cellspacing=0 cellpadding=1 border=1 bordercolor=black width=100%>
 
         <tr>
+            <th style="width: 50 px">Nr</th>
+            <th>Study level</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Affiliation</th>
@@ -76,7 +78,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
         $presentation_table = 'wp_or_registration_presentations';
         $registration_table = "wp_or_registration";
         $evaluation_table = "wp_or_registration_evaluation";
-        $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id";
+        $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id LEFT JOIN (SELECT hash_id, title as person_title FROM wp_or_registration) as t ON t.hash_id = r.hash_id";
         $user_id = get_current_user_id();
         $user_roles = get_userdata($user_id)->roles;
         $is_admin = in_array('administrator', $user_roles);
@@ -146,10 +148,10 @@ function send_emails($email, $comment, $decision, $presentation_title)
                 echo '<p style="background-color:red">' . $error . '</p>';
 
         }
-
         $evals = $wpdb->get_results("SELECT * FROM $joint_table WHERE checker = '$user_id'");
-
+        $person_index = 0;
         foreach ($evals as $eval) {
+            $person_index++;
 
             $ra = $eval->research_area;
             $decision = $eval->decision;
@@ -166,6 +168,8 @@ function send_emails($email, $comment, $decision, $presentation_title)
 
             echo '<tr style="background-color:' . $color . '">';
             echo '<form method="post">';
+            echo '<td style="width:30px;padding:7px">' . $person_index . '</td>';
+            echo '<td>' . $eval->person_title . '</td>';
             echo '<td>' . $eval->first_name . '</td>';
             echo '<td>' . $eval->last_name . '</td>';
             echo '<td>' . $eval->institution . '</td>';

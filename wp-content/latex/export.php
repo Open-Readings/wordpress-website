@@ -81,7 +81,7 @@ function generate_abstract()
 {
 
     if (!isset($_SESSION['id'])) {
-        ini_set('session.gc_maxlifetime', 3600);
+        ini_set('session.gc_maxlifetime', 14400);
         session_start();
         $_SESSION['id'] = 1;
     }
@@ -94,6 +94,8 @@ function generate_abstract()
 
         $_SESSION['generating'] = 1;
         $folder = $_SESSION['file'];
+        copy('orstylet.sty', $folder . '/orstylet.sty');
+        
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
