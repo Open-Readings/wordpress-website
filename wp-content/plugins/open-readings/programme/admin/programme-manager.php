@@ -1,6 +1,15 @@
 <h2>Presentation Manager</h2>
 
+
 <div>
+    <?
+    if($_POST['type_filter'] == 2 && $_POST['assigned_filter'] == 2 && $_POST['session_filter'] != 'none'){
+        ?>
+        <button id="incrementButton"> Increment </button>
+        <?
+    }
+
+    ?>
 
 
 
@@ -356,4 +365,26 @@
 
 
 
+</script>
+<script>
+// Add event listener when the DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the button element
+    var incrementButton = document.getElementById("incrementButton");
+
+    // Add click event listener to the button
+    incrementButton.addEventListener("click", function() {
+        // Select all input fields with names like "session-poster[wild]"
+        var posterInputs = document.querySelectorAll('input[name^="session-poster["]');
+
+        // Counter for incrementing
+        var count = 1;
+
+        // Loop through each input field
+        posterInputs.forEach(function(input) {
+            // Assign incremented value to the input field
+            input.value = count++;
+        });
+    });
+});
 </script>
