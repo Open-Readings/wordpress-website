@@ -16,11 +16,20 @@ if(isset($_POST['session-name'])){
     <label for="session-type"> Session type: </label> <br>
     <input type="radio" name="session-type" value="0"> Oral <br>
     <input type="radio" name="session-type" value="1"> Poster <br>
-    <input type="radio" name="session-type" value="2"> Other <br>
+    <input type="radio" name="session-type" value="2"> Workshop <br>
+    <input type="radio" name="session-type" value="3"> Special event <br>
+    <input type="radio" name="session-type" value="4"> Speaker <br>
+    <input type="radio" name="session-type" value="5"> Break <br>
+    <input type="radio" name="session-type" value="6"> OPTION 6 <br>
+    <input type="radio" name="session-type" value="7"> OPTION 7 <br>
+    <input type="radio" name="session-type" value="8"> OPTION 8 <br>
+    <label for="session-moderator"> Session moderator: </label> <br> 
+    <input type="text" name="session-moderator" > <br>
     <label for="session-start"> Session start: </label> <br>
     <input type="datetime-local" name="session-start"> <br>
     <label for="session-end"> Session end: </label> <br> 
     <input type="datetime-local" name="session-end" > <br>
+    
 </form>
 
 
@@ -31,6 +40,7 @@ if(isset($_POST['session-name'])){
             <th>Session</th>
             <th>Display name</th>
             <th>Type</th>
+            <th>Moderator</th>
             <th>Start</th>
             <th>End</th>
         </tr>
@@ -53,7 +63,13 @@ $args = array(
 $session_type = array(
     0 => 'Oral',
     1 => 'Poster',
-    2 => 'Other',
+    2 => 'Workshop',
+    3 => 'Special event',
+    4 => 'Speaker',
+    5 => 'Break',
+    6 => 'Option 6',
+    7 => 'Option 7',
+    8 => 'Option 8'
 );
 
 $query = new WP_Query($args);
@@ -64,6 +80,7 @@ if ($query->have_posts()) {
         // Retrieve and display the custom field values
         $short = get_post_meta(get_the_ID(), 'short_title', true); 
         $display = get_post_meta(get_the_ID(), 'display_title', true); 
+        $moderator = get_post_meta(get_the_ID(), 'session_moderator', true); 
         $type = get_post_meta(get_the_ID(), 'session_type', true); 
         $start = get_post_meta(get_the_ID(), 'session_start', true); 
         $end = get_post_meta(get_the_ID(), 'session_end', true); 
@@ -73,6 +90,7 @@ if ($query->have_posts()) {
             echo '<td>' . $short . '</td>';
             echo '<td>' . $display . '</td>';
             echo '<td>' . $session_type[$type] . '</td>';
+            echo '<td>' . $moderator . '</td>';
             echo '<td>' . $start . '</td>';
             echo '<td>' . $end . '</td>';
             echo '</tr>';
@@ -98,8 +116,9 @@ function add_session(){
             'short_title' => $_POST['session-name'],
             'display_title' => $_POST['session-display-name'],
             'session_type' => $_POST['session-type'],
-            'session_start' => $_POST['session-start'],
-            'session_end' => $_POST['session-end']
+            'session_start' => date('Y-m-d H:i:s',strtotime($_POST['session-start'])),
+            'session_end' => date('Y-m-d H:i:s',strtotime($_POST['session-end'])),
+            'session_moderator' => $_POST['session-moderator'],
         )
     );
     
@@ -114,3 +133,24 @@ function add_session(){
     }
 }
 
+?>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Get the element with the name "session-start"
+    var sessionStartInput = document.querySelector('input[name="session-start"]');
+
+    // Check if the element is found
+    if (sessionStartInput) {
+        // Get the current value of the input element
+        var currentValue = sessionStartInput.value;
+
+        // Reformat the date string to "Y-m-d H:i:s"
+        var formattedDate = new Date(currentValue).toISOString().slice(0, 19).replace('T', ' ');
+
+        // Set the reformatted value back to the input field
+        sessionStartInput.value = formattedDate;
+    } else {
+        console.log("Element with name 'session-start' not found");
+    }
+});
+</script>

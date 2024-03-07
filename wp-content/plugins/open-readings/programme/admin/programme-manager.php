@@ -90,6 +90,7 @@
 <div>
     <table cellspacing=0 cellpadding=1 border=1 bordercolor=white width=100%>
         <tr>
+            <th>Nr.</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Presentation Title</th>
@@ -110,7 +111,7 @@
         $evaluation_table = 'wp_or_registration_evaluation';
         $ra_filter = 'none';
 
-
+        $list_index = 1;
         if (isset($_POST['save_settings'])) {
             foreach ($_POST['session-name'] as $id => $session_name) {
                 if($session_name != 'none'){
@@ -251,6 +252,7 @@
             $id = get_post_meta($post_id, 'hash_id', true);
             $presentation_session = get_post_meta($post_id, 'presentation_session', true);
             echo '<tr style="background-color:#ffa;">';
+            echo "<td>" . $list_index++ . "</td>";
             echo "<td>" . get_post_meta($post_id, 'first_name', true) . "</td>";
             echo "<td>" . get_post_meta($post_id, 'last_name', true) . "</td>";
             echo "<td>" . get_post_meta($post_id, 'presentation_title', true) . "</td>";
@@ -308,6 +310,7 @@
                 );
                 $query = new WP_Query($args);
                 echo '<tr style="background-color:;">';
+                echo "<td>" . $list_index++ . "</td>";
                 echo "<td>$first_name</td>";
                 echo "<td>$last_name</td>";
                 echo "<td>$presentation_title</td>";
