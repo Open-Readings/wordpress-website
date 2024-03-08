@@ -37,6 +37,7 @@ class ORregistrationAdmin
     {
         register_setting('or_registration', 'or_registration_start');
         register_setting('or_registration', 'or_registration_end');
+        register_setting('or_registration', 'or_registration_late_end');
         register_setting('or_registration', 'or_registration_update_end');
         register_setting('or_registration', 'or_registration_email_subject');
         register_setting('or_registration', 'or_registration_email_success_template');
