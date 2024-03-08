@@ -131,6 +131,7 @@ function add_menu_roles()
   $role->add_cap('manage_or_registration');
   $role->add_cap('manage_or_mailer');
   $role->add_cap('manage_evaluations');
+  $role->add_cap('manage_programme');
   //add new capability
   $role = get_role('editor');
   $role->add_cap('manage_or_registration');
@@ -167,10 +168,12 @@ function register_admin()
   require_once(__DIR__ . '/registration/admin.php');
   require_once(__DIR__ . '/second-evaluation/or_evaluation_admin.php');
   require_once(__DIR__ . '/evaluation/admin.php');
+  require_once(__DIR__ . '/programme/admin.php');
   $admin = new OREvaluationAdmin();
   $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
-
+  $programme_admin = new ORProgrammeAdmin();
+  $programme_admin->init();
 
 }
 
@@ -299,3 +302,5 @@ $STATUS_CODES = [
   'Duplicate' => 99,
 
 ];
+
+
