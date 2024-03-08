@@ -172,7 +172,9 @@ function register_admin()
   $admin = new OREvaluationAdmin();
   $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
-  $admin = new ORProgrammeAdmin();
+  $programme_admin = new ORProgrammeAdmin();
+  $programme_admin->init();
+
 }
 
 add_action('init', 'register_admin');
@@ -300,3 +302,5 @@ $STATUS_CODES = [
   'Duplicate' => 99,
 
 ];
+
+
