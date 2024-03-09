@@ -17,8 +17,33 @@ class ORProgrammeAdmin
 
         add_action('admin_menu', array($this, 'add_admin_pages'));
 
+        add_filter('manage_session_posts_columns', array($this, 'set_custom_edit_session_columns'));
+        add_action('manage_session_posts_custom_column', array($this, 'custom_session_column'), 10, 2);
 
     }
+
+    function set_custom_edit_session_columns($columns)
+    {
+        $columns['session_start'] = 'Session Start - End';
+        return $columns;
+    }
+
+    function custom_session_column($column, $post_id)
+    {
+        switch ($column) {
+            case 'session_start':
+                $start = get_post_meta($post_id, 'session_start', true);
+                $end = get_post_meta($post_id, 'session_end', true);
+                $day = date('d/m/Y', strtotime($start));
+                $start = date('H:i', strtotime($start));
+                $end = date('H:i', strtotime($end));
+                echo $day . ' ' . $start . ' - ' . $end;
+                break;
+
+        }
+    }
+
+
 
     function add_session_post_type()
     {
@@ -74,12 +99,16 @@ class ORProgrammeAdmin
                             'label' => 'Session Start',
                             'name' => 'session_start',
                             'type' => 'date_time_picker',
+                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'd/m/Y H:i',
                         ),
                         array(
                             'key' => 'session_end_field',
                             'label' => 'Session End',
                             'name' => 'session_end',
                             'type' => 'date_time_picker',
+                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'd/m/Y H:i',
                         ),
                         array(
                             'key' => 'session_moderator_field',
@@ -105,7 +134,6 @@ class ORProgrammeAdmin
 
     function add_presentation_post_type()
     {
-        echo 'Adding presentation post type';
         $args = array(
             'public' => true,
             'label' => 'Presentations',
@@ -187,12 +215,18 @@ class ORProgrammeAdmin
                             'label' => 'Presentation Start',
                             'name' => 'presentation_start',
                             'type' => 'date_time_picker',
+                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'd/m/Y H:i',
+
                         ),
                         array(
                             'key' => 'field_10',
                             'label' => 'Presentation End',
                             'name' => 'presentation_end',
                             'type' => 'date_time_picker',
+                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'd/m/Y H:i',
+
                         ),
                         array(
                             'key' => 'field_11',
