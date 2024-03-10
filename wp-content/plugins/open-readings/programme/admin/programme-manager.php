@@ -317,11 +317,17 @@
                     }
                     $start = get_post_meta($post_id, 'presentation_start', true);
                     $start_time = get_post_meta($post_id, 'presentation_start', true);
+
+                    $start_time = date('H:i', $start_time);
+
+
                     $end = get_post_meta($post_id, 'presentation_end', true);
 
+                    $end_time = date('H:i', $end);
+
                     echo '</select></td>';
-                    echo '<td><label>Start: </label><input type="time" name="session-start[' . $id . ']" value="' . get_post_meta($post_id, 'presentation_start', true) . '"><br>
-            <label>End: </label><input type="time" name="session-end[' . $id . ']" value="' . get_post_meta($post_id, 'presentation_end', true) . '"></td>';
+                    echo '<td><label>Start: </label><input type="time" name="session-start[' . $id . ']" value="' . $start_time . '"><br>
+            <label>End: </label><input type="time" name="session-end[' . $id . ']" value="' . $end_time . '"></td>';
                     echo '<td><input type="number" name="session-poster[' . $id . ']" value="' . get_post_meta($post_id, 'poster_number', true) . '"></td>';
                     echo '<td><input type="checkbox" name="delete[' . $id . ']"> <input type="text" name="field-id[' . $id . ']" value="' . $post_id . '" hidden></td>';
                     echo "</tr>";
