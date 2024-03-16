@@ -44,7 +44,7 @@
             <?php
             global $RESEARCH_AREAS;
             for ($i = 1; $i < count($RESEARCH_AREAS) + 1; $i++) {
-                if (isset($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
+                if (isset ($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $RESEARCH_AREAS[$i] . '</option>';
                 } else
                     echo '<option value="' . $i . '">' . $RESEARCH_AREAS[$i] . '</option>';
@@ -59,10 +59,10 @@
             <?php
             global $PRESENTATION_TYPE;
             for ($i = 1; $i < count($PRESENTATION_TYPE); $i++) {
-                if (isset($_POST['type_filter']) && $_POST['type_filter'] == $i) {
-                    echo '<option value="' . $i . '" selected>' . array_search($i, $PRESENTATION_TYPE) . '</option>';
+                if (isset ($_POST['type_filter']) && $_POST['type_filter'] == $i) {
+                    echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '" selected>' . array_search($i, $PRESENTATION_TYPE) . '</option>';
                 } else
-                    echo '<option value="' . $i . '">' . array_search($i, $PRESENTATION_TYPE) . '</option>';
+                    echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '">' . array_search($i, $PRESENTATION_TYPE) . '</option>';
             }
 
             ?>
@@ -76,7 +76,7 @@
                 2 => 'assigned'
             ];
             for ($i = 1; $i < count($status) + 1; $i++) {
-                if (isset($_POST['assigned_filter']) && $_POST['assigned_filter'] == $i) {
+                if (isset ($_POST['assigned_filter']) && $_POST['assigned_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $status[$i] . '</option>';
                 } else
                     echo '<option value="' . $i . '">' . $status[$i] . '</option>';
@@ -113,13 +113,13 @@
             $ra_filter = 'none';
 
             $list_index = 1;
-            if (isset($_POST['save_settings'])) {
+            if (isset ($_POST['save_settings'])) {
                 foreach ($_POST['session-name'] as $id => $session_name) {
                     if ($session_name != 'none') {
                         $sql = $wpdb->prepare("SELECT * FROM $joint_table WHERE hash_id = %s", $id);
                         $result = $wpdb->get_row($sql);
 
-                        if (!isset($_POST['field-id'][$id])) {
+                        if (!isset ($_POST['field-id'][$id])) {
 
 
                             $start_time = $_POST['session-start'][$id];
@@ -131,9 +131,16 @@
                             $start = strtotime($session_start);
                             $start_day = date('Y-m-d', $start);
                             $start_time = date('H:i:s', strtotime($start_time));
+                            $presentation_type = get_post_meta($session_name, 'session_type', true);
 
-                            $final_start = strtotime($start_day . ' ' . $start_time);
-                            $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                            if ($presentation_type == 'poster') {
+
+                                $final_start = strtotime(get_post_meta($session_name, 'session_start', true));
+                                $final_end = strtotime(get_post_meta($session_name, 'session_end', true));
+                            } else {
+                                $final_start = strtotime($start_day . ' ' . $start_time);
+                                $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                            }
 
                             $presentation_data = array(
                                 'post_title' => $result->first_name . ' ' . $result->last_name,
@@ -146,7 +153,7 @@
                                     'research_area' => $result->research_area,
                                     'presentation_title' => $result->display_title,
                                     'abstract_pdf' => $result->pdf,
-                                    'presentation_type' => $result->decision,
+                                    'presentation_type' => $presentation_type,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
@@ -162,16 +169,23 @@
 
                             $start_time = $_POST['session-start'][$id];
                             $end_time = $_POST['session-end'][$id];
+
+
                             $session = get_post_meta($session_name, 'session', true);
                             $session_start = get_post_meta($session_name, 'session_start', true);
-
 
                             $start = strtotime($session_start);
                             $start_day = date('Y-m-d', $start);
                             $start_time = date('H:i:s', strtotime($start_time));
 
-                            $final_start = strtotime($start_day . ' ' . $start_time);
-                            $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                            $presentation_type = get_post_meta($session_name, 'session_type', true);
+                            if ($presentation_type == 'poster') {
+                                $final_start = strtotime(get_post_meta($session_name, 'session_start', true));
+                                $final_end = strtotime(get_post_meta($session_name, 'session_end', true));
+                            } else {
+                                $final_start = strtotime($start_day . ' ' . $start_time);
+                                $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                            }
 
                             $update_presentation_data = array(
                                 'ID' => $_POST['field-id'][$id],
@@ -185,7 +199,7 @@
                                     'research_area' => $result->research_area,
                                     'presentation_title' => $result->display_title,
                                     'abstract_pdf' => $result->pdf,
-                                    'presentation_type' => $result->decision,
+                                    'presentation_type' => $presentation_type,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
@@ -198,7 +212,7 @@
                             $post_id = wp_update_post($update_presentation_data);
                         }
 
-                        if (isset($_POST['delete'][$id])) {
+                        if (isset ($_POST['delete'][$id])) {
                             $delete = wp_delete_post($_POST['field-id'][$id], true);
                         }
                     }
@@ -206,7 +220,7 @@
             }
 
 
-            if (isset($_POST['ra_filter'])) {
+            if (isset ($_POST['ra_filter'])) {
                 $ra_filter = $_POST['ra_filter'];
             }
 
@@ -225,7 +239,7 @@
                     'compare' => '=',
                 );
             }
-            if (isset($_POST['type_filter'])) {
+            if (isset ($_POST['type_filter'])) {
                 $type_filter = $_POST['type_filter'];
                 if ($type_filter != 'none') {
                     $query .= " AND decision=$type_filter";
@@ -237,7 +251,7 @@
                 }
             }
 
-            if (isset($_POST['session_filter'])) {
+            if (isset ($_POST['session_filter'])) {
                 $session_filter = $_POST['session_filter'];
                 if ($session_filter != 'none') {
                     // $query .= " AND decision=$type_filter";
@@ -292,7 +306,7 @@
                     echo "<td>" . get_post_meta($post_id, 'presentation_title', true) . "</td>";
                     echo "<td>" . get_post_meta($post_id, 'research_area', true) . "</td>";
                     echo "<td> <a href=\"" . get_post_meta($post_id, 'abstract_pdf', true) . "?timestamp=" . time() . "\">" . basename(get_post_meta($post_id, 'abstract_pdf', true)) . "</a></td>";
-                    echo '<td><strong>' . array_search(get_post_meta($post_id, 'presentation_type', true), $PRESENTATION_TYPE) . '</strong> <br>';
+                    echo '<td><strong>' . get_post_meta($post_id, 'presentation_type', true) . '</strong> <br>';
                     echo "</td>";
                     echo '<td><select name="session-name[' . $id . ']">';
                     echo '<option value="none">Select session</option>';
@@ -315,15 +329,22 @@
                             }
                         }
                     }
-                    $start = get_post_meta($post_id, 'presentation_start', true);
                     $start_time = get_post_meta($post_id, 'presentation_start', true);
 
-                    $start_time = date('H:i', $start_time);
+                    //check if start time is timestamp or not
+                    if (is_numeric($start_time)) {
+                        $start_time = date('H:i', $start_time);
+                    } else {
+                        $start_time = date('H:i', strtotime($start_time));
+                    }
 
 
                     $end = get_post_meta($post_id, 'presentation_end', true);
-
-                    $end_time = date('H:i', $end);
+                    if (is_numeric($end)) {
+                        $end_time = date('H:i', $end);
+                    } else {
+                        $end_time = date('H:i', strtotime($end));
+                    }
 
                     echo '</select></td>';
                     echo '<td><label>Start: </label><input type="time" name="session-start[' . $id . ']" value="' . $start_time . '"><br>
