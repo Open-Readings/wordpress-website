@@ -26,6 +26,8 @@ function register_faq_widget($widgets_manager)
 {
   require_once(__DIR__ . '/widgets/faq-widget.php');
   $widgets_manager->register(new \Elementor_Faq_Widget());
+  require_once(__DIR__ . '/widgets/assigned-session-widget.php');
+  $widgets_manager->register(new \Elementor_Assigned_Session_Widget());
 }
 
 add_action('elementor/widgets/register', 'register_faq_widget');
