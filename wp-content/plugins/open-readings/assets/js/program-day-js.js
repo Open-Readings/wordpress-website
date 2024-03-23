@@ -73,3 +73,39 @@ window.onclick = function (event) {
         document.getElementById('sessionModal').style.display = 'none';
     }
 }
+
+function adjustTimeHeaderMargins() {
+    document.querySelectorAll('.program-section').forEach(function (section) {
+        section.querySelectorAll('.time-header').forEach(function (header) {
+            var ending = header.getAttribute('data-end');
+            var elements = section.querySelectorAll('[data-end="' + ending + '"]');
+
+            //find the height of the element with the same ending
+            var maxHeight = 0;
+            var relative_end_of_element = 0;
+            //get relative end of the element with respect to the section
+            elements.forEach(function (element) {
+                if (element != header) {
+                    maxHeight = element.clientHeight;
+                    relative_end_of_element = element.offsetTop - section.offsetTop + element.clientHeight;
+
+                }
+            });
+
+
+
+
+
+            var headerHeight = header.clientHeight;
+            // Convert the vh (viewport height) factor to pixels based on the program-block's height
+            // Adjust the calculation below based on your specific needs
+            var marginTop = relative_end_of_element - headerHeight + 2;
+            header.style.marginTop = marginTop + 'px';
+        });
+    });
+}
+// Adjust on load
+window.addEventListener('load', adjustTimeHeaderMargins);
+
+// Adjust on resize
+window.addEventListener('resize', adjustTimeHeaderMargins);

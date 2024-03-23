@@ -25,12 +25,26 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
         return 'eicon-help-o';
     }
 
+    function parseDate($date_to_parse)
+    {
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $date_to_parse);
+        if ($date == false) {
+            $date = DateTime::createFromFormat('d/m/Y H:i', $date_to_parse);
+            if ($date == false) {
+                $date = DateTime::createFromFormat('Y-m-d H:i', $date_to_parse);
+                echo 'error parsing date: ' . $date;
+            }
+
+        }
+        return $date;
+    }
+
     function getSessionLengthInMinutes($session_id)
     {
         $start = get_field('session_start', $session_id);
         $end = get_field('session_end', $session_id);
-        $startDate = DateTime::createFromFormat('d/m/Y H:i', $start);
-        $endDate = DateTime::createFromFormat('d/m/Y H:i', $end);
+        $startDate = $this->parseDate($start);
+        $endDate = $this->parseDate($end);
         $length = $endDate->diff($startDate);
         return ($length->days * 24 * 60) + ($length->h * 60) + $length->i;
     }
@@ -219,7 +233,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                         $total_overlapping_sessions = min($total_overlapping_sessions, 3);
                         $width = 80 / $total_overlapping_sessions;
                     } else {
-                        $width = 80;
+                        $width = 100;
                     }
 
                     $index++;
@@ -227,13 +241,12 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                     $session_type = get_field('session_type_field');
                     $title = get_field('display_title');
+                    $format = 'Y-m-d H:i:s';
 
-                    $format = 'd/m/Y H:i';
 
                     $start = get_field('session_start');
                     // parse from 04/23/2024 09:00 format
-                    $startDate = DateTime::createFromFormat($format, $start);
-
+                    $startDate = $this->parseDate($start);
 
 
 
@@ -246,18 +259,16 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                         ?>
                         <div class="program-section">
                             <div class="program-block">
-                                <div class="time-block" style="margin-top: <?php echo $height - 30; ?>px;">
-                                    <div class="time-header" style="position:absolute">
+                                <div class="time-block">
+                                    <div class="time-header" data-end=" <?php echo $startDate->format('H:i'); ?>">
                                         <h4>
                                             <?php echo $startDate->format('H:i'); ?>
                                         </h4>
                                     </div>
                                 </div>
-                                <div style="width:80%; height: <?php echo $height; ?>px;"></div>
+                                <div data-end=" <?php echo $startDate->format('H:i'); ?>"
+                                    style="width:80%; height: <?php echo $height; ?>px;"></div>
                             </div>
-                            <!-- <svg width="100%" height="5" xmlns="http://www.w3.org/2000/svg">
-                                <line x1="1%" y1="3" x2="99%" y2="3" stroke="#2386f3" stroke-width="3" stroke-linecap="round" />
-                            </svg> -->
                         </div>
                         <?php
                     }
@@ -265,7 +276,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                     $end = get_field('session_end');
 
-                    $endDate = DateTime::createFromFormat($format, $end);
+                    $endDate = $this->parseDate($end);
                     $length = $endDate->diff($startDate);
                     $starting_times = array();
                     $starting_times[] = $start;
@@ -277,8 +288,9 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                             $this_session_start = get_field('session_start', $overlapping_id);
                             $this_session_end = get_field('session_end', $overlapping_id);
-                            $this_start = DateTime::createFromFormat($format, $this_session_start);
-                            $this_end = DateTime::createFromFormat($format, $this_session_end);
+                            $this_start = $this->parseDate($this_session_start);
+                            $this_end = $this->parseDate($this_session_end);
+
                             $this_length = $this_end->diff($startDate);
                             if ($this_length->h + $this_length->i * 60 > $longest_session->h + $longest_session->i * 60) {
                                 $longest_session = $this_length;
@@ -295,7 +307,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
 
                     $length = $endDate->diff($startDate);
-                    $height_per_hour = 20;
+                    $height_per_hour = 25;
                     if ($session_type == 'speaker') {
                         $height_per_hour = 25;
                     }
@@ -308,7 +320,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                     $max_height = $longest_session->i * $height_per_minute + $longest_session->h * $height_per_hour;
                     $max_height = max($max_height, $height);
                     $max_height = min($max_height, 40);
-                    $max_height_style = 'height: ' . $max_height . 'vh;';
+                    $max_height_style = 'min-height: ' . $max_height . 'vh;';
                     if ($session_type == 'speaker') {
                         $height_style = 'max-height: ' . $height . 'vh;';
                     } else {
@@ -350,8 +362,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                     foreach ($overlapping_ids as $overlapping_id) {
                         $start = get_field('session_start', $overlapping_id);
                         $end = get_field('session_end', $overlapping_id);
-                        $startDate = DateTime::createFromFormat($format, $start);
-                        $endDate = DateTime::createFromFormat($format, $end);
+                        $startDate = $this->parseDate($start);
+                        $endDate = $this->parseDate($end);
                         $length = $endDate->diff($startDate);
                         $ending_times[] = $end;
 
@@ -398,13 +410,15 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                         <div class="program-block" style=" <?php echo $max_height_style; ?>">
                             <div class="time-block">
                                 <?php
-                                $compared_date = DateTime::createFromFormat($format, get_field('session_start', $session_id));
+                                $start = get_field('session_start');
+                                $compared_date = $this->parseDate($start);
                                 $totalHeight = 0; // Initialize total height to accumulate block heights
                 
                                 foreach ($ending_times as $ending_time) {
-                                    $endDate = DateTime::createFromFormat($format, $ending_time);
+                                    $endDate = $this->parseDate($ending_time);
                                     $length = $endDate->diff($compared_date);
                                     $compared_date = $endDate;
+
 
                                     // Calculate the height for the current block
                                     $height = $length->i * $height_per_minute + $length->h * $height_per_hour;
@@ -416,8 +430,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                     $displayed_time[] = $endDate->format('H:i');
                                     ?>
 
-                                    <div class="time-header"
-                                        style="position: absolute; margin-top: <?php echo $totalHeight - 4 . 'vh'; ?>;">
+                                    <div class="time-header" data-end="<?php echo $endDate->format('H:i'); ?>"
+                                        data-height="<?php echo $totalHeight; ?>">
                                         <h4>
                                             <?php echo $endDate->format('H:i'); ?>
                                         </h4>
@@ -442,18 +456,18 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                     $description = get_field('description', $overlapping_id);
                                     $start = get_field('session_start', $overlapping_id);
                                     $end = get_field('session_end', $overlapping_id);
-                                    $startDate = DateTime::createFromFormat($format, $start);
-                                    $endDate = DateTime::createFromFormat($format, $end);
+                                    $startDate = $this->parseDate($start);
+                                    $endDate = $this->parseDate($end);
 
                                     $length = $endDate->diff($startDate);
-                                    $height_per_hour = 20;
+                                    $height_per_hour = 25;
                                     if ($session_type == 'speaker') {
                                         $height_per_hour = 25;
                                     }
                                     $height_per_minute = $height_per_hour / 60;
 
 
-                                    if ($idx == $number_of_branches && count($overlapping_ids) > $number_of_branches && !$overlapped) {
+                                    if ($idx == $number_of_branches && count($overlapping_ids) > $number_of_branches && !$overlapped && $session_type != "speaker" && count($overlapping_ids) > 1) {
                                         $overlapped = True;
                                         echo '<div style="' . $max_height_style . $width_style . '">';
                                         $width_style = "width: 100%;";
@@ -481,7 +495,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                         $post_link = get_permalink($speaker);
 
                                         ?>
-                                        <a href="<?php echo $post_link; ?>" class="speaker">
+                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $post_link; ?>" class="speaker">
                                             <div class="speaker">
                                                 <div class="event-title">
                                                     <?php echo $title ?>
@@ -507,10 +521,9 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             $presentation_query = array(
                                                 'post_type' => 'presentation',
                                                 'posts_per_page' => -1,
-                                                'orderby' => 'meta_value',
+                                                'orderby' => 'meta_value_num',
                                                 'order' => 'ASC',
                                                 'meta_key' => 'presentation_start',
-                                                'meta_type' => 'DATETIME',
                                                 'meta_query' => array(
                                                     array(
                                                         'key' => 'presentation_session',
@@ -525,7 +538,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             $presentation_query = array(
                                                 'post_type' => 'presentation',
                                                 'posts_per_page' => -1,
-                                                'orderby' => 'meta_value',
+                                                'orderby' => 'meta_value_num',
                                                 'order' => 'ASC',
                                                 'meta_key' => 'poster_number',
                                                 'meta_query' => array(
@@ -540,6 +553,15 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                         }
 
                                         $presentations = new WP_Query($presentation_query);
+                                        if ($session_type == 'oral') {
+                                            //perform aditional sorting by presentation start time
+                                            $sorted_presentations = $presentations->posts;
+                                            usort($sorted_presentations, function ($a, $b) {
+                                                $start_a = $this->parseDate(get_field('presentation_start', $a->ID))->format('Hi');
+                                                $start_b = $this->parseDate(get_field('presentation_start', $b->ID))->format('Hi');
+                                                return $start_a <=> $start_b;
+                                            });
+                                        }
 
                                         echo '<div id="modal-data-' . esc_attr($overlapping_id) . '" ' .
                                             'type="' . esc_attr($session_type) . '" ' .
@@ -550,7 +572,11 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             'session_end="' . esc_attr($end) . '" ' .
 
                                             'style="display:none;">';
-                                        foreach ($presentations->posts as $presentation) {
+
+                                        if (empty ($sorted_presentations) || $session_type == 'poster') {
+                                            $sorted_presentations = $presentations->posts;
+                                        }
+                                        foreach ($sorted_presentations as $presentation) {
                                             $presentation_id = $presentation->ID;
                                             $presenter = get_the_title($presentation_id);
                                             $presentation_title = get_field('presentation_title', $presentation_id);
@@ -564,7 +590,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                                 'data-abstract="' . esc_attr($presentation_abstract) . '" ' .
                                                 'data-research-area="' . esc_attr($research_area) . '" ' .
                                                 'data-poster-number="' . esc_attr($poster_number) . '" ' .
-                                                'data-start="' . esc_attr($start) . '" ' .
+                                                'data-start="' . $start . '" ' .
 
 
                                                 '></div>';
@@ -577,18 +603,15 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
 
                                         ?>
-                                        <a href="javascript:void(0);" onclick="openSessionModal(<?php echo $overlapping_id; ?>)" style="<?php echo $width_style;
-                                           echo 'height: ' . $height . 'vh;' ?>">
+                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" href="javascript:void(0);"
+                                            onclick="openSessionModal(<?php echo $overlapping_id; ?>)" style="<?php echo $width_style;
+                                               echo 'height: ' . $height . 'vh;' ?>">
                                             <div class="event-title oral">
                                                 <?php echo $title ?>
                                             </div>
                                             <div class="event-description oral">
                                                 <?php echo $description ?>
                                             </div>
-                                            <!-- <svg width="10000px" height="5" xmlns="http://www.w3.org/2000/svg">
-                                                <line x1="0%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3"
-                                                    stroke-linecap="round" />
-                                            </svg> -->
                                         </a>
                                         <?php
 
@@ -596,30 +619,23 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                         $sponsor_link = get_field('link', $overlapping_id);
 
                                         ?>
-                                        <a href="<?php echo $sponsor_link; ?>" style="<?php echo $width_style;
-                                           echo $max_height_style; ?>">
+                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $sponsor_link; ?>" style="<?php echo $width_style;
+                                              echo 'min-height:' . $max_height . 'vh;'; ?>">
                                             <div class="event-title other">
                                                 <?php echo $title ?>
                                             </div>
-                                            <!-- <svg width="10000px" height="5" xmlns="http://www.w3.org/2000/svg">
-                                                <line x1="1%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3"
-                                                    stroke-linecap="round" />
-                                            </svg> -->
+
                                         </a>
                                         <?php
                                     } elseif ($session_type == "break") {
                                         ?>
-                                        <div class="break-wrapper" style="<?php echo $width_style;
-                                        echo $height_style; ?>">
+                                        <div data-end="<?php echo $endDate->format("H:i"); ?>" class="break-wrapper" style="<?php echo $width_style;
+                                           echo $height_style; ?>">
                                             <div class="event-container break" style="<?php echo $width_style;
                                             ?>">
                                                 <div class="event-title break">
                                                     <?php echo $title ?>
                                                 </div>
-                                                <!-- <svg width="10000px" height="5" xmlns="http://www.w3.org/2000/svg">
-                                                <line x1="1%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3"
-                                                    stroke-linecap="round" />
-                                            </svg> -->
                                             </div>
                                         </div>
 
@@ -628,15 +644,11 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                     } elseif ($session_type == 'special_event') {
                                         $post_link = get_field('link', $overlapping_id);
                                         ?>
-                                        <a class="event-container special-event" style="<?php echo $width_style;
-                                        echo $height_style; ?>" href="<?php echo $post_link; ?>">
+                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container special-event" style="<?php echo $width_style;
+                                           echo $height_style; ?>" href="<?php echo $post_link; ?>">
                                             <div class="event-title ">
                                                 <?php echo $title ?>
                                             </div>
-                                            <!-- <svg width="10000px" height="5" xmlns="http://www.w3.org/2000/svg">
-                                                <line x1="1%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3"
-                                                    stroke-linecap="round" />
-                                            </svg> -->
                                         </a>
                                         <?php
 
@@ -645,8 +657,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                     } elseif ($session_type == 'workshop') {
                                         $post_link = get_field('link', $overlapping_id);
                                         ?>
-                                        <a class="event-container workshop" style="<?php echo $width_style;
-                                        echo $height_style; ?>" href="<?php echo $post_link; ?>">
+                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container workshop" style="<?php echo $width_style;
+                                           echo $height_style; ?>" href="<?php echo $post_link; ?>">
 
                                             <div class="event-title ">
                                                 <?php echo $title ?>
@@ -661,15 +673,11 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                     } else {
                                         ?>
-                                        <div class="event-container" style="<?php echo $width_style;
-                                        echo $height_style; ?>">
+                                        <div data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container" style="<?php echo $width_style;
+                                           echo $height_style; ?>">
                                             <div class="event-title other">
                                                 <?php echo $title ?>
                                             </div>
-                                            <!-- <svg width="10000px" height="5" xmlns="http://www.w3.org/2000/svg">
-                                                <line x1="1%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3"
-                                                    stroke-linecap="round" />
-                                            </svg> -->
                                         </div>
 
 
@@ -687,11 +695,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                 ?>
                             </div>
-                            <?php if ($session_type == "speaker") { ?>
-                                <!-- <svg width="100%" height="5" xmlns="http://www.w3.org/2000/svg">
-                                    <line x1="1%" y1="3" x2="100%" y2="3" stroke="#2386f3" stroke-width="3" stroke-linecap="round" />
-                                </svg> -->
-                            <?php } ?>
+
                         </div>
 
                         <?php
@@ -713,9 +717,6 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                         </div>
                         <div style="height: 100px;px;"></div>
                     </div>
-                    <!-- <svg width="100%" height="5" xmlns="http://www.w3.org/2000/svg">
-                                <line x1="1%" y1="3" x2="99%" y2="3" stroke="#2386f3" stroke-width="3" stroke-linecap="round" />
-                            </svg> -->
                 </div>
             </div>
             <?php
