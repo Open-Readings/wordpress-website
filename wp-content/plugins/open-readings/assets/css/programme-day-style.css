@@ -1,0 +1,367 @@
+.event-container,
+.program-section a {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    padding: 0 10px;
+    background-color: #e6e6e6;
+    border-radius: 5px;
+    text-wrap: wrap;
+    width: 100%;
+    max-width: 650px;
+    position: relative;
+    z-index: 2;
+    /* margin-bottom: 3px; */
+    border: 2px solid #121f47;
+}
+
+.break-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    padding: 0 10px;
+    text-wrap: wrap;
+    width: 100%;
+    max-width: 650px;
+    position: relative;
+    z-index: 2;
+}
+
+
+
+.time-header {
+    position: relative;
+    /* Establishes positioning context */
+    z-index: 1;
+    /* Ensures it does not overlap event-containers */
+    /* Your existing styles */
+}
+
+
+.collapsible.title {
+    font-size: x-large;
+
+
+}
+
+.time-header::before {
+    content: "";
+    /* Required for pseudo-elements */
+    position: absolute;
+    top: 100%;
+    /* Adjust as needed to align with the middle of the time-header */
+    left: 0;
+    /* Start from the right edge of the time-header */
+    width: calc(100vw - 100%);
+    /* Extend to the right edge of the viewport, adjust based on your layout */
+    height: 2px;
+    /* Thickness of the line */
+    background-color: #2386f3;
+    /* Blue line color */
+    z-index: -1;
+    /* Ensures it goes behind event-container elements */
+}
+
+.presentation-item {
+    flex-direction: row;
+    /* Adjust the gap as needed */
+}
+
+.fixed-width {
+
+    display: inline-block;
+    /* Allows the span to have a fixed width */
+    width: 40px;
+
+    font-weight: 600;
+    font-size: medium;
+    color: #121f47;
+    /* Set the desired fixed width */
+    /* Ensures that the overflow text is hidden */
+    /* Prevents the text from wrapping to a new line */
+
+    padding-right: 20px;
+    /* Prevents the time from wrapping */
+    /* Prevents the time from shrinking */
+}
+
+
+.light-blue {
+    color: #2386f3;
+}
+
+.modal-presentation-title::before {
+    content: '';
+    /* Required for pseudo-elements */
+    display: inline-block;
+    /* Makes the pseudo-element behave like an inline element */
+    margin-right: 10px;
+    margin-left: 10px;
+    /* Space between the text and the line */
+    height: 1em;
+    /* Match the height of the text */
+    width: 2px;
+    /* Width of the vertical line */
+    vertical-align: middle;
+    /* Aligns the line with the middle of the text */
+    /* Thickness of the line */
+    background-color: #2386f3;
+    /* Blue line color */
+
+    /* Ensures it goes behind event-container elements */
+}
+
+
+a.speaker {
+    background-color: #2e5988;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    text-align: center;
+    height: 100%;
+    padding: 10px 10px;
+    width: 80%;
+
+}
+
+
+
+a.workshop {
+    background-color: #b4ccea;
+    color: #121f47;
+
+}
+
+.workshop .event-title {
+    font-weight: 700;
+    color: #121f47;
+    text-transform: uppercase;
+
+}
+
+.workshop .event-description {
+    font-size: small;
+    color: #121f47;
+}
+
+a.special-event {
+    background-color: #b4ccea;
+    color: #121f47;
+}
+
+.special-event .event-title {
+    font-weight: 700;
+    color: #121f47;
+    text-transform: uppercase;
+
+}
+
+
+.speaker-image {
+    width: 30%;
+    max-width: 125px;
+    height: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto
+}
+
+@media screen and (max-width: 600px) {
+    .speaker-image {
+        display: none;
+    }
+
+    .speaker {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .oral.event-description {
+        font-size: small;
+    }
+
+}
+
+.speaker-image img {
+
+    object-fit: cover;
+    margin: 0 auto;
+    height: auto;
+    border-radius: 50%;
+
+}
+
+
+
+
+.speaker .event-affiliation {
+    padding-top: 5px;
+    font-weight: 800;
+    font-size: 9px;
+
+}
+
+.speaker .event-description {
+    text-align: left;
+    font-size: medium;
+    /* color: #7a7a7a; */
+    color: #e6e6e6;
+}
+
+div.speaker {
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: left;
+}
+
+.event-description {
+    font-size: 16px;
+}
+
+.speaker .event-title {
+    padding-top: 5px;
+    width: 90%;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #fff;
+    text-align: left;
+
+
+}
+
+
+.special_event {}
+
+.break.event-title {
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+
+
+.break.event-container {
+    margin: auto 0;
+    border: 2px #121f47;
+    background-color: #fff;
+
+
+
+}
+
+
+.oral.event-title {
+    text-transform: uppercase;
+    margin-top: 10px;
+    font-weight: 700;
+    color: #121f47;
+}
+
+.oral.event-description {
+    margin-top: 0;
+    margin-bottom: auto;
+    text-align: center;
+    font-weight: 600;
+    color: #121f47;
+
+}
+
+
+.event-title,
+.event-description {
+    text-align: center;
+    margin: auto 0;
+    color: #121f47;
+
+}
+
+.program-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    overflow: wrap;
+    margin-bottom: 2px;
+}
+
+
+
+.time-header {
+    width: 10%;
+    min-width: auto;
+    /* padding-left: 10px;
+    padding-right: 10px; */
+    justify-content: end;
+    margin-top: auto;
+    margin-right: 10%;
+    text-align: left;
+
+}
+
+.time-block {
+    width: 20%;
+    position: relative;
+}
+
+.event-container svg {
+    z-index: 1;
+    /* Lower z-index means it will be "under" elements with higher z-index */
+    position: relative;
+}
+
+.event-container .event-title {
+    z-index: 2;
+    /* Ensures the title is above the line */
+    position: relative;
+
+}
+
+.program-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: left;
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+    padding-bottom: 2px;
+    gap: 5px;
+
+
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
