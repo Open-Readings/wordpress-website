@@ -75,6 +75,26 @@ class ORProgrammeAdmin
                             'type' => 'text',
                         ),
                         array(
+                            'key' => 'session_description_field',
+                            'label' => 'Description',
+                            'name' => 'description',
+                            'type' => 'text',
+
+                        ),
+                        array(
+                            'key' => 'invited_speaker_reference',
+                            'label' => 'Invited Speaker',
+                            'name' => 'invited_speaker',
+                            'type' => 'post_object',
+                            'post_type' => 'invited_speaker',
+                        ),
+                        array(
+                            'key' => 'session_link_field',
+                            'label' => 'Link',
+                            'name' => 'link',
+                            'type' => 'url',
+                        ),
+                        array(
                             'key' => 'session_display_title_field',
                             'label' => 'Display Title',
                             'name' => 'display_title',
@@ -89,9 +109,11 @@ class ORProgrammeAdmin
                                 'oral' => 'Oral',
                                 'poster' => 'Poster',
                                 'workshop' => 'Workshop',
+                                'sponsor' => 'Sponsor',
                                 'special_event' => 'Special Event',
-                                'Speaker' => 'Speaker',
-                                'Break' => 'Break',
+                                'speaker' => 'Speaker',
+                                'break' => 'Break',
+                                'other' => 'Other'
                             ),
                         ),
                         array(
@@ -116,6 +138,13 @@ class ORProgrammeAdmin
                             'name' => 'session_moderator',
                             'type' => 'text',
                         ),
+                        array(
+                            'key' => 'location_field',
+                            'label' => 'Location',
+                            'name' => 'location',
+                            'type' => 'text',
+                        ),
+
                     ),
                     'location' => array(
                         array(

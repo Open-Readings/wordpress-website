@@ -121,25 +121,37 @@
 
                         if (!isset ($_POST['field-id'][$id])) {
 
-
                             $start_time = $_POST['session-start'][$id];
-                            $end_time = $_POST['session-end'][$id];
+                            $end = $_POST['session-end'][$id];
                             $session = get_post_meta($session_name, 'session', true);
                             $session_start = get_post_meta($session_name, 'session_start', true);
 
+                            $start = DateTime::createFromFormat('Y-m-d H:i:s', $session_start);
+                            if ($start == false) {
+                                $start = DateTime::createFromFormat('d/m/Y H:i', $session_start);
+                            }
+                            $start_day = $session_start->format('m/d/Y');
+                            $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $end);
+                            if ($end_time == false) {
+                                $end_time = DateTime::createFromFormat('d/m/Y H:i', $end);
 
-                            $start = strtotime($session_start);
-                            $start_day = date('Y-m-d', $start);
-                            $start_time = date('H:i:s', strtotime($start_time));
+                            }
+                            if ($end_time == false) {
+                                $end_time = strtotime($end);
+                                $end_date = date('Y-m-d H:i:s', $end_time);
+                                $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $end_date);
+
+
+                            }
+
+
                             $presentation_type = get_post_meta($session_name, 'session_type', true);
-
                             if ($presentation_type == 'poster') {
-
-                                $final_start = strtotime(get_post_meta($session_name, 'session_start', true));
-                                $final_end = strtotime(get_post_meta($session_name, 'session_end', true));
+                                $final_start = get_post_meta($session_name, 'session_start', true);
+                                $final_end = get_post_meta($session_name, 'session_end', true);
                             } else {
-                                $final_start = strtotime($start_day . ' ' . $start_time);
-                                $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                                $final_start = $start_day . ' ' . $start_time;
+                                $final_end = $start_day . ' ' . $end_time->format('H:i');
                             }
 
                             $presentation_data = array(
@@ -168,23 +180,46 @@
                         } else {
 
                             $start_time = $_POST['session-start'][$id];
-                            $end_time = $_POST['session-end'][$id];
+                            $end = $_POST['session-end'][$id];
 
 
                             $session = get_post_meta($session_name, 'session', true);
                             $session_start = get_post_meta($session_name, 'session_start', true);
 
-                            $start = strtotime($session_start);
-                            $start_day = date('Y-m-d', $start);
-                            $start_time = date('H:i:s', strtotime($start_time));
+                            $start = DateTime::createFromFormat('Y-m-d H:i:s', $session_start);
+                            if ($start == false) {
+                                $start = DateTime::createFromFormat('d/m/Y H:i', $session_start);
+                            }
+                            $start_day = $start->format('m/d/Y');
+
+
+                            $start = DateTime::createFromFormat('Y-m-d H:i:s', $start_time);
+                            if ($start == false) {
+                                $start = DateTime::createFromFormat('d/m/Y H:i', $start_time);
+                            }
+
+
+                            $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $end);
+                            if ($end_time == false) {
+                                $end_time = DateTime::createFromFormat('d/m/Y H:i', $end);
+
+                            }
+                            if ($end_time == false) {
+                                $end_time = strtotime($end);
+                                $end_date = date('Y-m-d H:i:s', $end_time);
+                                $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $end_date);
+
+
+                            }
+
 
                             $presentation_type = get_post_meta($session_name, 'session_type', true);
                             if ($presentation_type == 'poster') {
-                                $final_start = strtotime(get_post_meta($session_name, 'session_start', true));
-                                $final_end = strtotime(get_post_meta($session_name, 'session_end', true));
+                                $final_start = get_post_meta($session_name, 'session_start', true);
+                                $final_end = get_post_meta($session_name, 'session_end', true);
                             } else {
-                                $final_start = strtotime($start_day . ' ' . $start_time);
-                                $final_end = strtotime($start_day . ' ' . date('H:i:s', strtotime($end_time)));
+                                $final_start = $start_day . ' ' . $start_time;
+                                $final_end = $start_day . ' ' . $end_time->format('H:i');
                             }
 
                             $update_presentation_data = array(
