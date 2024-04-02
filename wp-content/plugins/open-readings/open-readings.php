@@ -207,9 +207,11 @@ function add_new_form_actions($form_actions_registrar)
 {
 
   require_once (__DIR__ . '/form-actions/or-form-action.php');
+  require_once (__DIR__ . '/form-actions/or-presentation-redirect.php');
   require_once (__DIR__ . '/form-actions/custom-form.php');
   //require_once(__DIR__ . '/form-actions/or-update-form.php');
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
+  $form_actions_registrar->register(new \ORPresentationUpload());
   //$form_actions_registrar->register(new \ORUpdateFormAction());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
