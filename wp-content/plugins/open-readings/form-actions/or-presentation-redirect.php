@@ -36,6 +36,16 @@ class ORPresentationUpload extends \ElementorPro\Modules\Forms\Classes\Action_Ba
     public function run($record, $ajax_handler)
     {
         global $wpdb;
+        $table_name = $wpdb->prefix . 'or_presentation'; // Add your table name here
+
+        // SQL query to create the table if it doesn't exist
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            hash_id VARCHAR(255) NOT NULL,
+            presentation VARCHAR(255) NOT NULL,
+            PRIMARY KEY (hash_id)
+        ) ENGINE=InnoDB;";
+
+        $wpdb->query($sql);
         $raw_fields = $record->get('fields');
 
         $fields = [];
