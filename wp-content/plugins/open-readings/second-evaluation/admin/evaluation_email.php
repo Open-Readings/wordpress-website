@@ -128,7 +128,7 @@
 
 
         <?php
-        if (isset ($_POST['save_settings'])) {
+        if (isset($_POST['save_settings'])) {
             update_option('evaluation_subject', $_POST['email_subject']);
             update_option('evaluation_accept_body', $_POST['acceptance_body']);
             update_option('evaluation_reject_body', $_POST['rejection_body']);
@@ -169,7 +169,7 @@
             <?php
             global $RESEARCH_AREAS;
             for ($i = 1; $i <= count($RESEARCH_AREAS); $i++) {
-                if (isset ($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
+                if (isset($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $RESEARCH_AREAS[$i] . '</option>';
                 } else
                     echo '<option value="' . $i . '">' . $RESEARCH_AREAS[$i] . '</option>';
@@ -208,11 +208,11 @@
 
 
 
-        if (isset ($_POST['ra_filter'])) {
+        if (isset($_POST['ra_filter'])) {
             $ra_filter = $_POST['ra_filter'];
         }
 
-        if (isset ($_POST['send_emails'])) {
+        if (isset($_POST['send_emails'])) {
 
             $check = $_POST['check'];
             if (count($check) > $send_threshold) {
@@ -239,8 +239,8 @@
                 );
                 $presentation_post = get_posts($args)[0];
                 $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
-                $presentation_day = date('d/m/Y', $presentation_time);
-                $presentation_hour = date('H:i', $presentation_time);
+                $presentation_day = date('d/m/Y', strtotime($presentation_time));
+                $presentation_hour = date('H:i', strtotime($presentation_time));
 
                 $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
                 $session_post = get_post($presentation_session);
