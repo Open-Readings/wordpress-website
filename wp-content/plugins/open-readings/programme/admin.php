@@ -67,6 +67,7 @@ class ORProgrammeAdmin
                 array(
                     'key' => 'session_group', // Unique key for the field group
                     'title' => 'Session Fields',
+                    'show_in_rest' => true,
                     'fields' => array(
                         array(
                             'key' => 'session_short_title_field',
@@ -185,6 +186,7 @@ class ORProgrammeAdmin
                 array(
                     'key' => 'presentation_details',
                     'title' => 'Presentation Details',
+                    'show_in_rest' => true,
                     'fields' => array(
                         array(
                             'key' => 'field_1',
