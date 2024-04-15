@@ -323,4 +323,23 @@ $STATUS_CODES = [
 
 ];
 
+require_once __DIR__ . '/programme/download-session.php';
 
+add_action('init', 'custom_rewrite_rule');
+function custom_rewrite_rule() {
+    add_rewrite_rule('^secretdownload/([^/]+)/?', 'index.php?secretdownload=$matches[1]', 'top');
+}
+
+add_filter('query_vars', 'custom_query_vars');
+function custom_query_vars($vars) {
+    $vars['abc'] = 'secretdownload';
+    return $vars;
+}
+add_action('parse_request', 'custom_parse_request');
+function custom_parse_request($wp) {
+    if (array_key_exists('secretdownload', $wp->query_vars)) {
+        $key = $wp->query_vars['secretdownload'];
+        download_session_zip($key);
+        exit();
+    }
+}
