@@ -70,7 +70,7 @@ function get_presentation_path_array(string $session){
 
     $presentation_id_string = implode(',', $presentation_ids);
 
-    // Get array of presentation post ids.
+    // Get array of presentation post ids
     $results = $wpdb->get_results("SELECT meta_value FROM wp_postmeta WHERE meta_key = 'hash_id' AND post_id IN ($presentation_id_string) GROUP BY meta_value");
     $hash_ids = array();
     foreach($results as $result){
