@@ -38,7 +38,7 @@
 
     }
 
-    function send_emails($email, $decision, $presentation_title)
+    function send_emails($email, $decision, $presentation_title, $other_vars = array())
     {
         global $PRESENTATION_TYPE;
         global $or_mailer;
@@ -60,9 +60,11 @@
                 array(
                     '{$title}' => $presentation_title,
                     '{$decision}' => array_search($decision, $PRESENTATION_TYPE),
-                    '{$link}'=> '<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFMjHLhjOXPNJf432hsvh-hxtBA0SvU06jovlNjkIcgYyDTQ/viewform">link</a>'
+                    '{$link}' => '<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFMjHLhjOXPNJf432hsvh-hxtBA0SvU06jovlNjkIcgYyDTQ/viewform">link</a>'
                 );
+            $vars = array_merge($vars, $other_vars);
             $template = strtr($acc_body, $vars);
+            $template = stripslashes($template);
             return $or_mailer->send_or_mail($email, $subj, $template);
         }
     }
@@ -147,11 +149,9 @@
             <input id="email_subject" name="email_subject" value="<?php echo $subject; ?>">
             <?php echo $subject; ?></input>
             <label for="acceptance_body">Acceptance Body</label>
-            <textarea name="acceptance_body"
-                ><?php echo $acceptance_body; ?></textarea>
+            <textarea name="acceptance_body"><?php echo $acceptance_body; ?></textarea>
             <label for="rejection_body">Rejection Body</label>
-            <textarea name="rejection_body"
-                ><?php echo $rejection_body; ?></textarea>
+            <textarea name="rejection_body"><?php echo $rejection_body; ?></textarea>
 
             <button type="submit" name="save_settings"> Save Settings</button>
         </form>
@@ -207,6 +207,7 @@
         $ra_filter = 'none';
 
 
+
         if (isset($_POST['ra_filter'])) {
             $ra_filter = $_POST['ra_filter'];
         }
@@ -222,15 +223,54 @@
             foreach ($check as $id) {
 
                 $query = "SELECT * FROM $joint_table WHERE hash_id='$id'";
-                
+
                 $result = $wpdb->get_results($query);
                 $email = $result[0]->email;
+                $args = array(
+                    'post_type' => 'presentation',
+                    'meta_query' => array(
+                        array(
+                            'key' => 'hash_id',
+                            'value' => $id,
+                            'compare' => '='
+                        )
+                    )
+
+                );
+                $presentation_post = get_posts($args)[0];
+                $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
+                $presentation_day = date('d/m/Y', strtotime($presentation_time));
+                $presentation_hour = date('H:i', strtotime($presentation_time));
+
+                $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
+                $session_post = get_post($presentation_session);
+                $session_title = get_post_meta($session_post->ID, 'short_title', true);
+
+
+
+                if ($result[0]->decision == 1) {
+                    $duration = "15 minutes (account 2-3 minutes for Q&A as part of the duration).";
+                } else if ($result[0]->decision == 2) {
+                    $duration = "90 minutes (Poster presenter has to be present at their poster at all times during the Poster session; only one presenter per poster)";
+                }
+
+
+
+                $other_vars = array(
+                    '{$day}' => $presentation_day,
+                    '{$hour}' => $presentation_hour,
+                    '{$session}' => $session_title,
+                    '{$duration}' => $duration,
+                    '{$first_name}' => $result[0]->first_name,
+                    '{$last_name}' => $result[0]->last_name,
+                );
+
                 if ($result[0]->sent_email == 0) {
-                    $sent = send_emails($email, $result[0]->decision, $result[0]->title);
-                    if($sent){
+                    $sent = send_emails($email, $result[0]->decision, $result[0]->display_title, $other_vars);
+                    if ($sent) {
                         echo "<p>Email sent to $email</p>";
 
-                    }else{
+                    } else {
                         echo "<p>Email failed for $email, please try again</p>";
 
                     }
@@ -260,7 +300,7 @@
             $first_name = $result->first_name;
             $last_name = $result->last_name;
             $affiliation = $result->institution;
-            $presentation_title = $result->title;
+            $presentation_title = $result->display_title;
             $abstract_pdf = $result->pdf;
             $research_area = $result->research_area;
             $presentation_type = "";
