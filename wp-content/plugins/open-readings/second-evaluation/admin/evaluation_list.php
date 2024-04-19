@@ -73,7 +73,7 @@
             <option value="none">all</option>
             <?php
             global $RESEARCH_AREAS;
-            for ($i = 1; $i < count($RESEARCH_AREAS)+1; $i++) {
+            for ($i = 1; $i < count($RESEARCH_AREAS) + 1; $i++) {
                 if (isset($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $RESEARCH_AREAS[$i] . '</option>';
                 } else
@@ -105,11 +105,14 @@
         <tr>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Study level</th>
             <th>Email</th>
             <th>Presentation Title</th>
             <th>Abstract PDF</th>
             <th>Research Area</th>
+            <th>Grade</th>
             <th>Decision</th>
+            <th>Comment</th>
         </tr>
         <?php
         global $wpdb;
@@ -157,7 +160,8 @@
             $first_name = $result->first_name;
             $last_name = $result->last_name;
             // $affiliation = $result->affiliation;
-            $presentation_title = $result->title;
+            $presentation_title = $result->display_title;
+            $person_title = $wpdb->get_var("SELECT title FROM wp_or_registration WHERE hash_id='$result->hash_id'"); //get_post_meta($result->hash_id, 'title', true);
             $abstract_pdf = $result->pdf;
             $research_area = $result->research_area;
             $presentation_type = "";
@@ -179,10 +183,12 @@
             echo '<tr style="background-color: ' . $color . ';">';
             echo "<td>$first_name</td>";
             echo "<td>$last_name</td>";
+            echo "<td>$person_title</td>";
             echo "<td><a name=\"{$result->hash_id}\" href=\"mailto:{$result->email}\">{$result->email}</a></td>";
             echo "<td>$presentation_title</td>";
             echo "<td> <a href=\"{$result->pdf}\">" . basename($result->pdf) . "</a></td>";
             echo "<td>" . $research_area . "</td>";
+            echo "<td>" . $result->evaluation . "</td>";
             echo '<td>preffered presentation type: <strong>' . $result->presentation_type . '</strong> <br>';
             echo '<input type="radio" name="decision[' . $result->hash_id . ']" value="3" ' . (($decision == 3) ? "checked>" : ">") . 'Reject</input>';
             echo '<br>';

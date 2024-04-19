@@ -24,22 +24,38 @@ use OpenReadings\Registration\OpenReadingsRegistration;
 
 function register_faq_widget($widgets_manager)
 {
-  require_once(__DIR__ . '/widgets/faq-widget.php');
+  require_once (__DIR__ . '/widgets/faq-widget.php');
   $widgets_manager->register(new \Elementor_Faq_Widget());
+  require_once(__DIR__ . '/widgets/assigned-session-widget.php');
+  $widgets_manager->register(new \Elementor_Assigned_Session_Widget());
 }
+
+
+function register_programme_day_widget($widgets_manager)
+{
+  require_once (__DIR__ . '/widgets/programme-day.php');
+  $widgets_manager->register(new \ElementorProgrammeDay());
+}
+
+add_action('elementor/widgets/register', 'register_programme_day_widget');
 
 add_action('elementor/widgets/register', 'register_faq_widget');
 
 function register_or_dependencies()
 {
   $version = '1';
-  wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__));
+  $css_path = plugin_dir_path(__FILE__) . 'assets/css/faq-widget-style.css';
+  wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__), array(), filemtime($css_path));
   wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
   wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
 
+  $css_path = plugin_dir_path(__FILE__) . 'assets/css/programme-day-style.css';
+  wp_register_style('programme-day-style', plugins_url('assets/css/programme-day-style.css', __FILE__), array(), filemtime($css_path));
   $css_path = plugin_dir_path(__FILE__) . 'assets/css/latex-field-style.css';
   wp_register_style('latex-field-style', plugins_url('assets/css/latex-field-style.css', __FILE__), array(), filemtime($css_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/program-day-js.js';
+  wp_register_script('programme-day-js', plugins_url('assets/js/program-day-js.js', __FILE__), array(), filemtime($js_path));
 
 
   wp_register_script('highlight-js', plugins_url('assets/js/highlight.js', __FILE__));
@@ -80,8 +96,10 @@ add_action('admin_enqueue_scripts', 'register_evaluation_styles');
 
 function register_faq_controls($controls_manager)
 {
-  require_once(__DIR__ . '/controls/faq-controls.php');
+  require_once (__DIR__ . '/controls/faq-controls.php');
+
   $controls_manager->register(new \Elementor_FAQ_Control());
+
 }
 
 add_action('elementor/controls/register', 'register_faq_controls');
@@ -89,7 +107,7 @@ add_action('elementor/controls/register', 'register_faq_controls');
 
 function register_or_mailer()
 {
-  require_once(__DIR__ . '/mailer/mailer.php');
+  require_once (__DIR__ . '/mailer/mailer.php');
   $mailer = new ORmailer();
 
   add_menu_roles();
@@ -102,7 +120,7 @@ function register_or_mailer()
 function register_or_registration_controller()
 {
 
-  require_once(__DIR__ . '/registration/registration.php');
+  require_once (__DIR__ . '/registration/registration.php');
   global $or_registration_controller;
   $or_registration_controller = new OpenReadingsRegistration();
 
@@ -165,10 +183,10 @@ function add_menu_roles()
 
 function register_admin()
 {
-  require_once(__DIR__ . '/registration/admin.php');
-  require_once(__DIR__ . '/second-evaluation/or_evaluation_admin.php');
-  require_once(__DIR__ . '/evaluation/admin.php');
-  require_once(__DIR__ . '/programme/admin.php');
+  require_once (__DIR__ . '/registration/admin.php');
+  require_once (__DIR__ . '/second-evaluation/or_evaluation_admin.php');
+  require_once (__DIR__ . '/evaluation/admin.php');
+  require_once (__DIR__ . '/programme/admin.php');
   $admin = new OREvaluationAdmin();
   $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
@@ -188,10 +206,12 @@ define('OR_PLUGIN_DIR', __DIR__ . '/');
 function add_new_form_actions($form_actions_registrar)
 {
 
-  require_once(__DIR__ . '/form-actions/or-form-action.php');
-  require_once(__DIR__ . '/form-actions/custom-form.php');
+  require_once (__DIR__ . '/form-actions/or-form-action.php');
+  require_once (__DIR__ . '/form-actions/or-presentation-redirect.php');
+  require_once (__DIR__ . '/form-actions/custom-form.php');
   //require_once(__DIR__ . '/form-actions/or-update-form.php');
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
+  $form_actions_registrar->register(new \ORPresentationUpload());
   //$form_actions_registrar->register(new \ORUpdateFormAction());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
@@ -202,15 +222,15 @@ add_action('elementor_pro/forms/actions/register', 'add_new_form_actions');
 function add_new_form_field($form_fields_registrar)
 {
 
-  require_once(__DIR__ . '/form-fields/country-field.php');
-  require_once(__DIR__ . '/form-fields/institution-field.php');
-  require_once(__DIR__ . '/form-fields/latex-field.php');
-  require_once(__DIR__ . '/form-fields/authors-field.php');
-  require_once(__DIR__ . '/form-fields/affiliation-field.php');
-  require_once(__DIR__ . '/form-fields/reference-field.php');
-  require_once(__DIR__ . '/form-fields/image-field.php');
-  require_once(__DIR__ . '/form-fields/title-field.php');
-  require_once(__DIR__ . '/form-fields/simple-check-field.php');
+  require_once (__DIR__ . '/form-fields/country-field.php');
+  require_once (__DIR__ . '/form-fields/institution-field.php');
+  require_once (__DIR__ . '/form-fields/latex-field.php');
+  require_once (__DIR__ . '/form-fields/authors-field.php');
+  require_once (__DIR__ . '/form-fields/affiliation-field.php');
+  require_once (__DIR__ . '/form-fields/reference-field.php');
+  require_once (__DIR__ . '/form-fields/image-field.php');
+  require_once (__DIR__ . '/form-fields/title-field.php');
+  require_once (__DIR__ . '/form-fields/simple-check-field.php');
 
 
 
@@ -246,7 +266,7 @@ add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
 function register_or_mailer_admin()
 {
-  require_once(__DIR__ . '/mailer/admin.php');
+  require_once (__DIR__ . '/mailer/admin.php');
   $admin = new ORmailerAdmin();
 
 
@@ -260,7 +280,7 @@ function enqueue_form_fill_script()
     return;
   }
   if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
-    require_once(__DIR__ . '/registration/begin-session.php');
+    require_once (__DIR__ . '/registration/begin-session.php');
   }
 }
 
@@ -270,7 +290,7 @@ function my_custom_function()
 {
   if (did_action('wp_footer') > 1)
     return;
-  require_once(__DIR__ . '/registration/populate-form-fields.php');
+  require_once (__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'my_custom_function');
 
@@ -303,4 +323,23 @@ $STATUS_CODES = [
 
 ];
 
+require_once __DIR__ . '/programme/download-session.php';
 
+add_action('init', 'custom_rewrite_rule');
+function custom_rewrite_rule() {
+    add_rewrite_rule('^secretdownload/([^/]+)/?', 'index.php?secretdownload=$matches[1]', 'top');
+}
+
+add_filter('query_vars', 'custom_query_vars');
+function custom_query_vars($vars) {
+    $vars['abc'] = 'secretdownload';
+    return $vars;
+}
+add_action('parse_request', 'custom_parse_request');
+function custom_parse_request($wp) {
+    if (array_key_exists('secretdownload', $wp->query_vars)) {
+        $key = $wp->query_vars['secretdownload'];
+        download_session_zip($key);
+        exit();
+    }
+}
