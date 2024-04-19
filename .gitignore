@@ -31,6 +31,7 @@ wp-config.php
 # Example themes
 /wp-content/themes/twenty*/
 
+
 # Example plugin
 /wp-content/plugins/hello.php
 
@@ -69,7 +70,7 @@ wp-content/plugins/*
 #
 # Note: If you wish to whitelist themes,
 # uncomment the next line
-#/wp-content/themes
+/wp-content/themes
 20230927_openreadings2024_603d5937a826f9d21987_20230927161505_installer-backup.php
 local-xdebuginfo.php
 
