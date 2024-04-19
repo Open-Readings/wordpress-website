@@ -38,6 +38,10 @@ wp-config.php
 # Uploads
 /wp-content/uploads/
 
+
+/wp-content/db.php
+
+
 # Log files
 *.log
 
