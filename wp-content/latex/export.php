@@ -1,5 +1,5 @@
 <?php
-
+// test
 error_reporting(0);
 
 function check_abstract_fields()
