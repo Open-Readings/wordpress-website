@@ -26,6 +26,8 @@ function register_faq_widget($widgets_manager)
 {
   require_once (__DIR__ . '/widgets/faq-widget.php');
   $widgets_manager->register(new \Elementor_Faq_Widget());
+  require_once(__DIR__ . '/widgets/assigned-session-widget.php');
+  $widgets_manager->register(new \Elementor_Assigned_Session_Widget());
 }
 
 
@@ -205,9 +207,11 @@ function add_new_form_actions($form_actions_registrar)
 {
 
   require_once (__DIR__ . '/form-actions/or-form-action.php');
+  require_once (__DIR__ . '/form-actions/or-presentation-redirect.php');
   require_once (__DIR__ . '/form-actions/custom-form.php');
   //require_once(__DIR__ . '/form-actions/or-update-form.php');
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
+  $form_actions_registrar->register(new \ORPresentationUpload());
   //$form_actions_registrar->register(new \ORUpdateFormAction());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
@@ -319,4 +323,23 @@ $STATUS_CODES = [
 
 ];
 
+require_once __DIR__ . '/programme/download-session.php';
 
+add_action('init', 'custom_rewrite_rule');
+function custom_rewrite_rule() {
+    add_rewrite_rule('^secretdownload/([^/]+)/?', 'index.php?secretdownload=$matches[1]', 'top');
+}
+
+add_filter('query_vars', 'custom_query_vars');
+function custom_query_vars($vars) {
+    $vars['abc'] = 'secretdownload';
+    return $vars;
+}
+add_action('parse_request', 'custom_parse_request');
+function custom_parse_request($wp) {
+    if (array_key_exists('secretdownload', $wp->query_vars)) {
+        $key = $wp->query_vars['secretdownload'];
+        download_session_zip($key);
+        exit();
+    }
+}
