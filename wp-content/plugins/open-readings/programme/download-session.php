@@ -1,31 +1,37 @@
 <?php
 
-function download_session_zip(string $session){
-    $presentations = get_presentation_path_array($session);
-    var_dump($presentations);
-    $zip = new ZipArchive();
-    $zip_file = $session . '.zip';
-
-    if ($zip->open($zip_file, ZipArchive::CREATE) !== true) {
-        return false;
-    }
-
-    foreach($presentations as $presentation){
-        $ext = pathinfo(basename($presentation['path']), PATHINFO_EXTENSION);
-        $zip->addFile($presentation['path'], $presentation['name'] . "." . $ext);
-    }
+function download_session_zip(){
+    if (isset($_GET['page']) && $_GET['page'] === 'or_programme') {
+        if (isset($_POST['download'])){
+            $session = $_POST['download'];
+            $presentations = get_presentation_path_array($session);
+            var_dump($presentations);
+            $zip = new ZipArchive();
+            $zip_file = $session . '.zip';
     
-    $zip->close();
-
-
-    // Set headers to initiate download
-    header('Content-disposition: attachment; filename=' . $zip_file);
-    header('Content-Type: application/zip');
-    readfile("$zip_file");
-    unlink($zip_file);
-
-    // Exit to prevent any further output
-    exit;
+            if ($zip->open($zip_file, ZipArchive::CREATE) !== true) {
+                return false;
+            }
+    
+            foreach($presentations as $presentation){
+                $ext = pathinfo(basename($presentation['path']), PATHINFO_EXTENSION);
+                $zip->addFile($presentation['path'], $presentation['name'] . "." . $ext);
+            }
+            
+            $zip->close();
+    
+    
+            // Set headers to initiate download
+            header('Content-disposition: attachment; filename=' . $zip_file);
+            header('Content-Type: application/zip');
+            readfile("$zip_file");
+            unlink($zip_file);
+    
+            // Exit to prevent any further output
+            exit;
+        }
+        
+    }
 }
 
 function wp_url_to_path($url) {
