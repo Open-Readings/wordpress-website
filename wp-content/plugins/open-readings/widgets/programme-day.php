@@ -715,7 +715,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                         <div class="time-block">
 
                         </div>
-                        <div style="height: 100px;px;"></div>
+                        <div style="height: 100px;"></div>
                     </div>
                 </div>
             </div>
