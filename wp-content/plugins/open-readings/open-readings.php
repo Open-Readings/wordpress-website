@@ -216,6 +216,7 @@ function add_new_form_actions($form_actions_registrar)
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
 
 
+
 }
 add_action('elementor_pro/forms/actions/register', 'add_new_form_actions');
 
@@ -322,24 +323,8 @@ $STATUS_CODES = [
   'Duplicate' => 99,
 
 ];
-
+//
 require_once __DIR__ . '/programme/download-session.php';
 
-add_action('init', 'custom_rewrite_rule');
-function custom_rewrite_rule() {
-    add_rewrite_rule('^secretdownload/([^/]+)/?', 'index.php?secretdownload=$matches[1]', 'top');
-}
+add_action('admin_init', 'download_session_zip');
 
-add_filter('query_vars', 'custom_query_vars');
-function custom_query_vars($vars) {
-    $vars['abc'] = 'secretdownload';
-    return $vars;
-}
-add_action('parse_request', 'custom_parse_request');
-function custom_parse_request($wp) {
-    if (array_key_exists('secretdownload', $wp->query_vars)) {
-        $key = $wp->query_vars['secretdownload'];
-        download_session_zip($key);
-        exit();
-    }
-}

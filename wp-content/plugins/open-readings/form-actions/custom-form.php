@@ -64,6 +64,23 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
                 'description' => __('Enter the body of the email.', 'elementor-pro'),
             ]
         );
+        $widget->add_control(
+            'limit_submissions',
+            [
+                'label' => __('Limit number of submissions', 'elementor-pro'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'description' => __('Should we limit the maximum number of submissions', 'elementor-pro'),
+            ]
+        );
+        $widget->add_control(
+            'max_submissions',
+            [
+                'label' => __('Maximum submissions', 'elementor-pro'),
+                'type' => Controls_Manager::NUMBER,
+                'description' => __('Set the submission limit', 'elementor-pro'),
+            ]
+        );
 
         $widget->end_controls_section();
     }
@@ -103,8 +120,22 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
 
         // Get the table name from the control
         $table_name = $record->get_form_settings('table_name');
-
+        
+        
         $table_name = $wpdb->prefix . $table_name;
+
+        $limit_submissions = $record->get_form_settings('limit_submissions'); //bool
+        $max_submissions = $record->get_form_settings('max_submissions');
+
+        if($limit_submissions == "yes"){
+            $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+
+            if ($count >= $max_submissions){
+                $ajax_handler->add_error_message("Registration is closed (maximum number of submissions has been reached)");
+                return;
+            }
+        }
+
         // Generate a hash_id
         $hash_id = md5(uniqid(rand(), true));
 
