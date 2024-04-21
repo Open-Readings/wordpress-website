@@ -1,7 +1,7 @@
 <form method="POST">
     <button name="add-session-name">UPDATE</button>
 </form>
-<?
+<?php
 if(isset($_POST['add-session-name'])){
     global $wpdb;
     $session_post_id = $wpdb->get_results("SELECT ID FROM wp_posts WHERE post_type = 'session' GROUP BY ID");
@@ -42,7 +42,7 @@ if(isset($_POST['add-session-name'])){
 
 <form method='POST' id="get_session">
 
-<?
+<?php
 echo '<select name="download">';
 echo '<option value="none">Select session</option>';
 $args = array(
