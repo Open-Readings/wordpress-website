@@ -110,7 +110,7 @@ if ($query->have_posts()) {
             <?php
             global $RESEARCH_AREAS;
             for ($i = 1; $i < count($RESEARCH_AREAS) + 1; $i++) {
-                if (isset ($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
+                if (isset($_POST['ra_filter']) && $_POST['ra_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $RESEARCH_AREAS[$i] . '</option>';
                 } else
                     echo '<option value="' . $i . '">' . $RESEARCH_AREAS[$i] . '</option>';
@@ -125,7 +125,7 @@ if ($query->have_posts()) {
             <?php
             global $PRESENTATION_TYPE;
             for ($i = 1; $i < count($PRESENTATION_TYPE); $i++) {
-                if (isset ($_POST['type_filter']) && $_POST['type_filter'] == $i) {
+                if (isset($_POST['type_filter']) && $_POST['type_filter'] == $i) {
                     echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '" selected>' . array_search($i, $PRESENTATION_TYPE) . '</option>';
                 } else
                     echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '">' . array_search($i, $PRESENTATION_TYPE) . '</option>';
@@ -142,7 +142,7 @@ if ($query->have_posts()) {
                 2 => 'assigned'
             ];
             for ($i = 1; $i < count($status) + 1; $i++) {
-                if (isset ($_POST['assigned_filter']) && $_POST['assigned_filter'] == $i) {
+                if (isset($_POST['assigned_filter']) && $_POST['assigned_filter'] == $i) {
                     echo '<option value="' . $i . '" selected>' . $status[$i] . '</option>';
                 } else
                     echo '<option value="' . $i . '">' . $status[$i] . '</option>';
@@ -179,13 +179,13 @@ if ($query->have_posts()) {
             $ra_filter = 'none';
 
             $list_index = 1;
-            if (isset ($_POST['save_settings'])) {
+            if (isset($_POST['save_settings'])) {
                 foreach ($_POST['session-name'] as $id => $session_name) {
                     if ($session_name != 'none') {
                         $sql = $wpdb->prepare("SELECT * FROM $joint_table WHERE hash_id = %s", $id);
                         $result = $wpdb->get_row($sql);
 
-                        if (!isset ($_POST['field-id'][$id])) {
+                        if (!isset($_POST['field-id'][$id])) {
 
                             $start_time = $_POST['session-start'][$id];
                             $end = $_POST['session-end'][$id];
@@ -194,12 +194,12 @@ if ($query->have_posts()) {
 
                             $start = DateTime::createFromFormat('Y-m-d H:i:s', $session_start);
                             if ($start == false) {
-                                $start = DateTime::createFromFormat('d/m/Y H:i', $session_start);
+                                $start = DateTime::createFromFormat('d-m-Y H:i', $session_start);
                             }
-                            $start_day = $session_start->format('m/d/Y');
+                            $start_day = $start->format('m-d-Y');
                             $end_time = DateTime::createFromFormat('Y-m-d H:i:s', $end);
                             if ($end_time == false) {
-                                $end_time = DateTime::createFromFormat('d/m/Y H:i', $end);
+                                $end_time = DateTime::createFromFormat('d-m-Y H:i', $end);
 
                             }
                             if ($end_time == false) {
@@ -313,7 +313,7 @@ if ($query->have_posts()) {
                             $post_id = wp_update_post($update_presentation_data);
                         }
 
-                        if (isset ($_POST['delete'][$id])) {
+                        if (isset($_POST['delete'][$id])) {
                             $delete = wp_delete_post($_POST['field-id'][$id], true);
                         }
                     }
@@ -321,7 +321,7 @@ if ($query->have_posts()) {
             }
 
 
-            if (isset ($_POST['ra_filter'])) {
+            if (isset($_POST['ra_filter'])) {
                 $ra_filter = $_POST['ra_filter'];
             }
 
@@ -340,7 +340,7 @@ if ($query->have_posts()) {
                     'compare' => '=',
                 );
             }
-            if (isset ($_POST['type_filter'])) {
+            if (isset($_POST['type_filter'])) {
                 $type_filter = $_POST['type_filter'];
                 if ($type_filter != 'none') {
                     $query .= " AND decision=$type_filter";
@@ -352,7 +352,7 @@ if ($query->have_posts()) {
                 }
             }
 
-            if (isset ($_POST['session_filter'])) {
+            if (isset($_POST['session_filter'])) {
                 $session_filter = $_POST['session_filter'];
                 if ($session_filter != 'none') {
                     // $query .= " AND decision=$type_filter";

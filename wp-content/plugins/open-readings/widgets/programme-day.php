@@ -27,16 +27,23 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
     function parseDate($date_to_parse)
     {
-        $date = DateTime::createFromFormat('Y-m-d H:i:s', $date_to_parse);
-        if ($date == false) {
-            $date = DateTime::createFromFormat('d/m/Y H:i', $date_to_parse);
-            if ($date == false) {
-                $date = DateTime::createFromFormat('Y-m-d H:i', $date_to_parse);
-                echo 'error parsing date: ' . $date;
-            }
+        $formats = [
+            'Y-m-d H:i:s', // Year-Month-Day Hour:Minute:Second
+            'd/m/Y H:i',   // Day/Month/Year Hour:Minute
+            'Y-m-d H:i'    // Year-Month-Day Hour:Minute
+        ];
 
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $date_to_parse);
+            if ($date !== false) {
+                // If parsing is successful, return the DateTime object
+                return $date;
+            }
         }
-        return $date;
+
+        // If none of the formats worked, print an error and return null
+        echo 'error parsing date: ' . $date_to_parse;
+        return null;
     }
 
     function getSessionLengthInMinutes($session_id)
@@ -196,7 +203,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
     
                 foreach ($overlaps as $session_id => &$overlapping_sessions) {
                     $overlapping_sessions = array_unique($overlapping_sessions);
-                    if (empty ($overlapping_sessions)) {
+                    if (empty($overlapping_sessions)) {
                         // Optionally, remove entries for sessions that have no overlaps
                         unset($overlaps[$session_id]);
                     } else {
@@ -221,7 +228,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                     $session_overlaps = True;
 
-                    if (empty ($overlaps[$session_id])) {
+                    if (empty($overlaps[$session_id])) {
                         $session_overlaps = False;
                     }
 
@@ -573,7 +580,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                             'style="display:none;">';
 
-                                        if (empty ($sorted_presentations) || $session_type == 'poster') {
+                                        if (empty($sorted_presentations) || $session_type == 'poster') {
                                             $sorted_presentations = $presentations->posts;
                                         }
                                         foreach ($sorted_presentations as $presentation) {
