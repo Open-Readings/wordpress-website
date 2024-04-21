@@ -246,8 +246,8 @@ class ORProgrammeAdmin
                             'label' => 'Presentation Start',
                             'name' => 'presentation_start',
                             'type' => 'date_time_picker',
-                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
-                            'return_format' => 'd/m/Y H:i',
+                            'display_format' => 'Y-m-d H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'Y-m-d H:i',
 
                         ),
                         array(
@@ -255,8 +255,8 @@ class ORProgrammeAdmin
                             'label' => 'Presentation End',
                             'name' => 'presentation_end',
                             'type' => 'date_time_picker',
-                            'display_format' => 'd/m/Y H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
-                            'return_format' => 'd/m/Y H:i',
+                            'display_format' => 'Y-m-d H:i', // Date in 'd/m/Y' format and time in 'H:i:s' format
+                            'return_format' => 'Y-m-d H:i',
 
                         ),
                         array(
