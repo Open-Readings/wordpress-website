@@ -1,9 +1,48 @@
+<form method="POST">
+    <button name="add-session-name">UPDATE</button>
+</form>
+<?php
+if(isset($_POST['add-session-name'])){
+    global $wpdb;
+    $session_post_id = $wpdb->get_results("SELECT ID FROM wp_posts WHERE post_type = 'session' GROUP BY ID");
+        
+    $session_id_array = array();
+    foreach ($session_post_id as $print_id) {
+        $session_id_array[] = $print_id->ID;
+    }
+
+    $session_id_string = implode(',', $session_id_array);
+    $results = $wpdb->get_results("SELECT post_id, meta_key, meta_value FROM wp_postmeta WHERE post_id IN ($session_id_string)");
+    // Initialize an array to store the post data
+    $session_post_data = array();
+
+    // Organize the data into a 2D array
+    foreach ($results as $result) {
+        $post_id = $result->post_id;
+        $meta_key = $result->meta_key;
+        $meta_value = $result->meta_value;
+        
+        $session_post_data[$post_id][$meta_key] = $meta_value;
+    }
+
+    $presentations_posts = get_posts(array(
+        'post_type' => 'presentation',
+        'posts_per_page' => -1 // Get all posts
+    ));
+
+    // Loop through each post and add/update the custom field
+    foreach ($presentations_posts as $post) {
+        // Add/update the custom field "example_field" with the value "Example data"
+        update_post_meta($post->ID, 'session_name', $session_post_data[$post->presentation_session]['short_title']);
+    }
+}
+?>
 <h2>Presentation Manager</h2>
 
 
 <form method='POST' id="get_session">
 
-<?
+<?php
 echo '<select name="download">';
 echo '<option value="none">Select session</option>';
 $args = array(
