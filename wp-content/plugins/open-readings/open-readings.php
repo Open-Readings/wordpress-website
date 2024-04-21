@@ -328,3 +328,13 @@ require_once __DIR__ . '/programme/download-session.php';
 
 add_action('admin_init', 'download_session_zip');
 
+function searchfilter($query) {
+ 
+  if ($query->is_search && !is_admin() ) {
+      $query->set('post_type',array('presentation'));
+  }
+
+return $query;
+}
+
+add_filter('pre_get_posts','searchfilter');
