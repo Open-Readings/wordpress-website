@@ -1,6 +1,33 @@
 <h2>Presentation Manager</h2>
 
 
+<form method='POST' id="get_session">
+
+<?
+echo '<select name="download">';
+echo '<option value="none">Select session</option>';
+$args = array(
+    'post_type' => 'session',
+    'posts_per_page' => -1, // To retrieve all posts, use -1
+);
+$query = new WP_Query($args);
+if ($query->have_posts()) {
+     while ($query->have_posts()) {
+         $query->the_post();
+         // Retrieve and display the custom field values
+         $display = get_post_meta(get_the_ID(), 'display_title', true);
+         $short_name = get_post_meta(get_the_ID(), 'short_title', true);
+         if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
+             echo '<option value="' . $short_name . '">' . $display . '</option>';
+     }
+ }
+ echo '</select>';
+?>
+<button type='submit' label='download'> Download Presentations </button>
+</form>
+
+
+
 <div>
     <?
     if ($_POST['type_filter'] == 2 && $_POST['assigned_filter'] == 2 && $_POST['session_filter'] != 'none') {
