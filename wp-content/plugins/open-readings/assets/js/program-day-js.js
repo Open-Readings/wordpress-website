@@ -46,8 +46,9 @@ function openSessionModal(sessionId) {
             presentationsHTML += '<p><span class="fixed-width">#' + position + '</span> <strong class="modal-presentation-title">' + presenter + '</strong>: ' + presentationTitle + ' <a href="' + abstract_link + '">Read abstract</a> </p></div>';
         } else {
             var position = presentation.getAttribute('data-start');
-            //parse from 23/04/2024 12:00 to 12:00
+            //parse from 23/04/2024 12:00:00 to 12:00
             var time = position.split(' ')[1];
+            time = time.split(':').slice(0, 2).join(':');
 
             presentationsHTML += '<p><span class="fixed-width">' + time + '</span> <strong class="modal-presentation-title">' + presenter + '</strong>: ' + presentationTitle + ' <a href="' + abstract_link + '">Read abstract</a> </p></div>';
 
