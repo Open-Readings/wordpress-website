@@ -185,11 +185,54 @@ a.special-event {
         font-size: x-small;
     }
 
+
+    .workshop .event-description {
+        font-size: x-small;
+    }
+
+    .event-chair {
+        font-size: xx-small;
+    }
+
     .event-title {
         font-size: small;
 
     }
 
+}
+
+
+.speaker .event-description.location {
+    text-align: left;
+    color: #fff;
+}
+
+
+.event-chair {
+    font-size: 12px;
+    font-weight: 400;
+    color: #121f47;
+    text-align: center;
+    padding-bottom: 4px;
+}
+
+
+
+
+.event-container.other {
+    flex-direction: row;
+}
+
+
+a.sponsor {
+    flex-direction: row;
+}
+
+
+.sponsor .event-title,
+.other .event-title {
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .speaker-image img {
@@ -269,6 +312,13 @@ div.speaker {
 .oral.event-description {
     margin-top: 0;
     margin-bottom: auto;
+    text-align: center;
+    font-weight: 600;
+    color: #121f47;
+
+}
+
+.location.event-description {
     text-align: center;
     font-weight: 600;
     color: #121f47;
