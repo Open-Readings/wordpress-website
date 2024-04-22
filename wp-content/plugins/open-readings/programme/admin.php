@@ -145,6 +145,7 @@ class ORProgrammeAdmin
                             'name' => 'location',
                             'type' => 'text',
                         ),
+                        
 
                     ),
                     'location' => array(
@@ -264,6 +265,12 @@ class ORProgrammeAdmin
                             'label' => 'Poster Number',
                             'name' => 'poster_number',
                             'type' => 'number',
+                        ),
+                        array(
+                            'key' => 'field_12',
+                            'label' => 'Session name',
+                            'name' => 'session_name',
+                            'type' => 'text',
                         ),
                     ),
                     'location' => array(
