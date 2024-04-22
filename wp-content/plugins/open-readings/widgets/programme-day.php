@@ -506,7 +506,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                         $post_link = get_permalink($speaker);
                                         $location = get_field('location', $overlapping_id);
-
+                                        $moderator = get_field('session_moderator', $overlapping_id);
                                         ?>
                                         <a data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $post_link; ?>" class="speaker">
                                             <div class="speaker">
@@ -518,6 +518,9 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                                 </div>
                                                 <div class="event-affiliation">
                                                     <?php echo $affiliation ?>
+                                                </div>
+                                                <div class="event-chair ">
+                                                    Chair: <?php echo $moderator ?>
                                                 </div>
                                                 <div class="event-description location">
                                                     <?php echo $location ?>
@@ -725,6 +728,9 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             </div>
                                             <div class="event-description">
                                                 <?php echo $description ?>
+                                            </div>
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
                                             </div>
                                         </a>
                                         <?php
