@@ -20,11 +20,17 @@ function openSessionModal(sessionId) {
     document.getElementById('modalSessionTitle').innerHTML += '  <strong class="modal-presentation-title light-blue">' + start + ' - ' + end + '</strong>';
     var session_type = sessionData.getAttribute('type');
     document.getElementById('modalSessionDescription').innerText = description;
-    var session_location = sessionData.getAttribute('location');
-
-    if (session_location != null) {
+    var session_location = sessionData.getAttribute('session_location');
+    var session_chair = sessionData.getAttribute('session_moderator');
+    if (session_location != null || session_location != '') {
         document.getElementById('modalSessionLocation').innerText = "Location: " + session_location;
     }
+    if (session_chair != null || session_chair != '') {
+        document.getElementById('modalSessionChair').innerText = "Chair: " + session_chair;
+    }
+
+
+
     if (session_type == 'poster') {
         document.getElementById('modalSessionDescription').innerHTML += '<p>(#number refers to the presenters poster location)</p>';
     }
