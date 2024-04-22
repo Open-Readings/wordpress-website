@@ -112,6 +112,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                 <div id="modalSessionDescription"></div>
                 <div id="modalSessionLocation"></div>
+                <div id="modalSessionChair"></div>
                 <div id="modalPresentations"></div>
             </div>
         </div>
@@ -578,6 +579,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             });
                                         }
 
+                                        $location = get_field('location', $overlapping_id);
+                                        $moderator = get_field('session_moderator', $overlapping_id);
                                         echo '<div id="modal-data-' . esc_attr($overlapping_id) . '" ' .
                                             'type="' . esc_attr($session_type) . '" ' .
                                             'session-id="' . esc_attr($overlapping_id) . '" ' .
@@ -585,6 +588,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             'session_description="' . esc_attr($description) . '" ' .
                                             'session_start="' . esc_attr($start) . '" ' .
                                             'session_end="' . esc_attr($end) . '" ' .
+                                            'session_location="' . esc_attr($location) . '" ' .
+                                            'session_moderator="' . esc_attr($moderator) . '" ' .
 
                                             'style="display:none;">';
 
@@ -635,10 +640,9 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             <?php
                                             if ($session_type == 'oral') {
 
-                                                $chair = get_field('session_moderator', $overlapping_id);
                                                 ?>
                                                 <div class="event-chair ">
-                                                    Session Chair: <?php echo $chair ?>
+                                                    Session Chair: <?php echo $moderator ?>
                                                 </div>
 
 
