@@ -229,6 +229,12 @@ a.sponsor {
 }
 
 
+
+.speaker .event-chair {
+    text-align: left;
+    color: #fff;
+}
+
 .sponsor .event-title,
 .other .event-title {
     margin-right: auto;
