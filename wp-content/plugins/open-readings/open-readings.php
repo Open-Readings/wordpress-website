@@ -339,4 +339,19 @@ function searchfilter($query) {
 return $query;
 }
 
-add_filter('pre_get_posts','searchfilter');
+function upcoming_session_api_endpoint_init() {
+  register_rest_route( 'wp/v2', '/upcoming-sessions', array(
+      'methods' => 'GET',
+      'callback' => 'upcoming_session_api_callback',
+  ));
+}
+add_action( 'rest_api_init', 'upcoming_session_api_endpoint_init' );
+
+require_once __DIR__ . '/rest/rest-functions.php';
+
+// Callback function for the custom endpoint
+function upcoming_session_api_callback( $data ) {
+  // Example response data
+  $response = get_upcoming_sessions();
+  return rest_ensure_response( $response );
+}
