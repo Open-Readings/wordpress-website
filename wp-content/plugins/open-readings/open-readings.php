@@ -356,16 +356,16 @@ add_filter('rest_presentation_query', function ($args, $request) {
 
   }
 
-  add_filter("rest_presentation_collection_params", function ($params) {
-    $params['per_page']['maximum'] = 500;
-    return $params;
-  });
 
 
   return $args;
 }, 10, 2);
 
 
+add_filter("rest_presentation_collection_params", function ($params) {
+  $params['per_page']['maximum'] = 500;
+  return $params;
+});
 
 
 
