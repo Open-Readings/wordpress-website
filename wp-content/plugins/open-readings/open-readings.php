@@ -350,11 +350,17 @@ add_filter('rest_presentation_query', function ($args, $request) {
         'value' => $session,
       ),
     );
-    $args['per_page'] = 1000; // Set your desired maximum limit
+    $args['per_page'] = 200; // Set your desired maximum limit
     // remove page limit
 
 
   }
+
+  add_filter("rest_presentation_collection_params", function ($params) {
+    $params['per_page']['maximum'] = 500;
+    return $params;
+  });
+
 
   return $args;
 }, 10, 2);
