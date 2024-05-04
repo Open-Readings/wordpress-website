@@ -258,4 +258,5 @@ function abstract_format_title($title){
     $title = str_replace('&nbsp;', ' ', $title);
     return $title;
 
+    
 }
