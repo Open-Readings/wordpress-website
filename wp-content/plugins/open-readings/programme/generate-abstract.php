@@ -254,8 +254,17 @@ function abstract_format_title($title){
         }
 
     }
+
+    
     
     $title = str_replace('&nbsp;', ' ', $title);
-    return $title;
+
+    $latex = (new \Pandoc\Pandoc)
+    ->from('html')
+    ->input($title)
+    ->to('latex')
+    ->run();
+
+    return $latex;
 
 }
