@@ -270,4 +270,5 @@ function abstract_format_title($title){
 
     return $latex;
 
+    
 }
