@@ -1,7 +1,5 @@
 <?php
 
-require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
-
 
 function download_abstract(){
     if (!isset($_GET['page']) or $_GET['page'] != 'or_programme_abstract') 
@@ -262,13 +260,7 @@ function abstract_format_title($title){
     
     $title = str_replace('&nbsp;', ' ', $title);
 
-    $latex = (new \Pandoc\Pandoc)
-    ->from('html')
-    ->input($title)
-    ->to('latex')
-    ->run();
-
-    return $latex;
+    return $title;
 
     
 }
