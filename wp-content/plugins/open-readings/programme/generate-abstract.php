@@ -1,5 +1,8 @@
 <?php
 
+require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
+
+
 function download_abstract(){
     if (!isset($_GET['page']) or $_GET['page'] != 'or_programme_abstract') 
         return;
