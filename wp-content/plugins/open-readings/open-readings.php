@@ -367,6 +367,6 @@ add_filter("rest_presentation_collection_params", function ($params) {
   return $params;
 });
 
+require_once __DIR__ . '/programme/generate-abstract.php';
 
-
-
+add_action('admin_init', 'download_abstract');
