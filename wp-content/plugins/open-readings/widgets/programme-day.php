@@ -112,6 +112,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                 <div id="modalSessionDescription"></div>
                 <div id="modalSessionLocation"></div>
+                <div id="modalSessionChair"></div>
                 <div id="modalPresentations"></div>
             </div>
         </div>
@@ -496,11 +497,16 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                         $thumbnail = get_the_post_thumbnail_url($speaker);
                                         $affiliation = get_field('affiliation', $speaker);
+
+
+
+
                                         //strip html tags:
                                         $affiliation = strip_tags($affiliation);
 
                                         $post_link = get_permalink($speaker);
-
+                                        $location = get_field('location', $overlapping_id);
+                                        $moderator = get_field('session_moderator', $overlapping_id);
                                         ?>
                                         <a data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $post_link; ?>" class="speaker">
                                             <div class="speaker">
@@ -512,6 +518,12 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                                 </div>
                                                 <div class="event-affiliation">
                                                     <?php echo $affiliation ?>
+                                                </div>
+                                                <div class="event-chair ">
+                                                    Chair: <?php echo $moderator ?>
+                                                </div>
+                                                <div class="event-description location">
+                                                    <?php echo $location ?>
                                                 </div>
                                             </div>
                                             <div class="speaker-image">
@@ -570,6 +582,8 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             });
                                         }
 
+                                        $location = get_field('location', $overlapping_id);
+                                        $moderator = get_field('session_moderator', $overlapping_id);
                                         echo '<div id="modal-data-' . esc_attr($overlapping_id) . '" ' .
                                             'type="' . esc_attr($session_type) . '" ' .
                                             'session-id="' . esc_attr($overlapping_id) . '" ' .
@@ -577,12 +591,15 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             'session_description="' . esc_attr($description) . '" ' .
                                             'session_start="' . esc_attr($start) . '" ' .
                                             'session_end="' . esc_attr($end) . '" ' .
+                                            'session_location="' . esc_attr($location) . '" ' .
+                                            'session_moderator="' . esc_attr($moderator) . '" ' .
 
                                             'style="display:none;">';
 
                                         if (empty($sorted_presentations) || $session_type == 'poster') {
                                             $sorted_presentations = $presentations->posts;
                                         }
+
                                         foreach ($sorted_presentations as $presentation) {
                                             $presentation_id = $presentation->ID;
                                             $presenter = get_the_title($presentation_id);
@@ -607,6 +624,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                         echo '</div>';
 
+                                        $location = get_field('location', $overlapping_id);
 
 
                                         ?>
@@ -619,15 +637,43 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             <div class="event-description oral">
                                                 <?php echo $description ?>
                                             </div>
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
+                                            </div>
+                                            <?php
+                                            if ($session_type == 'oral') {
+
+                                                ?>
+                                                <div class="event-chair ">
+                                                    Session Chair: <?php echo $moderator ?>
+                                                </div>
+
+
+
+                                                <?php
+
+
+
+                                            }
+
+
+                                            ?>
+
                                         </a>
                                         <?php
 
                                     } elseif ($session_type == 'sponsor') {
                                         $sponsor_link = get_field('link', $overlapping_id);
+                                        $location = get_field('location', $overlapping_id);
 
                                         ?>
-                                        <a data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $sponsor_link; ?>" style="<?php echo $width_style;
-                                              echo 'min-height:' . $max_height . 'vh;'; ?>">
+                                        <a class="sponsor" data-end="<?php echo $endDate->format("H:i"); ?>" href="<?php echo $sponsor_link; ?>"
+                                            style="<?php echo $width_style;
+                                            echo 'min-height:' . $max_height . 'vh;'; ?>">
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
+                                            </div>
+
                                             <div class="event-title other">
                                                 <?php echo $title ?>
                                             </div>
@@ -650,12 +696,21 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                         <?php
                                     } elseif ($session_type == 'special_event') {
                                         $post_link = get_field('link', $overlapping_id);
+                                        $location = get_field('location', $overlapping_id);
+
                                         ?>
                                         <a data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container special-event" style="<?php echo $width_style;
                                            echo $height_style; ?>" href="<?php echo $post_link; ?>">
                                             <div class="event-title ">
                                                 <?php echo $title ?>
                                             </div>
+                                            <div class="event-description">
+                                                <?php echo $description ?>
+                                            </div>
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
+                                            </div>
+
                                         </a>
                                         <?php
 
@@ -663,6 +718,7 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
 
                                     } elseif ($session_type == 'workshop') {
                                         $post_link = get_field('link', $overlapping_id);
+                                        $location = get_field('location', $overlapping_id);
                                         ?>
                                         <a data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container workshop" style="<?php echo $width_style;
                                            echo $height_style; ?>" href="<?php echo $post_link; ?>">
@@ -673,18 +729,26 @@ class ElementorProgrammeDay extends \Elementor\Widget_Base
                                             <div class="event-description">
                                                 <?php echo $description ?>
                                             </div>
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
+                                            </div>
                                         </a>
                                         <?php
 
 
 
                                     } else {
+                                        $location = get_field('location', $overlapping_id);
                                         ?>
-                                        <div data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container" style="<?php echo $width_style;
+                                        <div data-end="<?php echo $endDate->format("H:i"); ?>" class="event-container other" style="<?php echo $width_style;
                                            echo $height_style; ?>">
-                                            <div class="event-title other">
-                                                <?php echo $title ?>
+                                            <div class="event-description location">
+                                                <?php echo $location ?>
                                             </div>
+                                            <div class="event-title other">
+                                                <?php echo $title; ?>
+                                            </div>
+
                                         </div>
 
 

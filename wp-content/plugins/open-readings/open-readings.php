@@ -26,7 +26,7 @@ function register_faq_widget($widgets_manager)
 {
   require_once (__DIR__ . '/widgets/faq-widget.php');
   $widgets_manager->register(new \Elementor_Faq_Widget());
-  require_once(__DIR__ . '/widgets/assigned-session-widget.php');
+  require_once (__DIR__ . '/widgets/assigned-session-widget.php');
   $widgets_manager->register(new \Elementor_Assigned_Session_Widget());
 }
 
@@ -330,32 +330,45 @@ require_once __DIR__ . '/programme/download-session.php';
 
 add_action('admin_init', 'download_session_zip');
 
-function searchfilter($query) {
- 
-  if ($query->is_search && !is_admin() ) {
-      $query->set('post_type',array('presentation'));
+function searchfilter($query)
+{
+
+  if ($query->is_search && !is_admin()) {
+    $query->set('post_type', array('presentation'));
   }
 
-return $query;
+  return $query;
 }
 
-function upcoming_session_api_endpoint_init() {
-  register_rest_route( 'wp/v2', '/upcoming-sessions', array(
-      'methods' => 'GET',
-      'callback' => 'upcoming_session_api_callback',
-  ));
-}
-add_action( 'rest_api_init', 'upcoming_session_api_endpoint_init' );
+add_filter('rest_presentation_query', function ($args, $request) {
+  $session = $request->get_param('session');
 
-require_once __DIR__ . '/rest/rest-functions.php';
+  if ($session) {
+    $args['meta_query'] = array (
+      array (
+        'key' => 'presentation_session', // This is assuming the ACF field name is 'status'.
+        'value' => $session,
+      ),
+    );
+    $args['per_page'] = 200; // Set your desired maximum limit
+    // remove page limit
 
-// Callback function for the custom endpoint
-function upcoming_session_api_callback( $data ) {
-  // Example response data
-  $response = get_upcoming_sessions();
-  return rest_ensure_response( $response );
-}
+
+  }
+
+
+
+  return $args;
+}, 10, 2);
+
+
+add_filter("rest_presentation_collection_params", function ($params) {
+  $params['per_page']['maximum'] = 500;
+  return $params;
+});
 
 require_once __DIR__ . '/programme/generate-abstract.php';
 
 add_action('admin_init', 'download_abstract');
+
+

@@ -58,6 +58,7 @@ class ORProgrammeAdmin
             'show_in_admin_bar' => true,
             'in_menu' => true,
             'show_in_rest' => true,
+            'query_var' => true,
             'menu_icon' => 'dashicons-calendar-alt',
             'taxonomies' => array('category', 'post_tag'),
         );
@@ -145,7 +146,7 @@ class ORProgrammeAdmin
                             'name' => 'location',
                             'type' => 'text',
                         ),
-                        
+
 
                     ),
                     'location' => array(
@@ -174,6 +175,7 @@ class ORProgrammeAdmin
             'show_in_rest' => true,
             'show_in_menu' => true,
             'in_menu' => true,
+            'query_var' => true
 
             // Add other arguments as needed
         );
