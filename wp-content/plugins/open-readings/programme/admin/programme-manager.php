@@ -2,6 +2,7 @@
     <button name="add-session-name">UPDATE</button>
 </form>
 <?php
+global $wpdb;
 if(isset($_POST['add-session-name'])){
     global $wpdb;
     $session_post_id = $wpdb->get_results("SELECT ID FROM wp_posts WHERE post_type = 'session' GROUP BY ID");

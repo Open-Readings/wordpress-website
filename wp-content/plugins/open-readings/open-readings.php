@@ -355,3 +355,7 @@ function upcoming_session_api_callback( $data ) {
   $response = get_upcoming_sessions();
   return rest_ensure_response( $response );
 }
+
+require_once __DIR__ . '/programme/generate-abstract.php';
+
+add_action('admin_init', 'download_abstract');

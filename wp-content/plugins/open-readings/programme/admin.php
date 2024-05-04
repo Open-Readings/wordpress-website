@@ -293,6 +293,8 @@ class ORProgrammeAdmin
     {
         add_menu_page('Open Readings Programme', 'OR programme', 'manage_programme', 'or_programme', array($this, 'admin_index'), 'dashicons-excerpt-view', 6);
         add_submenu_page('or_programme', 'or_programme_settings', 'OR programme settings', 'manage_programme', 'or_programme_settings', array($this, 'admin_settings'), 2);
+        add_submenu_page('or_programme', 'or_programme_abstract', 'OR programme abstract', 'manage_programme', 'or_programme_abstract', array($this, 'admin_abstract'), 3);
+
     }
 
     function admin_index()
@@ -303,6 +305,11 @@ class ORProgrammeAdmin
     function admin_settings()
     {
         require_once plugin_dir_path(__FILE__) . 'admin/programme-settings.php';
+    }
+
+    function admin_abstract()
+    {
+        require_once plugin_dir_path(__FILE__) . 'admin/programme-abstract.php';
     }
 
     public function init()
