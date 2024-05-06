@@ -29,6 +29,12 @@ class ORmailerAdmin
         if (current_user_can('manage_options')) {
             add_submenu_page('or_mailer', 'or_mailer_settings', 'OR Mailer settings', 'manage_options', 'or_mailer_settings', array($this, 'admin_settings'), 2);
         }
+        if (current_user_can('manage_options')) {
+            add_submenu_page('or_mailer', 'or_mailer_certificate_settings', 'Certificate Mailer settings', 'manage_options', 'or_mailer_certificate_settings', array($this, 'certificate_mail_settings'), 2);
+        }
+
+
+
 
     }
 
@@ -37,6 +43,10 @@ class ORmailerAdmin
     function add_option_groups()
     {
         register_setting('or_mailer_options', 'or_mailer_api_key');
+        register_setting('or_mailer_options', 'or_mailer_certificate_subject');
+        register_setting('or_mailer_options', 'or_mailer_certificate_message');
+        register_setting('or_mailer_options', 'or_mailer_certificate_use_template');
+
     }
 
     function admin_index()
@@ -47,6 +57,11 @@ class ORmailerAdmin
     function admin_settings()
     {
         require_once plugin_dir_path(__FILE__) . 'admin/mailer-settings.php';
+    }
+
+    function certificate_mail_settings()
+    {
+        require_once plugin_dir_path(__FILE__) . 'admin/certificate-mailer.php';
     }
 
     public function init()

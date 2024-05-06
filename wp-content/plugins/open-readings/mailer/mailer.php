@@ -23,7 +23,7 @@ class ORmailer
         // stuff to init
     }
 
-    public function send_OR_mail($to, $subject, $content)
+    public function send_OR_mail($to, $subject, $content, $attachments = array())
     {
         //fetch template from wp settings
 
@@ -36,6 +36,13 @@ class ORmailer
             'Content-Type: text/html; charset=UTF-8',
             'From: Open Readings 2024 <it@openreadings.eu>'
         );
+
+
+        if (!empty($attachments)) {
+            return wp_mail($to, $subject, $message, $headers, $attachments);
+        }
+
+
         return wp_mail($to, $subject, $message, $headers);
 
     }
