@@ -1,5 +1,6 @@
 <?php
 
+
 function download_abstract(){
     if (!isset($_GET['page']) or $_GET['page'] != 'or_programme_abstract') 
         return;
@@ -254,8 +255,12 @@ function abstract_format_title($title){
         }
 
     }
+
+    
     
     $title = str_replace('&nbsp;', ' ', $title);
+
     return $title;
 
+    
 }
