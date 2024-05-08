@@ -100,12 +100,17 @@ function add_allowed_mailer_options($allowed_options)
 }
 
 
-function send_certficicate_mail($certficate, $to)
+function send_certficicate_mail($certficate, $to, $row)
 {
     $subject = get_option('or_mailer_certificate_subject');
     $message = get_option('or_mailer_certificate_message');
     $use_template = get_option('or_mailer_certificate_use_template');
 
+
+
+    foreach ($row as $key => $value) {
+        $message = str_replace('${' . $key . '}', $value, $message);
+    }
 
     global $or_mailer;
 
@@ -149,7 +154,12 @@ function send_all_certificates($csv)
             }
         }
         $certificate = $data['pdf'];
-        $result = send_certficicate_mail($certificate, $to);
+
+
+
+
+
+        $result = send_certficicate_mail($certificate, $to, $data);
 
         if ($result) {
             $mail_exists = $wpdb->get_results("SELECT * FROM wp_or_mailer WHERE mail = '$to'");
