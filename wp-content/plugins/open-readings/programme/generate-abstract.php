@@ -94,8 +94,10 @@ function get_abstract_page($hash_id, $abstract_fields){
     $i = 1;
     $authors_array = $abstract_fields[$hash_id]['authors'];
     $authors = '';
+    $author_list = '';
     foreach ($authors_array as $auth) {
         $name = $auth[0];
+        $author_list = $author_list . $name;
         $aff_ref = $auth[1];
         //replace everything that is not a digit or ,
 
@@ -105,8 +107,10 @@ function get_abstract_page($hash_id, $abstract_fields){
         } else
             $authors = $authors . $name . '$^{' . $aff_ref . '}$';
 
-        if ($i < count($authors_array))
+        if ($i < count($authors_array)){
             $authors = $authors . ', ';
+            $author_list = $author_list . ', ';
+        }
         $i++;
     }
 
@@ -160,7 +164,8 @@ function get_abstract_page($hash_id, $abstract_fields){
         '${authors}' => $authors,
         '${affiliations}' => $affiliations,
         '${content}' => $abstractContent,
-        '${references}' => $references
+        '${references}' => $references,
+        '${author_list}' => $author_list
 
         // Add more placeholders and values as needed
     );
