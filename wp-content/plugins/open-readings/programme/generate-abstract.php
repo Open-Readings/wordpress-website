@@ -122,7 +122,8 @@ function get_abstract_page($hash_id, $abstract_fields){
     ';
         $i++;
     }
-    $affiliations = $affiliations . '\rightaddress{' . $author_email . '}';
+    $affiliations = $affiliations . '\rightaddress{\href{' . $author_email . '}{' . $author_email . '}
+}';
 
     $reference_array = $abstract_fields[$hash_id]['references'];
 
