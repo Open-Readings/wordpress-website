@@ -218,12 +218,9 @@ function get_abstract_data()
         $presenter_query = new WP_Query($presenter_args);
         $presenter = $presenter_query->posts[0];
         $session = get_field('session', $presenter->ID);
-        $session_args = array(
-            'post_type' => 'session',
-            'p' => $session->ID
-        );
-        $session_query = new WP_Query($session_args);
-        $short_title = get_field('short_title', $session_query->posts[0]->ID);
+
+        $session_query = get_post($session);
+        $short_title = get_field('short_title', $session_query->ID);
 
         $abstract_fields[$result->person_hash_id]['session'] = $short_title;
 
