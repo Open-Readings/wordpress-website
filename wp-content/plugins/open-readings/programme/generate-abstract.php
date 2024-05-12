@@ -217,7 +217,7 @@ function get_abstract_data()
 
         $presenter_query = new WP_Query($presenter_args);
         $presenter = $presenter_query->posts[0];
-        $session = get_field('session', $presenter->ID);
+        $session = get_field('presentation_session', $presenter->ID);
 
         $session_query = get_post($session);
         $short_title = get_field('short_title', $session_query->ID);
