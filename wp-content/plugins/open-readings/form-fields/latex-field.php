@@ -7,6 +7,7 @@ use Elementor\Controls_Manager;
 use ElementorPro\Modules\Forms\Classes\Form_Record;
 use ElementorPro\Plugin;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
+use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
 
 class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
@@ -27,14 +28,15 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
     public function render($item, $item_index, $form)
     {
-        if (!isset($_SESSION['id'])) {
-            ini_set('session.gc_maxlifetime', 3600);
-            session_start();
-            $_SESSION['id'] = 1;
+
+        global $or_session;
+        if (isset($or_session)){
+            $or_session->setup_folder();
+            $folder = $or_session->folder_hash;
+        } else {
+            # When editing in elementor or_session is null 
+            $folder = "";
         }
-
-        $folder = $_SESSION['file'];
-
         $data_to_pass = array(
             'folder' => $folder,
             // Use admin-ajax.php for AJAX requests

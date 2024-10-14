@@ -5,6 +5,196 @@ use DateTime;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 use WP_Error;
 
+class ORReadForm
+{
+    public function get_form(){
+        $registration_data = new RegistrationData();
+        $registration_data->first_name = $_POST['form_fields']['firstname'];
+        $registration_data->last_name = $_POST['form_fields']['lastname'];
+        $registration_data->email = $_POST['form_fields']['email'];
+        $registration_data->institution = $_POST['form_fields']['institution'];
+        $registration_data->country = $_POST['form_fields']['country'];
+        $registration_data->department = $_POST['form_fields']['department'];
+        $registration_data->privacy = isset($_POST['form_fields']['privacy']) ? true : false;
+        $registration_data->needs_visa = isset($_POST['form_fields']['visa']) ? true : false;
+        $registration_data->research_area = $_POST['form_fields']['research_area'];
+        $registration_data->presentation_type = $_POST['form_fields']['presentation_type'];
+        $registration_data->presentation_id = $_COOKIE['hash_id'];
+        $registration_data->agrees_to_email = isset($_POST['form_fields']['email_agree']) ? true : false;
+        $registration_data->hash_id = $_COOKIE['hash_id'];
+        $registration_data->person_title = $_POST['form_fields']['person_title'];
+        $registration_data->title = $_POST['form_fields']['abstract_title'];
+        $registration_data->authors = $this->get_authors_array();
+        $registration_data->affiliations = $_POST['affiliation'];
+        $registration_data->references = isset($_POST['reference']) ? $_POST['reference'] : [];
+        $registration_data->images = $this->get_images();
+        $registration_data->abstract = $_POST['textArea'];
+        $registration_data->pdf = WP_CONTENT_DIR . '/latex/temp/' . $_POST['session_id'] . '/abstract.pdf';
+        $registration_data->session_id = $_POST['session_id'];
+        $registration_data->display_title = $_POST['form_fields']['abstract_title'];
+
+        return $registration_data;
+    }
+
+    public function get_authors_array(){
+        $authors_array = [];
+        $author_names = $_POST['name'];
+        $author_affiliations = $_POST['aff_ref'];
+        for ($i = 0; $i < count($author_names); $i++) {
+            if ($_POST['contact_author'] == $i + 1)
+                $authors_array[$i] = array($author_names[$i], $author_affiliations[$i], $_POST['email-author']);
+            else {
+                $authors_array[$i] = array($author_names[$i], $author_affiliations[$i]);
+            }
+        }
+        return $authors_array;
+    }
+
+    public function get_images(){
+        $directory_path = WP_CONTENT_DIR . '/latex/temp/' . $_POST['session_id'] . '/abstract.pdf';
+        $image_directory_path = $directory_path . '/images/';
+        $uploaded_images = scandir($image_directory_path);
+        $img_array = array();
+        foreach ($uploaded_images as $image) {
+            if (!is_file($image_directory_path . '/' . $image)) {
+                continue;
+            }
+            if ($image != '.' && $image != '..') {
+                $img_array[] = $image;
+            }
+        }
+        return $img_array;
+    }
+}
+
+class ORCheckForm
+{
+
+    public function check_fields($registration_data){
+        global $wpdb;
+        $country_list = $wpdb->get_col('SELECT name FROM countries');
+        global $RESEARCH_AREAS;
+        $research_area_list = array_values($RESEARCH_AREAS);
+
+        $fields_exact_match = [
+            ['country', 'Country', $country_list],
+            ['research_area', 'Research area', $research_area_list],
+            ['person_title', 'Person title', ["", "Dr.", "Student (PhD)", "Student (Master's)", "Student (Bachelor)"]],
+            ['agrees_to_email', 'ATEfield', [true, false]],
+            ['needs_visa', 'NVfield', [true, false]]
+        ];
+
+        $field_check_settings = [
+            ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
+            ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
+            ['email', 'Email', 300, ''],
+            ['institution', 'Institution', 500, '/[^\\p{L}(),.\- ]/u'],
+            ['department', 'Department', 500, '/[^\\p{L}()-,. ]/u'],
+            ['title', 'Presentation title', 500, ''],
+            ['affiliations', 'Affiliation', 500, ''],
+            ['references', 'Abstract references', 1000, ''],
+            ['abstract', 'Abstract content', 3000, '']
+        ];
+
+        $field_check_authors = [
+            [0, 'Author name', 200, '/[^\\p{L} ]/u'],
+            [1, 'Author affiliation reference number', 3, '/[^0-9, ]+$/']
+        ];
+
+        $check_if_pdf_exists = true;
+
+        $response = $this->check_strings($field_check_settings, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $response = $this->check_authors($field_check_authors, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $response = $this->check_matches($fields_exact_match, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $pdf_path = WP_CONTENT_DIR . '/latex/temp/' . $registration_data->session_id . '/abstract.pdf';
+        if ($check_if_pdf_exists and !file_exists($pdf_path))
+            return 'Please generate your abstract before submitting';
+
+        return true;
+
+    }
+
+    public function check_strings($field_check_settings, $registration_data){
+        foreach ($field_check_settings as $item) {
+            if (is_array($registration_data->{$item[0]})) {
+                foreach ($registration_data->{$item[0]} as $field) {
+                    if (mb_strlen($field) > $item[2]) {
+                        return $item[1] . ": field input too long";
+                    }
+                    if ($item[3] != '') if (preg_match($item[3], $field)) {
+                        return $item[1] . " field: special characters not allowed in field.";
+                    }
+                    if (trim($field) == '' && $item[0] != 'references') {
+                        return $item[1] . ": detected empty field.";
+                    }
+                }
+            } else {
+                $field = $registration_data->{$item[0]};
+                if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
+                    return $item[1] . ": field input too long";
+                }
+                if ($item[3] != '') if (preg_match($item[3], $field)) {
+                    return $item[1] . " field: special characters not allowed in field.";
+                }
+                if (trim($field) == '' && $item[0] != 'references') {
+                    return $item[1] . ": detected empty field.";
+                }
+            }
+        }
+        return true;
+    }
+
+    public function check_authors($field_check_authors, $registration_data){
+        $contact_exists = false;
+        foreach ($registration_data->authors as $author){
+            if(count($author) == 3){
+                $contact_exists = true;
+                if (filter_var($author[2], FILTER_VALIDATE_EMAIL) == false)
+                    return "Corresponding author email not valid";
+            }
+            foreach ($field_check_authors as $item){
+                $field_id = $item[0];
+                $field_value = $author[$field_id];
+                if (mb_strlen($field_value) > $item[2]) {
+                    return $item[1] . ": field input too long";
+                }
+                if ($item[3] != '') if (preg_match($item[3], $field_value)) {
+                    return $item[1] . " field: special characters not allowed in field.";
+                }
+                if (trim($field_value) == '' && $item[0]) {
+                    return $item[1] . ": detected empty field.";
+                }
+            }
+        }
+
+        if ($contact_exists == false)
+            return "Corresponding author email not set";
+
+        return true;
+    }
+
+    public function check_matches($fields_exact_match, $registration_data){
+        foreach ($fields_exact_match as $item){
+            $field_value = $registration_data->{$item[0]};
+            $allowed_values = $item[2];
+            $field_name = $item[1];
+            if (!in_array($field_value, $allowed_values))
+                return $field_name . " field value is incorrect";
+        }
+
+        return true;
+    }
+}
+
 
 class RegistrationData
 {
@@ -144,7 +334,6 @@ class PresentationData
     public string $presentation_id;
     public string $display_title;
 
-
     public string $session_id;
     function map_from_query($result)
     {
@@ -182,26 +371,11 @@ class PresentationData
 
 class OpenReadingsRegistration
 {
-
-
-    function register_person(PersonData $person_data, $hash_id)
+    function register_person(PersonData $person_data, $hash_id, $table_name)
     {
 
-        //check if all important fields exist and are not empty
-        foreach ($person_data as $key => $value) {
-            if (empty($value)) {
-                if ($key == 'agrees_to_email') {
-                    continue;
-                }
-                if ($key == 'needs_visa') {
-                    continue;
-                }
-                return new WP_Error('missing_field', 'Missing required field: ' . $key);
-            }
-        }
         //insert person data into database
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
         $query = '
         INSERT INTO ' . $table_name . '
         (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, presentation_id, agrees_to_email, title) 
@@ -218,28 +392,11 @@ class OpenReadingsRegistration
 
     }
 
-    function register_presentation(PresentationData $presentation_data, $presentation_id)
+    function register_presentation(PresentationData $presentation_data, $presentation_id, $table_name)
     {
-        //check if all important fields exist
-
-
-        foreach ($presentation_data as $key => $value) {
-            if (empty($value)) {
-                if ($key == 'agrees_to_email') {
-                    continue;
-                }
-                if ($key == 'needs_visa') {
-                    continue;
-                }
-                return new WP_Error('missing_field', 'Missing required field: ' . $key);
-            }
-        }
 
         //insert person data into database
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
-
-
 
         $query = '
         INSERT INTO ' . $table_name . '
@@ -258,7 +415,6 @@ class OpenReadingsRegistration
 
 
     }
-
 
     function get_person_data($hash_id)
     {
@@ -306,26 +462,12 @@ class OpenReadingsRegistration
         return $presentation_data;
     }
 
-    function update_person_data(PersonData $person_data, $hash_id)
+    function update_person_data(PersonData $person_data, $hash_id, $table_name)
     {
-
-        //check if all important fields exist
-        foreach ($person_data as $key => $value) {
-            if (empty($value)) {
-                if ($key == 'agrees_to_email') {
-                    continue;
-                }
-                if ($key == 'needs_visa') {
-                    continue;
-                }
-                return new WP_Error('missing_field', 'Missing required field: ' . $key);
-            }
-        }
 
         //update person data into database
 
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
 
         $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, presentation_id = %s, agrees_to_email = %d, title = %s WHERE hash_id = %s';
 
@@ -339,20 +481,11 @@ class OpenReadingsRegistration
         return $person_data;
     }
 
-
-    function update_presentation_data(PresentationData $presentation_data, $presentation_id)
+    function update_presentation_data(PresentationData $presentation_data, $presentation_id, $table_name)
     {
-        //check if all important fields exist
-        foreach ($presentation_data as $key => $value) {
-            if (empty($value)) {
-                return new WP_Error('missing_field', 'Missing required field: ' . $key);
-            }
-        }
-
         //update person data into database
 
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
 
         $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s WHERE presentation_id = %s';
 
@@ -366,114 +499,14 @@ class OpenReadingsRegistration
         return $presentation_data;
     }
 
-
-    public function check_form_fields(RegistrationData $registration_data)
-    {
-
-        $field_group_one = [
-            ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
-            ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
-            ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
-            ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
-            ['email', 'Email', 100, ''],
-            ['institution', 'Institution', 300, '/[^\\p{L}(),.\- ]/u'],
-            ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
-            ['department', 'Department', 300, '/[^\\p{L}()-,. ]/u'],
-            ['institution', 'Institution', 200, '/[^\\p{L}(),.\- ]/u'],
-            ['country', 'Country', 100, '/[^\\p{L}() ]/u'],
-            ['department', 'Department', 200, '/[^\\p{L}()-,. ]/u'],
-            ['research_area', 'Research area', 300, '/[^\\p{L} ,]/u'],
-            ['person_title', 'Person title', 200, ''],
-            ['title', 'Presentation title', 300, ''],
-            ['affiliations', 'Affiliation', 300, ''],
-            ['references', 'Abstract references', 1000, ''],
-            ['abstract', 'Abstract content', 3000, '']
-        ];
-        foreach ($field_group_one as $item) {
-            if (is_array($registration_data->{$item[0]})) {
-                foreach ($registration_data->{$item[0]} as $field) {
-                    if (mb_strlen($field) > $item[2]) {
-                        return $item[1] . ": field input too long";
-                    }
-                    if ($item[3] != '') if (preg_match($item[3], $field)) {
-                        return $item[1] . " field: special characters not allowed in field.";
-                    }
-                    if (trim($field) == '' && $item[0] != 'references') {
-                        return $item[1] . ": detected empty field.";
-                    }
-                }
-            } else {
-                $field = $registration_data->{$item[0]};
-                if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
-                    return $item[1] . ": field input too long";
-                }
-                if ($item[3] != '') if (preg_match($item[3], $field)) {
-                    return $item[1] . " field: special characters not allowed in field.";
-                }
-                if (trim($field) == '' && $item[0] != 'references') {
-                    return $item[1] . ": detected empty field.";
-                }
-            }
-        }
-
-        $contact_exists = false;
-        foreach ($registration_data->authors as $author) {
-            if (mb_strlen($author[0]) > 100) {
-                return "Abstract author name: input too long";
-            }
-            if (preg_match('/[^\\p{L} ]/u', $author[0])) {
-                return "Abstract author field: special characters not allowed in field.";
-            }
-            if (trim($author[0]) == '') {
-                return "Abstract author: detected empty field.";
-            }
-
-            if (mb_strlen($author[1]) > 100) {
-                return "Author affiliation: input too long";
-            }
-            if (!preg_match('/^[0-9, ]+$/', $author[1])) {
-                return "Author affiliation field: special characters not allowed in field.";
-            }
-            if (trim($author[1]) == '') {
-                return "Author affiliation: detected empty field.";
-            }
-
-            if (isset($author[2])) {
-                $contact_exists = true;
-                if (filter_var($author[2], FILTER_VALIDATE_EMAIL) == false)
-                    return "Corresponding author email not valid";
-            }
-        }
-        if ($contact_exists == false)
-            return "Corresponding author email not set";
-        $session_id = $registration_data->session_id;
-        $generated_files_dir = WP_CONTENT_DIR . '/latex/' . $session_id . '';
-        $pdf = $generated_files_dir . '/abstract.pdf';
-        if (!file_exists($pdf) || $_SESSION['exists'] == 0) {
-            return 'Please generate your abstract before submitting';
-        }
-
-        return true;
-    }
-
-
     public function register(RegistrationData $registration_data)
     {
-
+        global $wpdb;
         $start_date = get_option('or_registration_start');
         $end_date = get_option('or_registration_end');
         $late_end_date = get_option(('or_registration_late_end'));
 
-        if(isset($_SESSION['late_hash'])){
-            $hash_id =$_SESSION['late_hash'];
-            $late_registration = true;
-        } else {
-            $late_registration = false;
-        }
-
         $now = new DateTime();
-
-
 
         if (empty($start_date)) {
             return new WP_Error('registration_not_open', 'Registration is not yet open');
@@ -483,12 +516,9 @@ class OpenReadingsRegistration
             if ($now < $startDate) {
                 return new WP_Error('registration_not_open', 'Registration is not yet open');
             }
-
-
-
         }
 
-        if (!empty($late_end_date) and $late_registration){
+        if (!empty($late_end_date)){
             $lateEndDate = new DateTime($late_end_date);
             if ($now > $lateEndDate){
                 return new WP_Error('registration_closed', 'Registration is closed');
@@ -497,66 +527,44 @@ class OpenReadingsRegistration
 
         if (!empty($end_date)) {
             $endDate = new DateTime($end_date);
-            if ($now > $endDate and !$late_registration) {
+            if ($now > $endDate) {
                 return new WP_Error('registration_closed', 'Registration is closed');
             }
         }
 
-        $field_check = $this->check_form_fields($registration_data);
+        $form_checker = new ORCheckForm();
+        $field_check = $form_checker->check_fields($registration_data);
         if ($field_check !== true) {
             return new WP_Error('field_check_error', $field_check);
-        }
-
-        if (!$late_registration){
-            $hash_id = md5($registration_data->email . $registration_data->first_name . $registration_data->last_name . rand(0, 10000));
         }
 
         $presentation_id = md5($registration_data->title . $registration_data->email);
 
 
         $person_data = new PersonData();
-        $registration_data->presentation_id = $presentation_id;
-        $person_data->map_from_class($registration_data, $hash_id);
-
-
-        $result = $this->register_person($person_data, $hash_id);
-
+        $person_data->map_from_class($registration_data, $registration_data->hash_id);
+        
+        $result = $this->register_person($person_data, $registration_data->hash_id, $wpdb->prefix . get_option('or_registration_database_table'));
         if (is_wp_error($result)) {
             return $result;
         }
 
         $presentation_data = new PresentationData();
-        $presentation_data->map_from_class($registration_data, $presentation_id, $hash_id);
-
-
-        $result = $this->register_presentation($presentation_data, $presentation_id);
+        $presentation_data->map_from_class($registration_data, $registration_data->presentation_id, $registration_data->hash_id);
+        $result = $this->register_presentation($presentation_data, $presentation_id, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
         if (is_wp_error($result)) {
             return $result;
         }
 
-        $result = $this->register_evaluation($hash_id);
+        $result = $this->register_evaluation($registration_data->hash_id);
         if (is_wp_error($result)) {
             return $result;
         }
 
         global $or_mailer;
 
-        $vars = $this->email_vars_map($registration_data, $hash_id);
+        $vars = $this->email_vars_map($registration_data, $registration_data->hash_id);
 
-        if($late_registration){
-            global $wpdb;
-    
-            $table_name = 'wp_or_registration_late';
-            $result = $wpdb->update(
-                $table_name,
-                array(
-                    'used' => 1
-                ),
-                array(
-                    'late_hash_id' => $hash_id
-                )
-            );
-        }
         $sent = $or_mailer->send_registration_success_email($vars, $registration_data->email);
         if ($sent) {
             return true;
@@ -610,13 +618,11 @@ class OpenReadingsRegistration
 
     public function update(RegistrationData $registration_data, $hash_id)
     {
-
+        global $wpdb;
         $start_date = get_option('or_registration_start');
         $end_date = get_option('or_registration_update_end');
 
         $now = new DateTime();
-
-
 
         if (empty($start_date)) {
             return new WP_Error('registration_not_open', 'Registration is not yet open');
@@ -626,9 +632,6 @@ class OpenReadingsRegistration
             if ($now < $startDate) {
                 return new WP_Error('registration_not_open', 'Registration is not yet open');
             }
-
-
-
         }
 
         if (!empty($end_date)) {
@@ -638,7 +641,8 @@ class OpenReadingsRegistration
             }
         }
 
-        $field_check = $this->check_form_fields($registration_data);
+        $form_checker = new ORCheckForm();
+        $field_check = $form_checker->check_fields($registration_data);
         if ($field_check !== true) {
             return new WP_Error('field_check_error', $field_check);
         }
@@ -646,7 +650,7 @@ class OpenReadingsRegistration
         $person_data = new PersonData();
         $person_data->map_from_class($registration_data, $hash_id);
         $presentation_id = $this->get_person_data($hash_id)->presentation_id;
-        $update = $this->update_person_data($person_data, $hash_id);
+        $update = $this->update_person_data($person_data, $hash_id, $wpdb->prefix . get_option('or_registration_database_table'));
 
         if (is_wp_error($update)) {
             return $update;
@@ -654,7 +658,7 @@ class OpenReadingsRegistration
 
         $presentation_data = new PresentationData();
         $presentation_data->map_from_class($registration_data, $presentation_id, $hash_id);
-        $update = $this->update_presentation_data($presentation_data, $presentation_id);
+        $update = $this->update_presentation_data($presentation_data, $presentation_id, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
         if (is_wp_error($update)) {
             return $update;
         }
@@ -671,10 +675,7 @@ class OpenReadingsRegistration
             return new WP_Error('email_error', 'Your submission, was saved, but we experienced an error sending you a confirmation email. Please contact us at info@openreadings.eu');
         }
 
-
-
     }
-
 
     public function get($hash_id)
     {
@@ -693,13 +694,3 @@ class OpenReadingsRegistration
 
 }
 
-
-
-
-
-
-
-
-
-
-?>

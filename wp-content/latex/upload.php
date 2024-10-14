@@ -3,64 +3,50 @@
 define('WP_USE_THEMES', false);
 require(dirname(dirname(__DIR__)) . '/wp-load.php');
 
+$folder = $_COOKIE['folder_hash'];
 
-if (!isset($_SESSION['id'])) {
-    ini_set('session.gc_maxlifetime', 14400);
-    session_start();
-    $_SESSION['id'] = 1;
-}
-
-if ($_SESSION['generating'] == 0) {
-
-    if (!is_dir(__DIR__ . '/' . $_SESSION['file']) . '/images') {
-        mkdir(__DIR__ . '/' . $_SESSION['file'] . '/images');
-        //shell_exec('sudo /bin/mkdir -m 777 "' . __DIR__ . '/' . $_SESSION['file'] . '/images' . '"');
-    }
-    $targetDirectory = __DIR__ . '/' . $_SESSION['file'] . "/images/";
+$targetDirectory = __DIR__ . '/temp/' . $folder . "/images/";
 
 
 
-    $files = glob($targetDirectory . '*'); // Get a list of all files in the directory
+$files = glob($targetDirectory . '*'); // Get a list of all files in the directory
 
-    foreach ($files as $file) {
-        if (is_file($file)) {
-            unlink($file); // Remove the file
-        }
-    }
-    if (isset($filenames))
-        unset($filenames);
-
-    $max_files = get_option('or_registration_max_images');
-    $max_files = $max_files ? $max_files : 2;
-
-
-
-    for ($i = 1; $i <= $max_files; $i++) {
-
-        $filename = "fileToUpload" . $i;
-        $targetFile = $targetDirectory . basename($_FILES[$filename]["name"]);
-        $uploadOk = 1;
-        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-        $filenames[$i - 1] = basename($_FILES[$filename]["name"]);
-
-
-
-        if ($_FILES[$filename]["size"] > 6000000) {
-            $uploadOk = 0;
-        }
-        if (($fileType != "png" && $fileType != "jpeg") && $fileType != "jpg") {
-            $uploadOk = 0;
-        }
-        if ($i > $max_files) {
-            $uploadOk = 0;
-        }
-        if ($uploadOk == 0) {
-        } else {
-            if (move_uploaded_file($_FILES[$filename]["tmp_name"], $targetFile)) {
-            } else {
-            }
-        }
-
+foreach ($files as $file) {
+    if (is_file($file)) {
+        unlink($file); // Remove the file
     }
 }
+if (isset($filenames))
+    unset($filenames);
+
+$max_files = get_option('or_registration_max_images');
+$max_files = $max_files ? $max_files : 2;
+$max_files = 1;
+
+
+
+for ($i = 1; $i <= $max_files; $i++) {
+
+    $filename = "fileToUpload" . $i;
+    $targetFile = $targetDirectory . basename($_FILES[$filename]["name"]);
+    $uploadOk = 1;
+    $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    $filenames[$i - 1] = basename($_FILES[$filename]["name"]);
+
+    if ($_FILES[$filename]["size"] > 6000000) {
+        $uploadOk = 0;
+    }
+    if (($fileType != "png" && $fileType != "jpeg") && $fileType != "jpg") {
+        $uploadOk = 0;
+    }
+    if ($i > $max_files) {
+        $uploadOk = 0;
+    }
+    if ($uploadOk == 0) {
+    } else {
+        move_uploaded_file($_FILES[$filename]["tmp_name"], $targetFile);
+    }
+
+}
+
 ?>

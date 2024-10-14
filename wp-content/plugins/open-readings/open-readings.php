@@ -1,5 +1,6 @@
 <?php
 use OpenReadings\Registration\OpenReadingsRegistration;
+use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
 
 /**
  * Open Readings
@@ -276,17 +277,17 @@ function register_or_mailer_admin()
 add_action('init', 'register_or_mailer_admin');
 
 
-function enqueue_form_fill_script()
-{
-  if (did_action('wp_loaded') > 1) {
-    return;
-  }
-  if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
-    require_once (__DIR__ . '/registration/begin-session.php');
-  }
-}
+// function enqueue_form_fill_script()
+// {
+//   if (did_action('wp_loaded') > 1) {
+//     return;
+//   }
+//   if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
+//     require_once (__DIR__ . '/registration/begin-session.php');
+//   }
+// }
 
-add_action('wp_loaded', 'enqueue_form_fill_script');
+// add_action('wp_loaded', 'enqueue_form_fill_script');
 
 function my_custom_function()
 {
@@ -370,3 +371,22 @@ add_filter("rest_presentation_collection_params", function ($params) {
 require_once __DIR__ . '/programme/generate-abstract.php';
 
 add_action('admin_init', 'download_abstract');
+
+function register_session_manager(){
+  require_once __DIR__ . '/registration/registration-session.php';
+}
+
+add_action('init','register_session_manager');
+
+function or_registration_cookies() {
+  // Check if the page slug or ID matches the specific page you want
+  if (is_page('registration-2')) {
+      // Only set the cookie if it isn't already set
+      global $or_session;
+      require_once __DIR__ . '/registration/registration-session.php';
+      $or_session = new ORRegistrationSession();
+
+  }
+}
+// Hook the function to 'template_redirect' or 'wp'
+add_action('template_redirect', 'or_registration_cookies');

@@ -42,11 +42,14 @@ function setIframeHeight() {
 window.addEventListener('load', setIframeHeight);
 window.addEventListener('resize', setIframeHeight);
 
+
 function afterWait($exportReturn) {
     latexButton.disabled = false;
     fileButton.disabled = false;
     loader.style.display = 'none';
-    fetch(dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.log' + '?timestamp=' + new Date().getTime())
+    logFilePath = dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.log' + '?timestamp=' + new Date().getTime();
+    console.log(logFilePath);
+    fetch(logFilePath)
         .then(response => response.text())
         .then(data => {
             document.getElementById('logContent').textContent = data;
@@ -79,7 +82,7 @@ function afterWait($exportReturn) {
     console.log('afterWait');
     if ($exportReturn == 0) {
         document.getElementById("abstract").style.display = "block";
-        document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+        document.getElementById("abstract").setAttribute("src", dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
     } else
         document.getElementById("abstract").style.display = "none";
 
@@ -144,6 +147,8 @@ latexButton.addEventListener("click", async function () {
         }
     } else {
         console.log('Form is not valid');
+        logFilePath = folderAjax.folder + 'abstract.log' + '?timestamp=' + new Date().getTime();
+        console.log(logFilePath);
         errorMessage.style.display = 'block';
         const invalidFields = [];
 

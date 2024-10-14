@@ -5,6 +5,8 @@ use OpenReadings\Registration\PersonData;
 use OpenReadings\Registration\PresentationData;
 use OpenReadings\Registration\RegistrationData;
 
+return;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
     return;
 // Get the ID from the URL (you can use your preferred method for getting the ID)
@@ -13,15 +15,6 @@ $id = isset($_GET['id']) ? ($_GET['id']) : 0;
 $ORregistration = new OpenReadingsRegistration();
 $registration_data = $ORregistration->get($id);
 
-if (!isset($_SESSION['id'])) {
-    ini_set('session.gc_maxlifetime', 3600);
-    session_start();
-    $_SESSION['id'] = 1;
-}
-
-if (!isset($_SESSION['update'])) {
-    return;
-}
 
 $person_data_fields = [
     ['form-field-person_title', 'person_title'],
