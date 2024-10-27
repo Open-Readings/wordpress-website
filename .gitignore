@@ -78,5 +78,7 @@ wp-content/plugins/*
 20230927_openreadings2024_603d5937a826f9d21987_20230927161505_installer-backup.php
 local-xdebuginfo.php
 
+wp-content1/*
+wp-content/plugin/*
 
-
+/wp-content/ql-cache/**

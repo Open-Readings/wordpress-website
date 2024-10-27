@@ -7,7 +7,7 @@ refAddButtons.forEach(function (button) {
         var childDivs = referenceList.querySelectorAll("div");
         var divCount = childDivs.length;
         referenceField.innerHTML = `<label class="ref-label">` + (divCount + 1) + `.` + `</label>` +
-            `<input type="text" class="ref-width form-padding" maxlength="1000" name="references[]" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)" required>
+            `<input type="text" class="ref-width form-padding elementor-field elementor-field-textual" name="references[]" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)">
         `;
         referenceField.className = "ref-div";
         if (divCount < 10)

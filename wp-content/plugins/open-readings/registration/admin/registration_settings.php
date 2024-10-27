@@ -43,12 +43,14 @@ function populate_database()
 {
     global $wpdb;
     $table_name = $wpdb->prefix . get_option('or_registration_database_table');
-
     $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
 
     $presentation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
-
     $presentation_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$presentation_table_name'") == $presentation_table_name;
+
+    $temp_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_temp';
+    $temp_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$temp_table_name'") == $temp_table_name;
+
 
     $person_fields = [
         'hash_id',
@@ -64,14 +66,12 @@ function populate_database()
         'agrees_to_email',
         'research_area',
         'presentation_type',
-        'presentation_id',
         'submit_time',
 
     ];
 
     $presentation_fields = [
         'hash_id',
-        'presentation_id',
         'title',
         'authors',
         'affiliations',
@@ -80,7 +80,14 @@ function populate_database()
         'images',
         'pdf',
         'session_id',
-        'display_title'
+        'display_title',
+        'acknowledgement'
+    ];
+
+    $temp_fields = [
+        'hash_id',
+        'saved',
+        'last_export'
     ];
 
     $person_data_sql = [
@@ -96,14 +103,12 @@ function populate_database()
         "needs_visa" => "tinyint(1) NOT NULL",
         "research_area" => "varchar(255) NOT NULL",
         "presentation_type" => "varchar(255) NOT NULL",
-        "presentation_id" => "varchar(255) NOT NULL",
         "submit_time" => "GETDATE() NOT NULL",
         "agrees_to_email" => "tinyint(1) NOT NULL"
     ];
 
     $presentation_data_sql = [
-        'person_hash_id' => "varchar(255) NOT NULL",
-        'presentation_id' => "varchar(255) NOT NULL, PRIMARY KEY (presentation_id)",
+        'person_hash_id' => "varchar(255) NOT NULL, PRIMARY KEY (person_hash_id)",
         'title' => "varchar(255) NOT NULL",
         'authors' => "varchar(1000) NOT NULL",
         'affiliations' => "varchar(1000) NOT NULL",
@@ -112,9 +117,17 @@ function populate_database()
         'images' => "varchar(1000) NOT NULL",
         'pdf' => "varchar(255) NOT NULL",
         'session_id' => "varchar(255) NOT NULL",
-        'display_title' => "varchar(255) NOT NULL"
+        'display_title' => "varchar(255) NOT NULL",
+        'acknowledgement' => "varchar(1000) NOT NULL"
 
     ];
+
+    $temp_data_sql = [
+        'hash_id' => "varchar(255) NOT NULL, PRIMARY KEY (hash_id)",
+        'saved' => "tinyint(1) NOT NULL",
+        'last_export' => "DATETIME NOT NULL"
+    ];
+
     if (!$table_exists) {
         $wpdb->query("CREATE TABLE $table_name (
             hash_id varchar(255) NOT NULL, 
@@ -130,7 +143,6 @@ function populate_database()
             needs_visa varchar(255) NOT NULL,
             research_area varchar(255) NOT NULL,
             presentation_type varchar(255) NOT NULL,
-            presentation_id varchar(255) NOT NULL, 
             submit_time DATETIME NOT NULL,
             agrees_to_email tinyint(1) NOT NULL
             )");
@@ -157,8 +169,7 @@ function populate_database()
     if (!$presentation_table_exists) {
         $wpdb->query("CREATE TABLE $presentation_table_name (
             person_hash_id varchar(255) NOT NULL, 
-            presentation_id varchar(255) NOT NULL, 
-            PRIMARY KEY (presentation_id),
+            PRIMARY KEY (person_hash_id),
             title varchar(255) NOT NULL,
             authors varchar(1000) NOT NULL,
             affiliations varchar(1000) NOT NULL,
@@ -167,7 +178,8 @@ function populate_database()
             images varchar(1000) NOT NULL,
             pdf varchar(255) NOT NULL,
             session_id varchar(255) NOT NULL,
-            display_title varchar(255) NOT NULL
+            display_title varchar(255) NOT NULL,
+            acknowledgement varchar(1000) NOT NULL
             )");
 
     } else {
@@ -180,6 +192,28 @@ function populate_database()
                 $wpdb->query("ALTER TABLE $presentation_table_name ADD `$field` $presentation_data_sql[$field]");
             } else {
                 $wpdb->query("ALTER TABLE $presentation_table_name MODIFY `$field` $presentation_data_sql[$field]");
+            }
+        }
+    }
+
+    if (!$temp_table_exists) {
+        $wpdb->query("CREATE TABLE $temp_table_name (
+            hash_id varchar(255) NOT NULL, 
+            PRIMARY KEY (hash_id),
+            saved tinyint(1) NOT NULL,
+            last_export DATETIME NOT NULL
+            )");
+
+    } else {
+        $temp_columns = $wpdb->get_col("DESC $temp_table_name", 0);
+        $temp_columns = array_map('strtolower', $temp_columns);
+
+        $temp_fields = array_map('strtolower', $temp_fields);
+        foreach ($temp_fields as $field) {
+            if (!in_array($field, $temp_columns)) {
+                $wpdb->query("ALTER TABLE $temp_table_name ADD `$field` $temp_data_sql[$field]");
+            } else {
+                $wpdb->query("ALTER TABLE $temp_table_name MODIFY `$field` $temp_data_sql[$field]");
             }
         }
     }
