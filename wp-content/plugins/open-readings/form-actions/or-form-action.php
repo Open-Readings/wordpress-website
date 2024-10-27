@@ -1,6 +1,7 @@
 <?php
 
 use OpenReadings\Registration;
+use OpenReadings\Registration\ORCheckForm;
 use OpenReadings\Registration\ORReadForm;
 use OpenReadings\Registration\RegistrationData;
 
@@ -46,6 +47,14 @@ use OpenReadings\Registration\RegistrationData;
         $registration = new RegistrationData();
         $or_get_form = new ORReadForm();
         $registration = $or_get_form->get_form();
+
+        $form_checker = new ORCheckForm();
+
+        $result = $form_checker->registration_check($registration);
+        if ($result !== true){
+            $ajax_handler->add_error_message($result);
+            return;
+        }
 
         if ($fields['email'] != $fields['repeat_email']) {
             $ajax_handler->add_error_message('Emails do not match');

@@ -19,17 +19,17 @@ class ORReadForm
         $registration_data->needs_visa = isset($_POST['form_fields']['visa']) ? true : false;
         $registration_data->research_area = $_POST['form_fields']['research_area'];
         $registration_data->presentation_type = $_POST['form_fields']['presentation_type'];
-        $registration_data->presentation_id = $_COOKIE['hash_id'];
         $registration_data->agrees_to_email = isset($_POST['form_fields']['email_agree']) ? true : false;
-        $registration_data->hash_id = $_COOKIE['hash_id'];
+        $registration_data->hash_id = $_POST['hash_id'];
         $registration_data->person_title = $_POST['form_fields']['person_title'];
         $registration_data->title = $_POST['form_fields']['abstract_title'];
         $registration_data->authors = $this->get_authors_array();
         $registration_data->affiliations = $_POST['affiliation'];
-        $registration_data->references = isset($_POST['reference']) ? $_POST['reference'] : [];
+        $registration_data->references = isset($_POST['references']) ? $_POST['references'] : [];
         $registration_data->images = $this->get_images();
         $registration_data->abstract = $_POST['textArea'];
-        $registration_data->pdf = WP_CONTENT_DIR . '/latex/temp/' . $_POST['session_id'] . '/abstract.pdf';
+        $registration_data->acknowledgement = isset($_POST['form_fields']['acknowledgement']) ? $_POST['form_fields']['acknowledgement'] : '';
+        $registration_data->pdf = content_url() . '/latex/perm/' . $_POST['session_id'] . '/abstract.pdf';
         $registration_data->session_id = $_POST['session_id'];
         $registration_data->display_title = $_POST['form_fields']['abstract_title'];
 
@@ -69,57 +69,46 @@ class ORReadForm
 
 class ORCheckForm
 {
+    public array $export_exact_field_settings;
+    public array $export_regex_settings;
+    public array $registration_exact_field_settings;
+    public array $author_field_settings;
 
-    public function check_fields($registration_data){
+    public function __construct(){
         global $wpdb;
         $country_list = $wpdb->get_col('SELECT name FROM countries');
         global $RESEARCH_AREAS;
         $research_area_list = array_values($RESEARCH_AREAS);
 
-        $fields_exact_match = [
+        $this->export_exact_field_settings = [
             ['country', 'Country', $country_list],
             ['research_area', 'Research area', $research_area_list],
             ['person_title', 'Person title', ["", "Dr.", "Student (PhD)", "Student (Master's)", "Student (Bachelor)"]],
+            ['presentation_type', 'Presentation type', ["Oral", "Poster"]],
+        ];
+
+        $this->registration_exact_field_settings = [
             ['agrees_to_email', 'ATEfield', [true, false]],
             ['needs_visa', 'NVfield', [true, false]]
         ];
 
-        $field_check_settings = [
+        $this->export_regex_settings = [
             ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
             ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
             ['email', 'Email', 300, ''],
-            ['institution', 'Institution', 500, '/[^\\p{L}(),.\- ]/u'],
-            ['department', 'Department', 500, '/[^\\p{L}()-,. ]/u'],
+            ['institution', 'Academic institution', 500, '/[^\\p{L}()\-,.0-9 ]/u'],
+            ['department', 'Department', 500, '/[^\\p{L}()\-,.0-9 ]/u'],
             ['title', 'Presentation title', 500, ''],
-            ['affiliations', 'Affiliation', 500, ''],
+            ['affiliations', 'Affiliations list', 500, ''],
             ['references', 'Abstract references', 1000, ''],
-            ['abstract', 'Abstract content', 3000, '']
+            ['abstract', 'Abstract content', 3000, ''],
+            ['acknowledgement', 'Acknowledgement', 1000, ''],
         ];
 
-        $field_check_authors = [
+        $this->author_field_settings = [
             [0, 'Author name', 200, '/[^\\p{L} ]/u'],
-            [1, 'Author affiliation reference number', 3, '/[^0-9, ]+$/']
+            [1, 'Authors list affiliation number ', 10, '/[^0-9, ]+$/']
         ];
-
-        $check_if_pdf_exists = true;
-
-        $response = $this->check_strings($field_check_settings, $registration_data);
-        if ($response !== true)
-            return $response;
-
-        $response = $this->check_authors($field_check_authors, $registration_data);
-        if ($response !== true)
-            return $response;
-
-        $response = $this->check_matches($fields_exact_match, $registration_data);
-        if ($response !== true)
-            return $response;
-
-        $pdf_path = WP_CONTENT_DIR . '/latex/temp/' . $registration_data->session_id . '/abstract.pdf';
-        if ($check_if_pdf_exists and !file_exists($pdf_path))
-            return 'Please generate your abstract before submitting';
-
-        return true;
 
     }
 
@@ -138,14 +127,17 @@ class ORCheckForm
                     }
                 }
             } else {
-                $field = $registration_data->{$item[0]};
+                if ($item[0] == 'abstract')
+                    $field = stripslashes($registration_data->{$item[0]});
+                else
+                    $field = $registration_data->{$item[0]};
                 if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
                     return $item[1] . ": field input too long";
                 }
                 if ($item[3] != '') if (preg_match($item[3], $field)) {
                     return $item[1] . " field: special characters not allowed in field.";
                 }
-                if (trim($field) == '' && $item[0] != 'references') {
+                if (trim($field) == '' && $item[0] != 'references' && $item[0] != 'acknowledgement') {
                     return $item[1] . ": detected empty field.";
                 }
             }
@@ -170,7 +162,7 @@ class ORCheckForm
                 if ($item[3] != '') if (preg_match($item[3], $field_value)) {
                     return $item[1] . " field: special characters not allowed in field.";
                 }
-                if (trim($field_value) == '' && $item[0]) {
+                if (trim($field_value) == '') {
                     return $item[1] . ": detected empty field.";
                 }
             }
@@ -193,6 +185,78 @@ class ORCheckForm
 
         return true;
     }
+
+    public function export_check($registration_data){
+
+        # Get registration status (saved/not saved) and time of last latex export
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM wp_or_registration_temp WHERE hash_id = %s",
+            $_POST['hash_id']
+        ), ARRAY_A);
+
+        if ($row == null)
+            return 'Database temp ID error';
+
+        if ($row['saved'] == 1)
+            return 'Your submition has already been saved';
+
+
+        # Prevent people from spamming the generate abstract button
+        $last_save_time = strtotime($row['last_export']);
+        $current_time = strtotime(current_time('mysql'));
+
+        if ($current_time - $last_save_time < 1) # If more than a second has passed continue
+            return;
+        else{
+            $updated = $wpdb->update(
+                'wp_or_registration_temp',
+                array('last_export' => current_time('mysql')),
+                array('hash_id' => $_POST['hash_id'])
+            );
+        }
+
+        # Check if hash_id and session_id (folder hash) match
+        if (hash('sha256', $_POST['hash_id']) != $_POST['session_id'])
+            return 'Folder ID error. Please reload the page and try again.';
+
+        # Check if folder exists
+        if (!is_dir(WP_CONTENT_DIR . "/latex/temp/{$_POST['session_id']}"))
+            return 'Folder error. Please reload the page and try again.';
+
+        # Perform field checks before generating latex
+        $response = $this->check_strings($this->export_regex_settings, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $response = $this->check_authors($this->author_field_settings, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $response = $this->check_matches($this->export_exact_field_settings, $registration_data);
+        if ($response !== true)
+            return $response;
+        
+        return true;
+    }
+
+    public function registration_check($registration_data){
+        $response = $this->export_check($registration_data);
+        if ($response !== true)
+            return $response;
+
+        $response = $this->check_matches($this->registration_exact_field_settings, $registration_data);
+        if ($response !== true)
+            return $response;
+
+        $pdf_path = WP_CONTENT_DIR . '/latex/temp/' . $registration_data->session_id . '/abstract.pdf';
+        if (!file_exists($pdf_path))
+            return 'Please generate your abstract before submitting';
+
+        return true;
+        
+    }
+
 }
 
 
@@ -208,7 +272,6 @@ class RegistrationData
     public bool $needs_visa;
     public string $research_area;
     public string $presentation_type;
-    public string $presentation_id;
     public bool $agrees_to_email;
     public string $hash_id;
     public string $person_title;
@@ -218,6 +281,7 @@ class RegistrationData
     public $references = array();
     public $images = array();
     public string $abstract;
+    public string $acknowledgement;
     public string $pdf;
     public string $session_id;
 
@@ -237,7 +301,6 @@ class RegistrationData
         $this->needs_visa = $personData->needs_visa;
         $this->research_area = $personData->research_area;
         $this->presentation_type = $personData->presentation_type;
-        $this->presentation_id = $personData->presentation_id;
         $this->agrees_to_email = $personData->agrees_to_email;
 
 
@@ -252,6 +315,7 @@ class RegistrationData
         $this->references = json_decode($presentationData->references);
         $this->images = json_decode($presentationData->images);
         $this->abstract = $presentationData->abstract;
+        $this->acknowledgement = $presentationData->acknowledgement;
         $this->pdf = $presentationData->pdf;
         $this->hash_id = $presentationData->person_hash_id;
         $this->session_id = $presentationData->session_id;
@@ -275,7 +339,6 @@ class PersonData
     public bool $needs_visa;
     public string $research_area;
     public string $presentation_type;
-    public string $presentation_id;
     public bool $agrees_to_email;
     public string $hash_id;
     public string $session_id;
@@ -292,7 +355,6 @@ class PersonData
         $this->needs_visa = $result['needs_visa'];
         $this->research_area = $result['research_area'];
         $this->presentation_type = $result['presentation_type'];
-        $this->presentation_id = $result['presentation_id'];
         $this->agrees_to_email = $result['agrees_to_email'];
         $this->title = $result['title'];
 
@@ -311,7 +373,6 @@ class PersonData
         $this->needs_visa = $data->needs_visa;
         $this->research_area = $data->research_area;
         $this->presentation_type = $data->presentation_type;
-        $this->presentation_id = $data->presentation_id;
         $this->agrees_to_email = $data->agrees_to_email;
         $this->hash_id = $hash_id;
         $this->title = $data->person_title;
@@ -327,11 +388,11 @@ class PresentationData
     public string $authors;
     public string $affiliations;
     public string $abstract;
+    public string $acknowledgement;
     public string $references;
     public string $images;
     public string $pdf;
     public string $person_hash_id;
-    public string $presentation_id;
     public string $display_title;
 
     public string $session_id;
@@ -341,6 +402,7 @@ class PresentationData
         $this->authors = $result['authors'];
         $this->affiliations = $result['affiliations'];
         $this->abstract = $result['content'];
+        $this->acknowledgement = $result['acknowledgement'];
         $this->references = $result['references'];
         $this->images = $result['images'];
         $this->pdf = $result['pdf'];
@@ -350,17 +412,17 @@ class PresentationData
 
     }
 
-    function map_from_class(RegistrationData $data, $presentation_id, $hash_id)
+    function map_from_class(RegistrationData $data, $hash_id)
     {
         $this->title = $data->title;
         $this->authors = json_encode($data->authors, JSON_UNESCAPED_UNICODE);
         $this->affiliations = json_encode($data->affiliations, JSON_UNESCAPED_UNICODE);
         $this->abstract = $data->abstract;
+        $this->acknowledgement = $data->acknowledgement;
         $this->references = json_encode($data->references, JSON_UNESCAPED_UNICODE);
         $this->images = json_encode($data->images, JSON_UNESCAPED_UNICODE);
         $this->pdf = $data->pdf;
         $this->session_id = $data->session_id;
-        $this->presentation_id = $presentation_id;
         $this->person_hash_id = $hash_id;
         $this->display_title = $data->display_title;
 
@@ -378,11 +440,11 @@ class OpenReadingsRegistration
         global $wpdb;
         $query = '
         INSERT INTO ' . $table_name . '
-        (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, presentation_id, agrees_to_email, title) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %s, %d, %s)
+        (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, presentation_type, agrees_to_email, title) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %d, %s)
         ';
 
-        $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $person_data->title);
+        $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->agrees_to_email, $person_data->title);
         $result = $wpdb->query($query);
         if ($result == false) {
             return new WP_Error('database_error', 'Database error');
@@ -392,7 +454,7 @@ class OpenReadingsRegistration
 
     }
 
-    function register_presentation(PresentationData $presentation_data, $presentation_id, $table_name)
+    function register_presentation(PresentationData $presentation_data, $table_name)
     {
 
         //insert person data into database
@@ -400,15 +462,21 @@ class OpenReadingsRegistration
 
         $query = '
         INSERT INTO ' . $table_name . '
-        (person_hash_id, presentation_id, title, authors, affiliations, content, `references`, images, pdf, session_id, display_title)
+        (person_hash_id, title, authors, affiliations, content, `references`, images, pdf, session_id, display_title, acknowledgement)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ';
 
-
-        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id, $presentation_data->display_title);
+        $presentation_data->pdf = WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}/abstract.pdf";
+        $query = $wpdb->prepare($query, $presentation_data->person_hash_id, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->session_id, $presentation_data->display_title, $presentation_data->acknowledgement);
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
+        }
+
+        $result = rename(WP_CONTENT_DIR . "/latex/temp/{$presentation_data->session_id}/", WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}/");
+        
+        if ($result === false) {
+            return new WP_Error('folder_error', 'Failed to rename folder');
         }
 
         return true;
@@ -436,19 +504,17 @@ class OpenReadingsRegistration
 
 
         return $person_data;
-
-
     }
 
-    function get_presentation_data($presentation_id)
+    function get_presentation_data($hash_id)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
         $query = '
         SELECT * FROM ' . $table_name . '
-        WHERE presentation_id = %s
+        WHERE person_hash_id = %s
         ';
-        $query = $wpdb->prepare($query, $presentation_id);
+        $query = $wpdb->prepare($query, $hash_id);
         $result = $wpdb->get_row($query, ARRAY_A);
         //check if result is empty:
         if ($result == null) {
@@ -469,9 +535,9 @@ class OpenReadingsRegistration
 
         global $wpdb;
 
-        $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, presentation_id = %s, agrees_to_email = %d, title = %s WHERE hash_id = %s';
+        $query = 'UPDATE ' . $table_name . ' SET first_name = %s, last_name = %s, email = %s, institution = %s, country = %s, department = %s, privacy = %d, needs_visa = %d, research_area = %s, presentation_type = %s, agrees_to_email = %d, title = %s WHERE hash_id = %s';
 
-        $query = $wpdb->prepare($query, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->presentation_id, $person_data->agrees_to_email, $person_data->title, $hash_id);
+        $query = $wpdb->prepare($query, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->presentation_type, $person_data->agrees_to_email, $person_data->title, $hash_id);
 
         $result = $wpdb->query($query);
         if ($result === false) {
@@ -481,21 +547,21 @@ class OpenReadingsRegistration
         return $person_data;
     }
 
-    function update_presentation_data(PresentationData $presentation_data, $presentation_id, $table_name)
+    function update_presentation_data(PresentationData $presentation_data, $hash_id, $table_name)
     {
         //update person data into database
 
         global $wpdb;
 
-        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s WHERE presentation_id = %s';
+        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s WHERE person_hash_id = %s';
 
-        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->display_title, $presentation_id);
+        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->display_title, $hash_id);
 
         $result = $wpdb->query($query);
         if ($result === false) {
             return new WP_Error('database_error', 'Database error');
         }
-        $presentation_data = $this->get_presentation_data($presentation_id);
+        $presentation_data = $this->get_presentation_data($hash_id);
         return $presentation_data;
     }
 
@@ -532,14 +598,6 @@ class OpenReadingsRegistration
             }
         }
 
-        $form_checker = new ORCheckForm();
-        $field_check = $form_checker->check_fields($registration_data);
-        if ($field_check !== true) {
-            return new WP_Error('field_check_error', $field_check);
-        }
-
-        $presentation_id = md5($registration_data->title . $registration_data->email);
-
 
         $person_data = new PersonData();
         $person_data->map_from_class($registration_data, $registration_data->hash_id);
@@ -550,8 +608,8 @@ class OpenReadingsRegistration
         }
 
         $presentation_data = new PresentationData();
-        $presentation_data->map_from_class($registration_data, $registration_data->presentation_id, $registration_data->hash_id);
-        $result = $this->register_presentation($presentation_data, $presentation_id, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
+        $presentation_data->map_from_class($registration_data, $registration_data->hash_id, $registration_data->hash_id);
+        $result = $this->register_presentation($presentation_data, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
         if (is_wp_error($result)) {
             return $result;
         }
@@ -560,6 +618,12 @@ class OpenReadingsRegistration
         if (is_wp_error($result)) {
             return $result;
         }
+
+        $update = $wpdb->update(
+            'wp_or_registration_temp',
+            array('saved' => 1),
+            array('hash_id' => $registration_data->hash_id)
+        );
 
         global $or_mailer;
 
@@ -641,15 +705,9 @@ class OpenReadingsRegistration
             }
         }
 
-        $form_checker = new ORCheckForm();
-        $field_check = $form_checker->check_fields($registration_data);
-        if ($field_check !== true) {
-            return new WP_Error('field_check_error', $field_check);
-        }
 
         $person_data = new PersonData();
         $person_data->map_from_class($registration_data, $hash_id);
-        $presentation_id = $this->get_person_data($hash_id)->presentation_id;
         $update = $this->update_person_data($person_data, $hash_id, $wpdb->prefix . get_option('or_registration_database_table'));
 
         if (is_wp_error($update)) {
@@ -657,8 +715,8 @@ class OpenReadingsRegistration
         }
 
         $presentation_data = new PresentationData();
-        $presentation_data->map_from_class($registration_data, $presentation_id, $hash_id);
-        $update = $this->update_presentation_data($presentation_data, $presentation_id, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
+        $presentation_data->map_from_class($registration_data, $hash_id);
+        $update = $this->update_presentation_data($presentation_data, $hash_id, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
         if (is_wp_error($update)) {
             return $update;
         }
@@ -682,7 +740,7 @@ class OpenReadingsRegistration
         $person_data = $this->get_person_data($hash_id);
         if (is_wp_error($person_data))
             return new WP_Error('database_error', 'Database error');
-        $presentation_data = $this->get_presentation_data($person_data->presentation_id);
+        $presentation_data = $this->get_presentation_data($hash_id);
         if (is_wp_error($presentation_data))
             return new WP_Error('database_error', 'Database error');
         $registration_data = new RegistrationData();

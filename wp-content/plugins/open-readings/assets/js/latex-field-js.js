@@ -48,7 +48,6 @@ function afterWait($exportReturn) {
     fileButton.disabled = false;
     loader.style.display = 'none';
     logFilePath = dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.log' + '?timestamp=' + new Date().getTime();
-    console.log(logFilePath);
     fetch(logFilePath)
         .then(response => response.text())
         .then(data => {
@@ -73,8 +72,10 @@ function afterWait($exportReturn) {
             logContent.textContent = newTextContent;
             if (newTextContent.length == 0)
                 logContent.style.display = "none";
-            else
+            else if($exportReturn == 0)
                 logContent.style.display = "block";
+            else
+                logContent.style.display = "none";
         })
         .catch(error => {
             document.getElementById('logContent').textContent = 'Error retrieving log file: ' + error;
@@ -121,34 +122,28 @@ latexButton.addEventListener("click", async function () {
             // Wait for the response and check its content
             const data = await response.text();
 
-            // Check if the response indicates the operation has finished
-            if (data.includes('Export completed::0')) {
-                // Call the function afterWait()
-                afterWait(0);
+            if (data.includes('Export completed')) {
                 errorMessage.style.display = 'none';
-            } else if (data.includes('Export failed::1')) {
-                errorMessage.innerHTML = 'Failed to generate document';
-                errorMessage.style.display = 'block';
-                afterWait(1);
             } else if (data.includes('Export failed::')) {
                 var message = data.match(/Export failed::(.*?)::end/);
                 errorMessage.innerHTML = message[1];
                 errorMessage.style.display = 'block';
-                afterWait(0);
             }
-            else {
-                console.log(data);
-                errorMessage.innerHTML = 'Failed to generate document';
-                errorMessage.style.display = 'none';
+
+            if (data.includes('File exists::true')) {
+                afterWait(0);
+            } else if (data.includes('File exists::false')){
                 afterWait(1);
+                if (data.includes('Export completed')) {
+                    errorMessage.innerHTML = 'Failed to generate document';
+                    errorMessage.style.display = 'block';
+                }
             }
         } catch (error) {
             console.log(error);
         }
     } else {
-        console.log('Form is not valid');
         logFilePath = folderAjax.folder + 'abstract.log' + '?timestamp=' + new Date().getTime();
-        console.log(logFilePath);
         errorMessage.style.display = 'block';
         const invalidFields = [];
 
@@ -163,7 +158,6 @@ latexButton.addEventListener("click", async function () {
 
         }
 
-        console.log(invalidFields);
         errorMessage.innerHTML = 'Please fill in all the required fields. make sure you have specified the corresponding author email correctly.';
     }
 });

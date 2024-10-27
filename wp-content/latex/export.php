@@ -9,14 +9,30 @@ error_reporting(0);
 $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
+function main(){
+    $latex_generator = new ORLatexExport();
+    $field_checker = new ORCheckForm();
+
+    $response = $field_checker->export_check($latex_generator->registration_data);
+    if ($response !== true){
+        echo 'Export failed::' . $response . '::end';
+    } else {
+        $latex_generator->generate_tex();
+        $latex_generator->generate_abstract();
+        echo 'Export completed';
+    }
+    if (file_exists(__DIR__ . '/temp/' . $latex_generator->registration_data->session_id . '/abstract.pdf'))
+        echo 'File exists::true';
+    else
+        echo 'File exists::false';
+        
+}
 
 
 class ORLatexExport {
-    public string $folder;
     public RegistrationData $registration_data;
 
-    public function __construct($folder){
-        $this->folder = $folder;
+    public function __construct(){
         $or_get_fields = new ORReadForm;
         $this->registration_data = $or_get_fields->get_form();
     }
@@ -65,7 +81,22 @@ class ORLatexExport {
                 $references = '';
             return $references;
         }
-        return null;
+        return $references;
+    }
+
+    public function generate_acknowledgement(){
+        if(trim($this->registration_data->acknowledgement) == ''){
+            $acknowledgement = '';
+        } else {
+            $acknowledgement = "\leavevmode\\newline
+        
+            {\\bfseries Acknowledgement} 
+            
+            {$this->registration_data->acknowledgement}
+            ";
+        }
+        
+        return $acknowledgement;
     }
 
     public function generate_title(){
@@ -142,17 +173,24 @@ class ORLatexExport {
         return $titleField;
     }
 
+    public function generate_content(){
+        $content = stripslashes($this->registration_data->abstract);
+
+        return $content;
+    }
+
     public function generate_tex(){
         $templateFilePath = '../plugins/open-readings/evaluation/admin/template.txt';
         $templateContent = file_get_contents($templateFilePath);
 
-        $filename = "temp/" . $this->folder . "/abstract.tex";
+        $filename = "temp/" . $this->registration_data->session_id . "/abstract.tex";
         
         $replacements = array(
             '${title}' => $this->generate_title(),
             '${authors}' => $this->generate_authors(),
             '${affiliations}' => $this->generate_affiliations(),
-            '${content}' => stripslashes($this->registration_data->abstract),
+            '${content}' => $this->generate_content(),
+            '${acknowledgement}' => $this->generate_acknowledgement(),
             '${references}' => $this->generate_references(),
         );
 
@@ -161,13 +199,12 @@ class ORLatexExport {
     }
 
     public function generate_abstract(){
-        $_ = shell_exec('/bin/lualatex -interaction=nonstopmode --output-directory="temp/' . $this->folder . '" "temp/' . $this->folder . '/abstract.tex"');
+        $d = chdir("temp/{$this->registration_data->session_id}");
+        // $_ = shell_exec('/bin/lualatex -interaction=nonstopmode --output-directory="temp/' . $this->folder . '" "temp/' . $this->folder . '/abstract.tex"');
+        $_ = shell_exec('TEXMFCACHE=../../.texlive2022 /bin/lualatex -interaction=nonstopmode abstract.tex');
 
-        if (file_exists(__DIR__ . '/temp/' . $this->folder . '/abstract.pdf'))
-            echo 'Export completed::0';
-        else
-            echo 'Export failed::1';
     }
+
 }
 
 
@@ -194,19 +231,4 @@ function fixUnclosedTags($text, $tagOpen, $tagClose)
 //     echo 'Export failed::' . $field_validity . '::end';
 // }
 
-$latex_generator = new ORLatexExport($_COOKIE['folder_hash']);
-$person_data = new PersonData();
-$person_data->map_from_class($latex_generator->registration_data, $_COOKIE['hash_id']);
-$presentation_data = new PresentationData();
-$presentation_data->map_from_class($latex_generator->registration_data, $_COOKIE['hash_id'], $_COOKIE['hash_id']);
-global $wpdb;
-$exists = $wpdb->get_var($wpdb->prepare(
-    "SELECT COUNT(*) FROM wp_or_temp WHERE hash_id = %s", 
-    $_COOKIE['hash_id']
-));
-if ($exists == 0){
-    $or_registration_controller->register_person($person_data, $_COOKIE['hash_id'], 'wp_or_temp');
-    $or_registration_controller->register_presentation($presentation_data, $_COOKIE['hash_id'], 'wp_or_temp_presentations');
-}
-$latex_generator->generate_tex();
-$latex_generator->generate_abstract();
+main();

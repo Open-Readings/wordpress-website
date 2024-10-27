@@ -20,6 +20,11 @@
 \usepackage{orstylet}
 \makeatother
 \usepackage{microtype}
+\graphicspath{{images}}
+
+\let\bold\bfseries
+\let\italic\itshape
+
 \begin{document}\sloppy
 
 \renewcommand{\figurename}{Fig.} 
@@ -29,6 +34,7 @@
 \maketitle
 ${affiliations}
 ${content}
+${acknowledgement}
 
 ${references}
 
