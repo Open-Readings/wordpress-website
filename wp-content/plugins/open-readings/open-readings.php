@@ -380,7 +380,7 @@ add_action('init','register_session_manager');
 
 function or_registration_cookies() {
   // Check if the page slug or ID matches the specific page you want
-  if (is_page('registration-2')) {
+  if (is_page('registration')) {
       // Only set the cookie if it isn't already set
       global $or_session;
       require_once __DIR__ . '/registration/registration-session.php';
