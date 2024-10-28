@@ -161,3 +161,32 @@ latexButton.addEventListener("click", async function () {
         errorMessage.innerHTML = 'Please fill in all the required fields. make sure you have specified the corresponding author email correctly.';
     }
 });
+
+
+// Displays latex instruction div only when second registration form page is active
+document.addEventListener('DOMContentLoaded', function () {
+    const targetElement = document.querySelector('.elementor-field-group-presentation');
+    const container = document.getElementById("instructions-container");
+
+    if (targetElement) {
+        // Create a new MutationObserver
+        const observer = new MutationObserver((mutationsList) => {
+            mutationsList.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    if (targetElement.classList.contains('elementor-hidden')) {
+                        // Add actions when the element is hidden
+                        container.style.display = 'none';
+                    } else {
+                        // Add actions when the element is visible
+                        container.style.display = 'block';
+                    }
+                }
+            });
+        });
+        
+        // Start observing the target element for class attribute changes
+        observer.observe(targetElement, { attributes: true });
+    } else {
+        console.warn('Element with class "elementor-field-group-presentation" not found.');
+    }
+});
