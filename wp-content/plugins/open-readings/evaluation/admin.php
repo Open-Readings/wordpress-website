@@ -17,7 +17,7 @@ class OREvaluationAdmin
 
         add_action('admin_menu', array($this, 'add_admin_pages'));
 
-        include_once plugin_dir_path(__FILE__) . 'admin/registration-functions.php';
+        // include_once plugin_dir_path(__FILE__) . 'admin/registration-functions.php';
 
 
         add_action('wp_ajax_evaluation', 'evaluation');

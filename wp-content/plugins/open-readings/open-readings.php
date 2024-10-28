@@ -1,5 +1,6 @@
 <?php
 use OpenReadings\Registration\OpenReadingsRegistration;
+use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
 
 /**
  * Open Readings
@@ -61,13 +62,19 @@ function register_or_dependencies()
   wp_register_script('highlight-js', plugins_url('assets/js/highlight.js', __FILE__));
   wp_register_script('latex-min-js', plugins_url('assets/js/latex.min.js', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
-  wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/institution-field-js.js';
+  wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__), array(), filemtime($js_path));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
-  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), $version);
-  wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__));
-  wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__));
-  wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
-  wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/latex-field-js.js';
+  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/authors-field-js.js';
+  wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/affiliation-field-js.js';
+  wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/reference-field-js.js';
+  wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/image-field-js.js';
+  wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__), array(), filemtime($js_path));
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
   wp_register_script('jquery-js', plugins_url('assets/js/jquery-3.6.4.min.js', __FILE__));
 
@@ -276,17 +283,17 @@ function register_or_mailer_admin()
 add_action('init', 'register_or_mailer_admin');
 
 
-function enqueue_form_fill_script()
-{
-  if (did_action('wp_loaded') > 1) {
-    return;
-  }
-  if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
-    require_once (__DIR__ . '/registration/begin-session.php');
-  }
-}
+// function enqueue_form_fill_script()
+// {
+//   if (did_action('wp_loaded') > 1) {
+//     return;
+//   }
+//   if (strpos($_SERVER['REQUEST_URI'], 'registration') !== false) {
+//     require_once (__DIR__ . '/registration/begin-session.php');
+//   }
+// }
 
-add_action('wp_loaded', 'enqueue_form_fill_script');
+// add_action('wp_loaded', 'enqueue_form_fill_script');
 
 function my_custom_function()
 {
@@ -370,3 +377,22 @@ add_filter("rest_presentation_collection_params", function ($params) {
 require_once __DIR__ . '/programme/generate-abstract.php';
 
 add_action('admin_init', 'download_abstract');
+
+function register_session_manager(){
+  require_once __DIR__ . '/registration/registration-session.php';
+}
+
+add_action('init','register_session_manager');
+
+function or_registration_cookies() {
+  // Check if the page slug or ID matches the specific page you want
+  if (is_page('registration')) {
+      // Only set the cookie if it isn't already set
+      global $or_session;
+      require_once __DIR__ . '/registration/registration-session.php';
+      $or_session = new ORRegistrationSession();
+
+  }
+}
+// Hook the function to 'template_redirect' or 'wp'
+add_action('template_redirect', 'or_registration_cookies');

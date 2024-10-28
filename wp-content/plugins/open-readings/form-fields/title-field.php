@@ -32,9 +32,10 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 	public function render($item, $item_index, $form)
 	{
 		$form->add_render_attribute('input' . $item_index, 'class', 'hidden');
+		$form->add_render_attribute('input' . $item_index, 'value', 'EXAMPLE TITLE OF YOUR ABSTRACT y = x<sup>2</sup> ');
 		$form->add_render_attribute('div' . $item_index, 'contenteditable', 'true');
 		$form->add_render_attribute('div' . $item_index, 'id', 'presentation_title_div');
-		$form->add_render_attribute('div' . $item_index, 'class', 'elementor-field elementor-size-sm elementor-field-textual');
+		$form->add_render_attribute('div' . $item_index, 'class', 'elementor-field elementor-size-sm elementor-field-textual title-field-pad');
 		$field_id = $form->get_attribute_id($item);
 
 		if ($item['allow_script']) {
@@ -46,7 +47,8 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 		}
 		if (!empty($item['title_default_value']))
-			$item['field_value'] = $item['title_default_value'];
+			$item['field_value'] = 'EXAMPLE TITLE OF YOUR ABSTRACT y = x<sup>2</sup>';
+			// $item['field_value'] = $item['title_default_value'];
 
 		$default_value = $item['field_value'];
 		if (empty($default_value)) {
@@ -203,11 +205,13 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 
 
-		$html = (new \Pandoc\Pandoc)
-			->from('latex')
-			->input($titleField)
-			->to('html')
-			->run();
+		// $html = (new \Pandoc\Pandoc)
+		// 	->from('latex')
+		// 	->input($titleField)
+		// 	->to('html')
+		// 	->run();
+
+		$html = "x";
 
 
 		//find the first <p> tag

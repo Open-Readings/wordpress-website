@@ -8,17 +8,11 @@
 \usepackage{float}
 \usepackage{blindtext}
 \usepackage[1]{pagesel}
-\graphicspath{ {images/} }
-\usepackage{microtype}
-\DeclareUnicodeCharacter{2212}{--}
-\DeclareUnicodeCharacter{2032}{$^\prime$}
-\DeclareUnicodeCharacter{2265}{$\geq$}
-\DeclareUnicodeCharacter{2264}{$\leq$}
-\DeclareUnicodeCharacter{2260}{$\neq$}
+
+\usepackage{fontspec}
+\setmainfont{Free Sans}
 
 
-
-\usepackage{mathptmx}
 \renewcommand{\familydefault}{\rmdefault}
 \usepackage{graphicx}
 \usepackage{babel}
@@ -26,6 +20,11 @@
 \usepackage{orstylet}
 \makeatother
 \usepackage{microtype}
+\graphicspath{{images}}
+
+\let\bold\bfseries
+\let\italic\itshape
+
 \begin{document}\sloppy
 
 \renewcommand{\figurename}{Fig.} 
@@ -35,6 +34,7 @@
 \maketitle
 ${affiliations}
 ${content}
+${acknowledgement}
 
 ${references}
 

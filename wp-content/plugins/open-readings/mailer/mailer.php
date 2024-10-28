@@ -52,7 +52,7 @@ class ORmailer
     {
         $subject = get_option('or_registration_success_email_subject');
         if ($subject == '') {
-            $subject = 'Open Readings 2024 registration success';
+            $subject = 'Open Readings 2025 registration success';
         }
 
         $template = get_option('or_registration_email_success_template');
