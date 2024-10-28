@@ -62,13 +62,19 @@ function register_or_dependencies()
   wp_register_script('highlight-js', plugins_url('assets/js/highlight.js', __FILE__));
   wp_register_script('latex-min-js', plugins_url('assets/js/latex.min.js', __FILE__));
   wp_register_script('country-field-js', plugins_url('assets/js/country-field-js.js', __FILE__));
-  wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/institution-field-js.js';
+  wp_register_script('institution-field-js', plugins_url('assets/js/institution-field-js.js', __FILE__), array(), filemtime($js_path));
   wp_register_script('institutions-list-js', plugins_url('assets/js/institutions-list-js.js', __FILE__));
-  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), $version);
-  wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__));
-  wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__));
-  wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__));
-  wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/latex-field-js.js';
+  wp_register_script('latex-field-js', plugins_url('assets/js/latex-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/authors-field-js.js';
+  wp_register_script('authors-field-js', plugins_url('assets/js/authors-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/affiliation-field-js.js';
+  wp_register_script('affiliation-field-js', plugins_url('assets/js/affiliation-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/reference-field-js.js';
+  wp_register_script('reference-field-js', plugins_url('assets/js/reference-field-js.js', __FILE__), array(), filemtime($js_path));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/image-field-js.js';
+  wp_register_script('image-field-js', plugins_url('assets/js/image-field-js.js', __FILE__), array(), filemtime($js_path));
   wp_register_script('title-field-js', plugins_url('assets/js/title-field-js.js', __FILE__));
   wp_register_script('jquery-js', plugins_url('assets/js/jquery-3.6.4.min.js', __FILE__));
 
