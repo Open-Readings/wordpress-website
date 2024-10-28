@@ -83,7 +83,7 @@ class ORCheckForm
         $this->export_exact_field_settings = [
             ['country', 'Country', $country_list],
             ['research_area', 'Research area', $research_area_list],
-            ['person_title', 'Person title', ["", "Dr.", "Student (PhD)", "Student (Master's)", "Student (Bachelor)"]],
+            ['person_title', 'Person title', ["Dr.", "Student (PhD)", "Student (Masters)", "Student (Bachelor)", "Other"]],
             ['presentation_type', 'Presentation type', ["Oral", "Poster"]],
         ];
 
