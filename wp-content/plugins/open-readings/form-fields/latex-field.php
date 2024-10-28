@@ -28,22 +28,6 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 
     public function render($item, $item_index, $form)
     {
-        $abstract_content = '
-Elementum aenean nibh blandit nostra sit risus justo. Diam taciti eleifend parturient eget sem. Tortor eget mauris per enim nisl. Consequat cursus elit ad etiam dis commodo sagittis scelerisque. Primis donec mattis nec consequat ut montes eu ut quisque. Curae nullam mus dui nam potenti phasellus molestie curabitur. Eros hac placerat magna; pretium a platea dapibus posuere.
-
-\begin{equation}
-(\partial^\mu \partial_\mu + m^2)\psi = 0
-\end{equation}
-
-Et sodales taciti ornare congue auctor molestie. Proin amet tempus neque; nisl sit elit maecenas pellentesque. Pharetra nostra morbi nunc vestibulum habitant inceptos? Turpis porttitor id mattis cubilia gravida eros eget platea. Etiam vitae mus mus auctor diam mattis taciti condimentum. Porta maximus egestas dolor purus neque quisque laoreet quis. Posuere non elit felis hendrerit sed. Bibendum varius torquent ornare, iaculis diam gravida potenti pellentesque.
-
-\begin{figure}[H] 
-\center 
-\includegraphics[height=6cm]{nftmc-1024x631-1.jpg} 
-\caption{Example caption for the figure} 
-\end{figure}
-';
-
         global $or_session;
         if (isset($or_session)){
             $or_session->setup_folder();
@@ -71,7 +55,7 @@ Et sodales taciti ornare congue auctor molestie. Proin amet tempus neque; nisl s
         <input class="hidden" value= "' . $folder . '" name="session_id"/>
         <input class="hidden" value= "' . $hash_id . '" name="hash_id"/>
         <div class="latex-half-div">   
-                    <textarea id="textArea" spellcheck="false" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '">' . $abstract_content . '</textarea>
+                    <textarea id="textArea" spellcheck="false" class="text-like-elementor test-style" name="textArea" rows="20" cols="50" placeholder="' . $item['latex_placeholder'] . '"></textarea>
                     <pre id="latexResult" class="pre-style"><code class="language-latex code-style" id="display-latex-code">
 \begin{equation}
 \int = abc
