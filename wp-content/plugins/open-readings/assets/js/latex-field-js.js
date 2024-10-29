@@ -1,10 +1,10 @@
 var textarea = document.getElementById("textArea");
 var textDisplay = document.getElementById("latexResult");
 var charCount = document.getElementById("charCount");
-const latexButton = document.getElementById("latexButton");
 const loader = document.getElementById('loader');
 var fileButton = document.getElementById('fileButton');
 const errorMessage = document.getElementById('errorMessage');
+let latexButton;
 
 
 textarea.addEventListener("input", function () { countChar(); });
@@ -92,9 +92,10 @@ function afterWait($exportReturn) {
 }
 
 
-
+function addLatexEventListener(){
+    latexButton = document.getElementById("latexButton");
 latexButton.addEventListener("click", async function () {
-    const form = this.closest('form');
+    const form = document.getElementsByClassName('elementor-form')[0];
     const inputs = form.querySelectorAll('input, textarea');
     inputs.forEach(input => {
         if (input.type !== 'submit' && input.type !== 'button' && input.type !== 'file') {
@@ -161,24 +162,45 @@ latexButton.addEventListener("click", async function () {
         errorMessage.innerHTML = 'Please fill in all the required fields. make sure you have specified the corresponding author email correctly.';
     }
 });
+}
 
 
 // Displays latex instruction div only when second registration form page is active
 document.addEventListener('DOMContentLoaded', function () {
     const targetElement = document.querySelector('.elementor-field-group-presentation');
     const container = document.getElementById("instructions-container");
+    const abstractDiv = document.getElementById("abstract-div");
+    const divToMove = document.getElementById("abstract-display");
+    const latexDiv = document.getElementById("latex-div");
+    if (divToMove && latexDiv) {
+        latexDiv.appendChild(divToMove);
+        addLatexEventListener();
+    } else {
+        console.warn("One or both of the elements do not exist.");
+    }
 
     if (targetElement) {
         // Create a new MutationObserver
         const observer = new MutationObserver((mutationsList) => {
+            
             mutationsList.forEach((mutation) => {
                 if (mutation.attributeName === 'class') {
                     if (targetElement.classList.contains('elementor-hidden')) {
                         // Add actions when the element is hidden
                         container.style.display = 'none';
+                        // abstractDiv.style.display = 'none';
+                        abstractDiv.classList.add('hidden');
+                        window.scrollTo(0, window.scrollY - 1000);
                     } else {
                         // Add actions when the element is visible
                         container.style.display = 'block';
+                        abstractDiv.classList.remove('hidden');
+                        window.dispatchEvent(new Event('resize'));
+                        window.scrollTo(0, window.scrollY + 1); // Scroll down by 1 pixel
+                        window.scrollTo(0, window.scrollY - 1); // Scroll up by 1 pixel
+                        setIframeHeight();
+
+                        // abstractDiv.style.display = 'flex';
                     }
                 }
             });
