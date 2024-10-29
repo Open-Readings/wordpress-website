@@ -37,6 +37,8 @@ function setIframeHeight() {
 
     iframe.style.height = height + 'px'; // Set the height of the iframe
     countChar();
+    iframe.setAttribute("src", dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+    console.log(11);
 }
 
 window.addEventListener('load', setIframeHeight);
@@ -172,6 +174,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const abstractDiv = document.getElementById("abstract-div");
     const divToMove = document.getElementById("abstract-display");
     const latexDiv = document.getElementById("latex-div");
+    const form = document.getElementsByClassName('elementor-form')[0];
+    if (form) {
+        form.addEventListener('keydown', function (event) {
+            // Check if 'Enter' key is pressed and the active element is not a submit button
+            if (event.key === 'Enter' && document.activeElement.type !== 'submit') {
+                event.preventDefault();  // Prevent default form navigation
+                event.stopImmediatePropagation(); // Prevent other event listeners from executing
+                const focusableElements = Array.from(
+                    form.querySelectorAll('input, select, textarea')
+                ).filter(el => !el.disabled && el.type !== 'hidden' && el.type !== 'submit');
+
+                const currentIndex = focusableElements.indexOf(document.activeElement);
+                const nextElement = focusableElements[currentIndex + 1];
+
+                if (nextElement) {
+                    nextElement.focus(); // Move to the next form field
+                }
+            }
+        }, true);
+    }
+
     if (divToMove && latexDiv) {
         latexDiv.appendChild(divToMove);
         addLatexEventListener();
