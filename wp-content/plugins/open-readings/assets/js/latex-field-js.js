@@ -32,13 +32,15 @@ function textScroll(){
 
 function setIframeHeight() {
     const iframe = document.getElementById('abstract');
-    const width = iframe.offsetWidth; // Get the current width of the iframe
-    const height = width * 1.41; // Calculate the height based on the width and aspect ratio
-
-    iframe.style.height = height + 'px'; // Set the height of the iframe
+    
     countChar();
     iframe.setAttribute("src", dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
-    console.log(11);
+    
+    iframe.onload = function() {
+        const width = iframe.offsetWidth; // Get the current width of the iframe
+        const height = width * 1.41; // Calculate the height based on the aspect ratio (A4 standard, 1:1.41)
+        iframe.style.height = height + 'px'; // Set the height of the iframe
+    };
 }
 
 window.addEventListener('load', setIframeHeight);
