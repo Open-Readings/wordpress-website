@@ -46,6 +46,57 @@ function setIframeHeight() {
 window.addEventListener('load', setIframeHeight);
 window.addEventListener('resize', setIframeHeight);
 
+let isFormDirty = false;
+
+// Set to true whenever the user modifies the form
+document.querySelectorAll('input, textarea').forEach((input) => {
+    input.addEventListener('input', () => {
+        isFormDirty = true;
+    });
+});
+
+window.addEventListener('beforeunload', warnOnExit);
+
+function warnOnExit(){
+    
+    if (isFormDirty == true){
+        event.returnValue = 'Are you sure you want to leave? Changes you made may not be saved.';
+    }
+}
+
+document.querySelector('.elementor-form').addEventListener('submit', function () {
+
+        window.removeEventListener('beforeunload', warnOnExit); // Remove warning if URL matches
+});
+
+const observer1 = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            // Check if the target element has appeared
+            const targetDiv = document.querySelector('.elementor-message-danger'); // Change this to your class
+            if (targetDiv) {
+                handleDivAppearance();
+                // Optionally, you can disconnect the observer if you only want to detect it once
+                break; // Exit the loop once the element is found
+            }
+            
+        }
+    }
+});
+
+const config = { childList: true, subtree: true };
+
+// Start observing the document body (or a specific parent element)
+observer1.observe(document.body, config);
+
+// If you want to also check if the element already exists when the script runs
+
+
+function handleDivAppearance(){
+    window.addEventListener('beforeunload', warnOnExit);
+    console.log('message YEEEES');
+}
+
 
 function afterWait($exportReturn) {
     latexButton.disabled = false;
