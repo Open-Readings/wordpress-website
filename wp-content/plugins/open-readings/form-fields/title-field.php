@@ -88,7 +88,9 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				html = html.replace('&nbsp;</sub>', '</sub>&nbsp;');
 				html = html.replace(' </sub>', '</sub> ');
 				document.getElementById("presentation_title_div").innerHTML = html;
-				document.getElementById(field_id).value = String(html).replace('&nbsp;', ' ');
+				document.getElementById(field_id).value = String(html).replace(/&nbsp;/g, ' ');
+				console.log(html);
+				console.log(html.replace('\&nbsp;', ' '));
 
 				//trim if more than 500 chars
 				if (html.length > 250) {
@@ -110,7 +112,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 						}
 						this.data_orig = this.innerHTML;
 					};
-					tags[i].onblur = function () {
+					tags[i].oninput = function () {
 						if (this.innerHTML != this.data_orig) {
 							<?php if ($item['allow_script']): ?>
 								// console.log(this.innerHTML);
@@ -122,6 +124,13 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 
 							<?php endif; ?>
 							delete this.data_orig;
+							const range = document.createRange();
+							range.selectNodeContents(this);
+							range.collapse(false);
+
+							const selection = window.getSelection();
+							selection.removeAllRanges();
+							selection.addRange(range);
 						}
 						if (this.innerHTML == "") {
 							this.innerHTML = default_value;
