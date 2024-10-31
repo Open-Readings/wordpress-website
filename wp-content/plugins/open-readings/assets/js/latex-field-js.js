@@ -94,7 +94,6 @@ observer1.observe(document.body, config);
 
 function handleDivAppearance(){
     window.addEventListener('beforeunload', warnOnExit);
-    console.log('message YEEEES');
 }
 
 
