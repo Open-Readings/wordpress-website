@@ -82,9 +82,9 @@ class ORCheckForm
 
         $this->export_exact_field_settings = [
             ['country', 'Country', $country_list],
-            ['research_area', 'Research area', $research_area_list],
-            ['person_title', 'Person title', ["", "Dr.", "Student (PhD)", "Student (Master's)", "Student (Bachelor)"]],
-            ['presentation_type', 'Presentation type', ["Oral", "Poster"]],
+            ['research_area', 'Research Area', $research_area_list],
+            ['person_title', 'Study Level', ["Dr.", "Student (PhD)", "Student (Masters)", "Student (Bachelor)", "Other"]],
+            ['presentation_type', 'Preferred Presentation Type', ["Oral", "Poster"]],
         ];
 
         $this->registration_exact_field_settings = [
@@ -93,21 +93,21 @@ class ORCheckForm
         ];
 
         $this->export_regex_settings = [
-            ['first_name', 'First name', 100, '/[^\\p{L}\-. ]/u'],
-            ['last_name', 'Last name', 100, '/[^\\p{L}\-. ]/u'],
+            ['first_name', 'First Name', 100, '/[^\p{L}\p{M}\s\'\-.]/u'],
+            ['last_name', 'Last Name', 100, '/[^\p{L}\p{M}\s\'\-.]/u'],
             ['email', 'Email', 300, ''],
-            ['institution', 'Academic institution', 500, '/[^\\p{L}()\-,.0-9 ]/u'],
-            ['department', 'Department', 500, '/[^\\p{L}()\-,.0-9 ]/u'],
-            ['title', 'Presentation title', 500, ''],
-            ['affiliations', 'Affiliations list', 500, ''],
-            ['references', 'Abstract references', 1000, ''],
+            ['institution', 'Academic Institution', 500, ''],
+            ['department', 'Department', 500, ''],
+            ['title', 'Presentation Title', 500, '/[&]/u'],
+            ['affiliations', 'Affiliations List', 500, ''],
+            ['references', 'References (optional)', 1000, ''],
             ['abstract', 'Abstract content', 3000, ''],
-            ['acknowledgement', 'Acknowledgement', 1000, ''],
+            ['acknowledgement', 'Acknowledgement (optional)', 1000, ''],
         ];
 
         $this->author_field_settings = [
-            [0, 'Author name', 200, '/[^\\p{L} ]/u'],
-            [1, 'Authors list affiliation number ', 10, '/[^0-9, ]+$/']
+            [0, 'Authors List: author name', 200, '/[^\p{L}\p{M}\s\'\-.]/u'],
+            [1, 'Authors List: affiliation reference number ', 10, '/[^0-9, ]+$/']
         ];
 
     }
@@ -116,29 +116,27 @@ class ORCheckForm
         foreach ($field_check_settings as $item) {
             if (is_array($registration_data->{$item[0]})) {
                 foreach ($registration_data->{$item[0]} as $field) {
+                    $field = stripslashes($field);
                     if (mb_strlen($field) > $item[2]) {
-                        return $item[1] . ": field input too long";
+                        return $item[1] . " field input too long. Please try to shorten it.";
                     }
                     if ($item[3] != '') if (preg_match($item[3], $field)) {
-                        return $item[1] . " field: special characters not allowed in field.";
+                        return $item[1] . " field. Special characters are not allowed in this field."; # NEEDS FIXING
                     }
                     if (trim($field) == '' && $item[0] != 'references') {
-                        return $item[1] . ": detected empty field.";
+                        return $item[1] . " field can't be left empty.";
                     }
                 }
             } else {
-                if ($item[0] == 'abstract')
-                    $field = stripslashes($registration_data->{$item[0]});
-                else
-                    $field = $registration_data->{$item[0]};
+                $field = stripslashes($registration_data->{$item[0]});
                 if (mb_strlen($field) - substr_count($field, "\n") > $item[2]) {
-                    return $item[1] . ": field input too long";
+                    return $item[1] . " field input too long. Please try to shorten it.";
                 }
                 if ($item[3] != '') if (preg_match($item[3], $field)) {
-                    return $item[1] . " field: special characters not allowed in field.";
+                    return $item[1] . " field. Special characters are not allowed in this field.";
                 }
                 if (trim($field) == '' && $item[0] != 'references' && $item[0] != 'acknowledgement') {
-                    return $item[1] . ": detected empty field.";
+                    return $item[1] . " field can't be left empty.";
                 }
             }
         }
@@ -150,26 +148,26 @@ class ORCheckForm
         foreach ($registration_data->authors as $author){
             if(count($author) == 3){
                 $contact_exists = true;
-                if (filter_var($author[2], FILTER_VALIDATE_EMAIL) == false)
-                    return "Corresponding author email not valid";
+                if (filter_var(stripslashes($author[2]), FILTER_VALIDATE_EMAIL) == false)
+                    return "Corresponding author email is not valid. Check if you entered it correctly.";
             }
             foreach ($field_check_authors as $item){
                 $field_id = $item[0];
-                $field_value = $author[$field_id];
+                $field_value = stripslashes($author[$field_id]);
                 if (mb_strlen($field_value) > $item[2]) {
-                    return $item[1] . ": field input too long";
+                    return $item[1] . " field input too long. Please try to shorten it.";
                 }
                 if ($item[3] != '') if (preg_match($item[3], $field_value)) {
-                    return $item[1] . " field: special characters not allowed in field.";
+                    return $item[1] . " field. Special characters are not allowed in this field.";
                 }
                 if (trim($field_value) == '') {
-                    return $item[1] . ": detected empty field.";
+                    return $item[1] . " field can't be left empty.";
                 }
             }
         }
 
         if ($contact_exists == false)
-            return "Corresponding author email not set";
+            return "Please select the corresponding author and specify their email.";
 
         return true;
     }
@@ -180,7 +178,7 @@ class ORCheckForm
             $allowed_values = $item[2];
             $field_name = $item[1];
             if (!in_array($field_value, $allowed_values))
-                return $field_name . " field value is incorrect";
+                return $field_name . " field. Check if the field is filled correctly.";
         }
 
         return true;

@@ -34,7 +34,7 @@ class ORmailer
         $message = str_replace('[content]', $content, $template);
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: Open Readings 2024 <it@openreadings.eu>'
+            'From: Open Readings 2025 <it@openreadings.eu>'
         );
 
 
@@ -70,7 +70,7 @@ class ORmailer
     {
         $subject = '';
         if ($subject == '') {
-            $subject = 'Open Readings 2024 registration update';
+            $subject = 'Open Readings 2025 registration update';
         }
 
         $template = get_option('or_registration_email_update_template');

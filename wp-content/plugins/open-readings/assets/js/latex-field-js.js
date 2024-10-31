@@ -1,10 +1,10 @@
 var textarea = document.getElementById("textArea");
 var textDisplay = document.getElementById("latexResult");
 var charCount = document.getElementById("charCount");
-const latexButton = document.getElementById("latexButton");
 const loader = document.getElementById('loader');
 var fileButton = document.getElementById('fileButton');
 const errorMessage = document.getElementById('errorMessage');
+let latexButton;
 
 
 textarea.addEventListener("input", function () { countChar(); });
@@ -32,15 +32,70 @@ function textScroll(){
 
 function setIframeHeight() {
     const iframe = document.getElementById('abstract');
-    const width = iframe.offsetWidth; // Get the current width of the iframe
-    const height = width * 1.41; // Calculate the height based on the width and aspect ratio
-
-    iframe.style.height = height + 'px'; // Set the height of the iframe
+    
     countChar();
+    iframe.setAttribute("src", dirAjax.path + '/latex/temp/' + folderAjax.folder + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
+    
+    iframe.onload = function() {
+        const width = iframe.offsetWidth; // Get the current width of the iframe
+        const height = width * 1.41; // Calculate the height based on the aspect ratio (A4 standard, 1:1.41)
+        iframe.style.height = height + 'px'; // Set the height of the iframe
+    };
 }
 
 window.addEventListener('load', setIframeHeight);
 window.addEventListener('resize', setIframeHeight);
+
+let isFormDirty = false;
+
+// Set to true whenever the user modifies the form
+document.querySelectorAll('input, textarea').forEach((input) => {
+    input.addEventListener('input', () => {
+        isFormDirty = true;
+    });
+});
+
+window.addEventListener('beforeunload', warnOnExit);
+
+function warnOnExit(){
+    
+    if (isFormDirty == true){
+        event.returnValue = 'Are you sure you want to leave? Changes you made may not be saved.';
+    }
+}
+
+document.querySelector('.elementor-form').addEventListener('submit', function () {
+
+        window.removeEventListener('beforeunload', warnOnExit); // Remove warning if URL matches
+});
+
+const observer1 = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            // Check if the target element has appeared
+            const targetDiv = document.querySelector('.elementor-message-danger'); // Change this to your class
+            if (targetDiv) {
+                handleDivAppearance();
+                // Optionally, you can disconnect the observer if you only want to detect it once
+                break; // Exit the loop once the element is found
+            }
+            
+        }
+    }
+});
+
+const config = { childList: true, subtree: true };
+
+// Start observing the document body (or a specific parent element)
+observer1.observe(document.body, config);
+
+// If you want to also check if the element already exists when the script runs
+
+
+function handleDivAppearance(){
+    window.addEventListener('beforeunload', warnOnExit);
+    console.log('message YEEEES');
+}
 
 
 function afterWait($exportReturn) {
@@ -92,9 +147,10 @@ function afterWait($exportReturn) {
 }
 
 
-
+function addLatexEventListener(){
+    latexButton = document.getElementById("latexButton");
 latexButton.addEventListener("click", async function () {
-    const form = this.closest('form');
+    const form = document.getElementsByClassName('elementor-form')[0];
     const inputs = form.querySelectorAll('input, textarea');
     inputs.forEach(input => {
         if (input.type !== 'submit' && input.type !== 'button' && input.type !== 'file') {
@@ -159,5 +215,76 @@ latexButton.addEventListener("click", async function () {
         }
 
         errorMessage.innerHTML = 'Please fill in all the required fields. make sure you have specified the corresponding author email correctly.';
+    }
+});
+}
+
+
+// Displays latex instruction div only when second registration form page is active
+document.addEventListener('DOMContentLoaded', function () {
+    const targetElement = document.querySelector('.elementor-field-group-presentation');
+    const container = document.getElementById("instructions-container");
+    const abstractDiv = document.getElementById("abstract-div");
+    const divToMove = document.getElementById("abstract-display");
+    const latexDiv = document.getElementById("latex-div");
+    const form = document.getElementsByClassName('elementor-form')[0];
+    if (form) {
+        form.addEventListener('keydown', function (event) {
+            // Check if 'Enter' key is pressed and the active element is not a submit button
+            if (event.key === 'Enter' && document.activeElement.type !== 'submit' && document.activeElement.type !== 'textarea') {
+                event.preventDefault();  // Prevent default form navigation
+                event.stopImmediatePropagation(); // Prevent other event listeners from executing
+                const focusableElements = Array.from(
+                    form.querySelectorAll('input, select')
+                ).filter(el => !el.disabled && el.type !== 'hidden' && el.type !== 'submit');
+
+                const currentIndex = focusableElements.indexOf(document.activeElement);
+                const nextElement = focusableElements[currentIndex + 1];
+
+                if (nextElement) {
+                    nextElement.focus(); // Move to the next form field
+                }
+            }
+        }, true);
+    }
+
+    if (divToMove && latexDiv) {
+        latexDiv.appendChild(divToMove);
+        addLatexEventListener();
+    } else {
+        console.warn("One or both of the elements do not exist.");
+    }
+
+    if (targetElement) {
+        // Create a new MutationObserver
+        const observer = new MutationObserver((mutationsList) => {
+            
+            mutationsList.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    if (targetElement.classList.contains('elementor-hidden')) {
+                        // Add actions when the element is hidden
+                        container.style.display = 'none';
+                        // abstractDiv.style.display = 'none';
+                        abstractDiv.classList.add('hidden');
+                        window.scrollTo(0, window.scrollY - 1000);
+                    } else {
+                        // Add actions when the element is visible
+                        container.style.display = 'block';
+                        abstractDiv.classList.remove('hidden');
+                        window.dispatchEvent(new Event('resize'));
+                        window.scrollTo(0, window.scrollY + 1); // Scroll down by 1 pixel
+                        window.scrollTo(0, window.scrollY - 1); // Scroll up by 1 pixel
+                        setIframeHeight();
+
+                        // abstractDiv.style.display = 'flex';
+                    }
+                }
+            });
+        });
+        
+        // Start observing the target element for class attribute changes
+        observer.observe(targetElement, { attributes: true });
+    } else {
+        console.warn('Element with class "elementor-field-group-presentation" not found.');
     }
 });

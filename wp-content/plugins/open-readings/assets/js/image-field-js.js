@@ -2,11 +2,13 @@ var fileButton1 = document.getElementById('fileButton');
 const uploadLoader = document.getElementById("uploadLoader");
 var latexButton1 = document.getElementById('latexButton');
 var imageMessage = document.getElementById('image-names');
+var fileInputField = document.getElementById('fileInput');
 let imageCodeElements;
 
 function uploadWait() {
     fileButton1.disabled = false;
     latexButton1.disabled = false;
+    fileInputField.disabled = false;
     uploadLoader.style.display = "none";
     var isImage = 1;
     Array.from(fileInput.files).forEach(file => {
@@ -46,12 +48,39 @@ function uploadWait() {
 
 
 
-fileButton1.addEventListener('click', function (event) {
+// fileButton1.addEventListener('click', function (event) {
+//     event.preventDefault();
+//     fileButton1.disabled = true;
+//     latexButton1.disabled = true;
+//     uploadLoader.style.display = "block";
+//     const form = this.closest('form');
+//     var fileInput = document.getElementById('fileInput');
+//     var formFile = new FormData();
+
+//     for (var i = 0; i < fileInput.files.length; i++) {
+//         formFile.append('fileToUpload' + (i + 1), fileInput.files[i]);
+//     }
+//     fetch(dirAjax.path + "/latex/upload.php", {
+//         method: "POST",
+//         body: formFile
+//     })
+//         .then(response => response.text())
+//         .then(data => {
+//             // Handle the response data as needed
+//         })
+//         .catch(error => {
+//         });
+
+    
+//     setTimeout(() => { uploadWait(); }, 4200);
+// });
+
+fileInputField.addEventListener('change', function(event){
     event.preventDefault();
     fileButton1.disabled = true;
     latexButton1.disabled = true;
+    fileInputField.disabled = true;
     uploadLoader.style.display = "block";
-    const form = this.closest('form');
     var fileInput = document.getElementById('fileInput');
     var formFile = new FormData();
 
@@ -64,15 +93,16 @@ fileButton1.addEventListener('click', function (event) {
     })
         .then(response => response.text())
         .then(data => {
-            // Handle the response data as needed
+            uploadWait();
         })
         .catch(error => {
+            uploadWait();
         });
 
     
-    setTimeout(() => { uploadWait(); }, 4200);
-});
+    // setTimeout(() => { uploadWait(); }, 4200);
 
+});
 
 
 
