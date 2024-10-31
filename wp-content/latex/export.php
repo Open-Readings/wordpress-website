@@ -37,13 +37,39 @@ class ORLatexExport {
         $this->registration_data = $or_get_fields->get_form();
     }
 
+    public function process_field($field){
+        $field = stripslashes($field);
+        $replacements = array(
+            // Step 1: Temporarily replace `{` and `}` with placeholders
+            '{' => '?:OPEN:?',
+            '}' => '?:CLOSE:?',
+            
+            // Step 2: Other special character replacements
+            '\\' => '\textbackslash{}',
+            '#' => '\#{}',
+            '$' => '\${}',
+            '%' => '\%{}',
+            '^' => '\^{}',
+            '&' => '\&{}',
+            '_' => '\_{}',
+            '~' => '\~{}',
+            
+            // Step 3: Replace placeholders with safer LaTeX-escaped braces
+            '?:OPEN:?' => '\{{}',
+            '?:CLOSE:?' => '\}{}',
+        );
+
+        $field = str_replace(array_keys($replacements), array_values($replacements), $field);
+        return $field;
+    }
+
     public function generate_authors(){
         $authors_tex = '';
         foreach ($this->registration_data->authors as $i => $author) {
             if (count($author) == 3)           
-                $authors_tex .= '\underline{' . $author[0] . '}$^{' . $author[1] . '}$';
+                $authors_tex .= '\underline{' . $this->process_field($author[0]) . '}$^{' . $author[1] . '}$';
             else
-                $authors_tex .= $author[0] . '$^{' . $author[1] . '}$';
+                $authors_tex .= $this->process_field($author[0]) . '$^{' . $author[1] . '}$';
     
             if ($i+1 < count($this->registration_data->authors))
                 $authors_tex .= ', ';
@@ -54,14 +80,14 @@ class ORLatexExport {
     public function generate_affiliations(){
         $affiliations_tex = '';
         foreach ($this->registration_data->affiliations as $i => $affiliation) {
-            $affiliations_tex .= '\address{$^{' . $i+1 . '}$' . $affiliation . '}
+            $affiliations_tex .= '\address{$^{' . $i+1 . '}$' . $this->process_field($affiliation) . '}
         ';
         }
         foreach ($this->registration_data->authors as $author){
             if(count($author))
                 $contact_email = $author[2];
         }
-        $affiliations_tex .= '\rightaddress{' . $contact_email . '}';
+        $affiliations_tex .= '\rightaddress{' . $this->process_field($contact_email) . '}';
         return $affiliations_tex;
     }
 
@@ -72,7 +98,7 @@ class ORLatexExport {
             \begin{thebibliography}{}
             ';
             foreach ($_POST['references'] as $i => $ref) {
-                $references .= '\bibitem{' . $i+1 . '} ' . $ref . '
+                $references .= '\bibitem{' . $i+1 . '} ' . $this->process_field($ref) . '
                 ';
             }
             $references .= '\end{thebibliography}
@@ -88,11 +114,12 @@ class ORLatexExport {
         if(trim($this->registration_data->acknowledgement) == ''){
             $acknowledgement = '';
         } else {
+            $ack_content = $this->process_field($this->registration_data->acknowledgement);
             $acknowledgement = "\leavevmode\\newline
         
             {\\bfseries Acknowledgement} 
             
-            {$this->registration_data->acknowledgement}
+            {$ack_content}
             ";
         }
         
@@ -100,7 +127,7 @@ class ORLatexExport {
     }
 
     public function generate_title(){
-        $titleField = $this->registration_data->title;
+        $titleField = $this->process_field($this->registration_data->title);
         //$titleField = str_replace('"', '', $title);
 
         // Add missing </sup> tags

@@ -231,11 +231,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (form) {
         form.addEventListener('keydown', function (event) {
             // Check if 'Enter' key is pressed and the active element is not a submit button
-            if (event.key === 'Enter' && document.activeElement.type !== 'submit') {
+            if (event.key === 'Enter' && document.activeElement.type !== 'submit' && document.activeElement.type !== 'textarea') {
                 event.preventDefault();  // Prevent default form navigation
                 event.stopImmediatePropagation(); // Prevent other event listeners from executing
                 const focusableElements = Array.from(
-                    form.querySelectorAll('input, select, textarea')
+                    form.querySelectorAll('input, select')
                 ).filter(el => !el.disabled && el.type !== 'hidden' && el.type !== 'submit');
 
                 const currentIndex = focusableElements.indexOf(document.activeElement);
