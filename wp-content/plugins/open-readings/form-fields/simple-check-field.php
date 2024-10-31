@@ -92,9 +92,15 @@ class Elementor_Simple_Check_Field extends \ElementorPro\Modules\Forms\Fields\Fi
         ?>
         <div class="elementor-field-subgroup">
             <span class="elementor-field-option">
-                <input <?php $form->print_render_attribute_string('input' . $item_index); ?>>
-                <?php // PHPCS - the variables $label is safe.
+            <div style="display: flex; align-items: flex-start;">
+                <div>
+                    <input <?php $form->print_render_attribute_string('input' . $item_index); ?>>
+                </div>
+                <div style="margin-left: 8px;">
+                    <?php // PHPCS - the variables $label is safe.
                         echo $label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                </div>
+            </div>
             </span>
         </div>
         <?php

@@ -28,14 +28,9 @@ class Elementor_Authors_Field extends \ElementorPro\Modules\Forms\Fields\Field_B
         <div class="full">
 			<div id="authList">
 				<div>
-					<input type="text" class="author-width form-padding elementor-field" value="Example John Smith" name="name[]" placeholder="(e.g. John Smith)">
-					<input type="text" class="narrow form-padding elementor-field" name="aff_ref[]" value="1" placeholder="(e.g. 1,2)">
-					<label class="text-like-elementor elementor-field"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="1">
-				</div>
-				<div>
-					<input type="text" class="author-width form-padding elementor-field" value="Example Jack Smith" name="name[]" placeholder="(e.g. John Smith)">
-					<input type="text" class="narrow form-padding elementor-field" name="aff_ref[]" value="1, 2" placeholder="(e.g. 1,2)">
-					<label class="text-like-elementor elementor-field"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="2" checked><input id="email-author" style="display:inline;" value="jack.smith@example.com" type="text" name="email-author" placeholder="john.smith@example.edu">
+					<input type="text" class="author-width form-padding elementor-field" value="" name="name[]" placeholder="(e.g. John Smith)">
+					<input type="text" class="narrow form-padding elementor-field" name="aff_ref[]" value="" placeholder="(e.g. 1,2)">
+					<label class="text-like-elementor elementor-field"> Corresponding author </label> <input style="margin: 5px;" class="contact-author" type="radio" name="contact_author" value="1" checked><input id="email-author" class="form-padding elementor-field" style="display:inline;" value="" type="text" name="email-author" placeholder="john.smith@example.edu">
 				</div>
 			</div>
 			<button type="button" class="auth-add" >Add</button>

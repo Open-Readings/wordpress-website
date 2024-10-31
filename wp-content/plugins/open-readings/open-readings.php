@@ -314,13 +314,12 @@ global $RESEARCH_AREAS;
 $RESEARCH_AREAS = [
   1 => 'Astrophysics and Astronomy',
   2 => 'Chemistry and Chemical Physics',
-  3 => 'Nanomaterials and Nanotechnology',
-  4 => 'Materials Science and Modern Technologies',
-  5 => 'Laser Physics and Optical Technologies',
-  6 => 'Theoretical Physics',
-  7 => 'Spectroscopy and Imaging',
-  8 => 'Biochemistry, Biophysics, and Biotechnology',
-  9 => 'Biology, Genetics and Biomedical Sciences'
+  3 => 'Material Science and Nanotechnology',
+  4 => 'Laser Physics and Optical Technologies',
+  5 => 'Theoretical Physics',
+  6 => 'Spectroscopy and Imaging',
+  7 => 'Biochemistry, Biophysics, and Biotechnology',
+  8 => 'Biology, Genetics and Biomedical Sciences'
 ];
 global $STATUS_CODES;
 $STATUS_CODES = [
