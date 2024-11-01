@@ -5,12 +5,29 @@ const loader = document.getElementById('loader');
 var fileButton = document.getElementById('fileButton');
 const errorMessage = document.getElementById('errorMessage');
 let latexButton;
-
+let timeout;
 
 textarea.addEventListener("input", function () { countChar(); });
 textarea.addEventListener('scroll', function() { textScroll(); });
 
 function countChar() {
+    const cursorPosition = textarea.selectionStart; // Save current cursor position
+    const beforeLength = textarea.value.length;     // Save initial length of the content
+
+    // Perform the replacement
+    textarea.value = textarea.value.replace(/(?<!\\)%/g, "\\%");
+
+    const afterLength = textarea.value.length; // Check new content length
+
+    // Adjust cursor position if the content length changed (due to replacements)
+    if (afterLength > beforeLength) {
+        textarea.selectionStart = cursorPosition + (afterLength - beforeLength);
+        textarea.selectionEnd = textarea.selectionStart; // Place cursor at adjusted position
+    } else {
+        textarea.selectionStart = cursorPosition;
+        textarea.selectionEnd = cursorPosition;
+    }
+    
     var text = textarea.value;
     var count = text.length;
 
@@ -23,6 +40,7 @@ function countChar() {
     }
 
     charCount.innerText = count;
+    
     textScroll();
 }
 
