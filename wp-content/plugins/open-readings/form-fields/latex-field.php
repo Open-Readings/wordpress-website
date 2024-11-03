@@ -62,14 +62,15 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
 \end{equation}
             </code></pre>
                     <p class="text-like-elementor margin-absolute">Character Count: <span id="charCount">0</span></p>
+                    <div class="flex-div">
+                        <button type="button" class="form-padding" id="latexButton">Generate abstract </button>
+                        <div class="loader" id="loader"></div>
+                    </div>
                     
                    
         </div>
         <div id="abstract-display">
-            <div class="flex-div">
-                <button type="button" class="form-padding" id="latexButton">Generate abstract </button>
-                <div class="loader" id="loader"></div>
-            </div>
+            
             <p id="errorMessage" style="display: none; color: red;"></p>
             <pre class="latex-error" id="logContent"></pre>
             <iframe class="pdf-frame" id="abstract" src="' . content_url() . '/latex/temp/' . $folder . '/abstract.pdf#toolbar=0' . '"></iframe>
