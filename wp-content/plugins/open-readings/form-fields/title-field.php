@@ -81,14 +81,18 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				//allowed_regex = allowed_regex.replace(/[\^_&]/g, '');
 				var sup_regex = new RegExp("\\^([" + allowed_sub_regex + "]+)", "g");
 				var sub_regex = new RegExp("_([" + allowed_sub_regex + "]+)", "g");
-				html = html.replace(sup_regex, '<sup>$1</sup>').replace(sub_regex, '<sub>$1</sub>');
+				html = html.replace(sup_regex, '<sup>$1</sup>&nbsp;').replace(sub_regex, '<sub>$1</sub>&nbsp;');
 
-				html = html.replace('&nbsp;</sup>', '</sup>&nbsp;');
-				html = html.replace(' </sup>', '</sup> ');
-				html = html.replace('&nbsp;</sub>', '</sub>&nbsp;');
-				html = html.replace(' </sub>', '</sub> ');
+				html = html.replace('&nbsp;</sup>', '</sup>');
+				html = html.replace('</sup>&nbsp;', '</sup>');
+				html = html.replace('&nbsp;</sub>', '</sub>');
+				html = html.replace('</sub>&nbsp;', '</sub>');
+				html = html.replace('</sup>', '</sup>&nbsp;');
+				html = html.replace('</sub>', '</sub>&nbsp;');
+
+				
 				document.getElementById("presentation_title_div").innerHTML = html;
-				document.getElementById(field_id).value = String(html).replace(/&nbsp;/g, ' ');
+				document.getElementById(field_id).value = String(html).replace(/\u200B/g, '').replace(/&nbsp;/g, ' ');
 
 				//trim if more than 500 chars
 				if (html.length > 250) {
@@ -110,32 +114,35 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 						}
 						this.data_orig = this.innerHTML;
 					};
-					tags[i].oninput = function () {
+					tags[i].onkeydown = function (event) {
 						if (this.innerHTML != this.data_orig) {
-							<?php if ($item['allow_script']): ?>
-								// console.log(this.innerHTML);
-								trim_title(this.innerHTML);
+							if (event.key === ' ' || event.key === '^' || event.key === '_'){
+								<?php if ($item['allow_script']): ?>
+									// console.log(this.innerHTML);
+									trim_title(this.innerHTML);
+								
+								<?php else: ?>
+									var field_id = "<?= $field_id ?>";
+									document.getElementById(field_id).value = this.innerHTML;
 
-							<?php else: ?>
-								var field_id = "<?= $field_id ?>";
-								document.getElementById(field_id).value = this.innerHTML;
+								<?php endif; ?>
+								delete this.data_orig;
+								const range = document.createRange();
+								range.selectNodeContents(this);
+								range.collapse(false);
 
-							<?php endif; ?>
-							delete this.data_orig;
-							const range = document.createRange();
-							range.selectNodeContents(this);
-							range.collapse(false);
-
-							const selection = window.getSelection();
-							selection.removeAllRanges();
-							selection.addRange(range);
+								const selection = window.getSelection();
+								selection.removeAllRanges();
+								selection.addRange(range);
+							}
 						}
 					}
 					tags[i].onblur = function(){
 						if (this.innerHTML == "") {
 							this.innerHTML = default_value;
+						} else {
+							trim_title(this.innerHTML);
 						}
-
 					}
 				};
 			}
