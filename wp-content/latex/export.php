@@ -117,7 +117,7 @@ class ORLatexExport {
             $ack_content = $this->process_field($this->registration_data->acknowledgement);
             $acknowledgement = "\leavevmode\\newline
         
-            {\\bfseries Acknowledgement} 
+            {\\bfseries Acknowledgements} 
             
             {$ack_content}
             ";

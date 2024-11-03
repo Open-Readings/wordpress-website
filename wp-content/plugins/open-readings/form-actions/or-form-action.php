@@ -86,6 +86,7 @@ use OpenReadings\Registration\RegistrationData;
         }
         
         $ajax_handler->add_success_message('Registration was successful, please check your email for confirmation.');
+        $ajax_handler->add_response_data('registration_success', 'Successful');
 
     }
 

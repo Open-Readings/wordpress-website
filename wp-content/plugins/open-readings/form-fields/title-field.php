@@ -89,8 +89,6 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				html = html.replace(' </sub>', '</sub> ');
 				document.getElementById("presentation_title_div").innerHTML = html;
 				document.getElementById(field_id).value = String(html).replace(/&nbsp;/g, ' ');
-				console.log(html);
-				console.log(html.replace('\&nbsp;', ' '));
 
 				//trim if more than 500 chars
 				if (html.length > 250) {
@@ -132,9 +130,12 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 							selection.removeAllRanges();
 							selection.addRange(range);
 						}
+					}
+					tags[i].onblur = function(){
 						if (this.innerHTML == "") {
 							this.innerHTML = default_value;
 						}
+
 					}
 				};
 			}
