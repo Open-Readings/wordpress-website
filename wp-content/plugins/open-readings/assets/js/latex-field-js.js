@@ -82,37 +82,14 @@ function warnOnExit(){
     }
 }
 
-document.querySelector('.elementor-form').addEventListener('submit', function () {
-
-        window.removeEventListener('beforeunload', warnOnExit); // Remove warning if URL matches
-});
-
-const observer1 = new MutationObserver((mutationsList) => {
-    for (const mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-            // Check if the target element has appeared
-            const targetDiv = document.querySelector('.elementor-message-danger'); // Change this to your class
-            if (targetDiv) {
-                handleDivAppearance();
-                // Optionally, you can disconnect the observer if you only want to detect it once
-                break; // Exit the loop once the element is found
-            }
-            
+jQuery(function($) {
+    $( document ).on('submit_success', function(e, data) {
+        if (data.data.registration_success) {
+            window.removeEventListener('beforeunload', warnOnExit);
+            window.location.href = 'https://www.openreadings.eu/registration-success/';
         }
-    }
-});
-
-const config = { childList: true, subtree: true };
-
-// Start observing the document body (or a specific parent element)
-observer1.observe(document.body, config);
-
-// If you want to also check if the element already exists when the script runs
-
-
-function handleDivAppearance(){
-    window.addEventListener('beforeunload', warnOnExit);
-}
+    });
+  });
 
 
 function afterWait($exportReturn) {
