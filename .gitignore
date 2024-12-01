@@ -31,10 +31,6 @@ wp-config.php
 # Example themes
 /wp-content/themes/twenty*/
 
-
-# Example plugin
-/wp-content/plugins/hello.php
-
 # Uploads
 /wp-content/uploads/
 
@@ -55,14 +51,13 @@ wp-config.php
 # Note: If you wish to whitelist plugins,
 # uncomment the next line
 
+# Ignore everything in the plugins folder
 /wp-content/plugins/*
-/wp-content/plugins/
-wp-content/plugins/*
+
+# Allow the "open-readings" plugin and its subdirectories
 !/wp-content/plugins/open-readings/
 !/wp-content/plugins/open-readings/**
-!/wp-content/plugins/open-readings/*
-!/wp-content/plugins/open-readings/evaluation/
-!/wp-content/plugins/open-readings/assets/
+
 #ignore composer:
 /wp-content/plugins/open-readings/vendor/
 /wp-content/plugins/open-readings/composer.phar
@@ -78,7 +73,5 @@ wp-content/plugins/*
 20230927_openreadings2024_603d5937a826f9d21987_20230927161505_installer-backup.php
 local-xdebuginfo.php
 
-wp-content1/*
-wp-content/plugin/*
 
 /wp-content/ql-cache/**
