@@ -5,7 +5,6 @@ use OpenReadings\Registration\PersonData;
 use OpenReadings\Registration\PresentationData;
 use OpenReadings\Registration\RegistrationData;
 
-return;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
     return;
@@ -16,44 +15,66 @@ $ORregistration = new OpenReadingsRegistration();
 $registration_data = $ORregistration->get($id);
 
 
-$person_data_fields = [
-    ['form-field-person_title', 'person_title'],
-    ['form-field-firstname', 'first_name'],
-    ['form-field-lastname', 'last_name'],
-    ['form-field-email', 'email'],
-    ['form-field-repeat_email', 'email'],
-    ['form-field-country', 'country'],
-    ['form-field-institution', 'institution'],
-    ['form-field-department', 'department'],
-    ['form-field-research_area', 'research_area'],
-    ['form-field-abstract_title', 'title'],
-];
-
-$fields_group_checkbox = [
-    ['form-field-visa', 'needs_visa'],
-    ['form-field-privacy', 'privacy'],
-    ['form-field-email_agree', 'agrees_to_email']
-];
-
-
-$abstract_content = $registration_data->abstract;
-$abstract_content = str_replace('\\\\', '\\', $abstract_content);
-
-$title = $registration_data->title;
-$title = str_replace('\\\\', '\\', $title);
 ?>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log(1111);
+    
+    const personTitle = <?= json_encode($registration_data->person_title) ?>;
+    const firstName = <?= json_encode($registration_data->first_name) ?>;
+    const lastName = <?= json_encode($registration_data->last_name) ?>;
+    const email = <?= json_encode($registration_data->email) ?>;
+    const country = <?= json_encode($registration_data->country) ?>;
+    const institution = <?= json_encode($registration_data->institution) ?>;
+    const department = <?= json_encode($registration_data->department) ?>;
+    const researchArea = <?= json_encode($registration_data->research_area) ?>;
+    const presentationType = <?= json_encode($registration_data->presentation_type) ?>;
+    const presentationTitle = <?= json_encode($registration_data->title) ?>;
+    const affiliations = <?= json_encode($registration_data->affiliations) ?>;
+    const authors = <?= json_encode($registration_data->authors) ?>;
+    const references = <?= json_encode($registration_data->references) ?>;
+    const acknowledgements = <?= json_encode($registration_data->acknowledgement) ?>;
+    const abstractContent = <?= json_encode(stripslashes($registration_data->abstract), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
+    const needsVisa = <?= json_encode($registration_data->needs_visa) ?>;
+    const privacy = <?= json_encode($registration_data->privacy) ?>;
+    const agreesToEmail = <?= json_encode($registration_data->agrees_to_email) ?>;
 
-        document.getElementById('presentation_title_div').innerHTML = ' <?= str_replace('"', '', json_encode($title)) ?>';
-        document.getElementById('textArea').value = <?= json_encode($abstract_content, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
-        <?php
-        foreach ($person_data_fields as $field) {
-            ?>
-            document.getElementById('<?= $field[0] ?>').value = '<?= $registration_data->{$field[1]} ?>';
-            <?php
-        } ?>
+    const personFields = [
+        ['form-field-person_title', personTitle],
+        ['form-field-firstname', firstName],
+        ['form-field-lastname', lastName],
+        ['form-field-email', email],
+        ['form-field-repeat_email', email],
+        ['form-field-country', country],
+        ['form-field-institution', institution],
+        ['form-field-department', department],
+        ['form-field-research-area', researchArea],
+        ['form-field-abstract-title', presentationTitle],
+        ['form-field-acknowledgements', acknowledgements],
+        ['textArea', abstractContent],
+        ['form-field-needs-visa', needsVisa],
+        ['form-field-privacy', privacy],
+        ['form-field-agrees-to-email', agreesToEmail]
+    ];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('personTitle', personTitle, '\nfirstName', firstName, '\nlastName', lastName, '\nemail', email, '\ncountry', country, '\ninstitution', institution, '\ndepartment', department, '\nresearchArea', researchArea, '\npresentationType', presentationType, '\npresentationTitle', presentationTitle, '\naffiliations', affiliations, '\nauthors', authors, '\nreferences', references, '\nacknowledgements', acknowledgements, '\nabstractContent', abstractContent, '\nneedsVisa', needsVisa, '\nprivacy', privacy, '\nagreesToEmail', agreesToEmail);
+    });
+    
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('presentation_title_div').innerHTML = presentationTitle;
+        
+        personFields.forEach(function(field) {
+                element = document.getElementById(field[0]);
+                if (element.type === 'checkbox')
+                    element.checked = field[1];
+                else
+                    element.value = field[1];
+        });
+
+        var presentation_radio = document.querySelector('input[name="form_fields[presentation_type]"][value="'+presentationType+'"]');
+        presentation_radio.checked = true;
 
 
         const affiliationList = document.getElementById("affList");
@@ -132,8 +153,7 @@ $title = str_replace('\\\\', '\\', $title);
         ?>
 
 
-        var presentation_radio = document.querySelector('input[name="form_fields[presentation_type]"][value="<?= $registration_data->presentation_type ?>"]');
-        presentation_radio.checked = true;
+        
 
 
         var imageMessage = document.getElementById('image-names');
@@ -144,14 +164,6 @@ $title = str_replace('\\\\', '\\', $title);
             imageMessage.style.display = 'block';
             <?php
         }
-
-
-        foreach ($fields_group_checkbox as $field) {
-            ?>
-            var checkbox = document.getElementById('<?= $field[0] ?>');
-            checkbox.checked = <?= ($registration_data->{$field[1]} == 1) ? 1 : 0 ?>;
-            <?php
-        }
         ?>
 
         var abstract = document.getElementById('abstract');
@@ -159,5 +171,4 @@ $title = str_replace('\\\\', '\\', $title);
         abstract.setAttribute("src", '<?= WP_CONTENT_URL ?>' + '/latex/' + '<?= $registration_data->session_id ?>' + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
         abstract.style.display = 'block';
     });
-    console.log(9999);
 </script>
