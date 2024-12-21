@@ -37,8 +37,6 @@ use OpenReadings\Registration\RegistrationData;
                 $fields['abstract_title'] = $field['raw_value'];
 
             }
-
-
         }
 
 
@@ -77,9 +75,18 @@ use OpenReadings\Registration\RegistrationData;
         global $wpdb;
         
         global $or_registration_controller;
-       
-        $result = $or_registration_controller->register($registration);
 
+        $result = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM wp_or_registration WHERE hash_id = %s",
+            $registration->hash_id
+        ));
+
+        if (count($result) > 0){
+            $result = $or_registration_controller->update($registration, $registration->hash_id);
+        } else {
+            $result = $or_registration_controller->register($registration);
+        }
+       
         if (is_wp_error($result)) {
             $ajax_handler->add_error_message($result->get_error_message());
             return;

@@ -162,3 +162,41 @@ code span {
 .image-code:hover{
     color: #121f47;
 }
+
+.save-checkbox {
+    display: flex;
+    justify-content: right; /* Horizontal centering */
+    align-items:normal;    /* Vertical alignment */
+    margin-bottom: 10px;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    z-index: 999;
+    bottom: 125%; /* Position the tooltip above the question mark */
+    margin-left: -100px; /* Center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-weight: normal;
+
+    position: absolute;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

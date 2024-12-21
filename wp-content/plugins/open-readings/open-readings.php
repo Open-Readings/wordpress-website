@@ -298,12 +298,6 @@ require_once __DIR__ . '/programme/generate-abstract.php';
 
 add_action('admin_init', 'download_abstract');
 
-function register_session_manager(){
-  require_once __DIR__ . '/registration/registration-session.php';
-}
-
-add_action('init','register_session_manager');
-
 function or_registration_cookies() {
   // Check if the page slug or ID matches the specific page you want
   if (is_page('registration')) {

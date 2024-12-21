@@ -51,6 +51,12 @@ function populate_database()
     $temp_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_temp';
     $temp_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$temp_table_name'") == $temp_table_name;
 
+    $registration_save_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_save';
+    $registration_save_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$registration_save_table_name'") == $registration_save_table_name;
+
+    $presentation_save_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations_save';
+    $presentation_save_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$presentation_save_table_name'") == $presentation_save_table_name;
+
 
     $person_fields = [
         'hash_id',
@@ -165,6 +171,40 @@ function populate_database()
         }
     }
 
+    if (!$registration_save_table_exists) {
+        $wpdb->query("CREATE TABLE $registration_save_table_name (
+            hash_id varchar(255) NOT NULL, 
+            PRIMARY KEY (hash_id),
+            first_name varchar(255) NOT NULL,
+            last_name varchar(255) NOT NULL,
+            email varchar(255) NOT NULL,
+            institution varchar(255) NOT NULL,
+            country varchar(255) NOT NULL,
+            department varchar(255) NOT NULL,
+            title varchar(255),
+            privacy varchar(255) NOT NULL,
+            needs_visa varchar(255) NOT NULL,
+            research_area varchar(255) NOT NULL,
+            presentation_type varchar(255) NOT NULL,
+            submit_time DATETIME NOT NULL,
+            agrees_to_email tinyint(1) NOT NULL
+            )");
+
+
+    } else {
+        //check if the person table has the correct columns
+        $person_columns = $wpdb->get_col("DESC $registration_save_table_name", 0);
+        $person_columns = array_map('strtolower', $person_columns);
+        $person_fields = array_map('strtolower', $person_fields);
+        foreach ($person_fields as $field) {
+            if (!in_array($field, $person_columns)) {
+                $wpdb->query("ALTER TABLE $registration_save_table_name ADD `$field` $person_data_sql[$field]");
+            } else {
+                $wpdb->query("ALTER TABLE $registration_save_table_name MODIFY `$field` $person_data_sql[$field]");
+            }
+        }
+    }
+
     //check if the presentation table has the correct columns
     if (!$presentation_table_exists) {
         $wpdb->query("CREATE TABLE $presentation_table_name (
@@ -192,6 +232,36 @@ function populate_database()
                 $wpdb->query("ALTER TABLE $presentation_table_name ADD `$field` $presentation_data_sql[$field]");
             } else {
                 $wpdb->query("ALTER TABLE $presentation_table_name MODIFY `$field` $presentation_data_sql[$field]");
+            }
+        }
+    }
+
+    if (!$presentation_save_table_exists) {
+        $wpdb->query("CREATE TABLE $presentation_save_table_name (
+            person_hash_id varchar(255) NOT NULL, 
+            PRIMARY KEY (person_hash_id),
+            title varchar(255) NOT NULL,
+            authors varchar(1000) NOT NULL,
+            affiliations varchar(1000) NOT NULL,
+            `references` varchar(1000) NOT NULL,
+            content varchar(4000) NOT NULL,
+            images varchar(1000) NOT NULL,
+            pdf varchar(255) NOT NULL,
+            session_id varchar(255) NOT NULL,
+            display_title varchar(255) NOT NULL,
+            acknowledgement varchar(1000) NOT NULL
+            )");
+
+    } else {
+        $presentation_columns = $wpdb->get_col("DESC $presentation_save_table_name", 0);
+        $presentation_columns = array_map('strtolower', $presentation_columns);
+
+        $presentation_fields = array_map('strtolower', $presentation_fields);
+        foreach ($presentation_fields as $field) {
+            if (!in_array($field, $presentation_columns)) {
+                $wpdb->query("ALTER TABLE $presentation_save_table_name ADD `$field` $presentation_data_sql[$field]");
+            } else {
+                $wpdb->query("ALTER TABLE $presentation_save_table_name MODIFY `$field` $presentation_data_sql[$field]");
             }
         }
     }
