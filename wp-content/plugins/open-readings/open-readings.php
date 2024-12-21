@@ -47,7 +47,8 @@ function register_or_dependencies()
   $version = '1';
   $css_path = plugin_dir_path(__FILE__) . 'assets/css/faq-widget-style.css';
   wp_register_style('faq-widget-style', plugins_url('assets/css/faq-widget-style.css', __FILE__), array(), filemtime($css_path));
-  wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__));
+  $js_path = plugin_dir_path(__FILE__) . 'assets/js/faq-widget-js.js';
+  wp_register_script('faq-widget-js', plugins_url('assets/js/faq-widget-js.js', __FILE__), array(), filemtime($js_path));
   wp_register_style('highlight-style', plugins_url('assets/css/github.css', __FILE__));
   wp_register_style('registration-widget-style', plugins_url('assets/css/registration-widget-style.css', __FILE__));
 
