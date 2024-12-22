@@ -7,7 +7,7 @@ use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 
 
 // add autoloader
-require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
+// require_once OR_PLUGIN_DIR . 'vendor/autoload.php';
 
 
 if (!defined('ABSPATH')) {
