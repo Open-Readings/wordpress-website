@@ -64,6 +64,11 @@ use OpenReadings\Registration\RegistrationData;
             return;
         }
 
+        if ($fields['abstract_agree'] == 'false' || $fields['abstract_agree'] == '') {
+            $ajax_handler->add_error_message('Please check the box to confirm that you are aware your abstract will be included in the abstract book');
+            return;
+        }
+
         if ($fields['research_area'] == 'Null' || $fields['research_area'] == 'Select') {
             $ajax_handler->add_error_message('You must select a research area');
             return;

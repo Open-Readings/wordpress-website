@@ -67,7 +67,7 @@ if($update == false){?>
         // Tooltip text
         let tooltipText = document.createElement('span');
         tooltipText.className = 'tooltiptext';
-        tooltipText.textContent = 'Automatically save form progress as you type. (Temporalily stores data in our database)';
+        tooltipText.textContent = 'Automatically save form progress as you type. (Temporalily stores form in our database)';
 
         // Add the tooltip text inside the question mark span
         questionMark.appendChild(tooltipText);
@@ -133,6 +133,7 @@ if (is_wp_error($registration_data)){
         ['textArea', abstractContent],
         ['form-field-visa', needsVisa],
         ['form-field-privacy', privacy],
+        ['form-field-abstract_agree', abstractAgree],
         ['form-field-email_agree', agreesToEmail],
         ['save-form', saveCheckbox]
     ];
@@ -146,14 +147,16 @@ if (is_wp_error($registration_data)){
 
         // Set value of presentation title div
         document.getElementById('presentation_title_div').innerHTML = presentationTitle;
-        
+
         // Set values of form fields
         personFields.forEach(function(field) {
                 element = document.getElementById(field[0]);
-                if (element.type === 'checkbox')
-                    element.checked = field[1];
-                else
-                    element.value = field[1];
+                if (element){
+                    if (element.type === 'checkbox')
+                        element.checked = field[1];
+                    else
+                        element.value = field[1];
+                }
         });
 
         // Set presentation type (oral/poster)
@@ -223,9 +226,6 @@ if (is_wp_error($registration_data)){
                 }
             });
         });
-
-        // Agree to abstract book
-        document.getElementById('form-field-abstract_agree').checked = abstractAgree;
         
     });
 </script>
