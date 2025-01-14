@@ -165,6 +165,3 @@ class ORRegistrationSession {
         return false;
     }
 }
-
-class ORLatex {
-}

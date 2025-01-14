@@ -200,16 +200,6 @@ function add_new_form_field($form_fields_registrar)
 }
 add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
-
-
-// function populate_registration_form()
-// {
-//   require_once(__DIR__ . '/registration/populate-form-fields.php');
-
-// }
-
-// add_action('init', 'populate_registration_form');
-
 function register_or_mailer_admin()
 {
   require_once (__DIR__ . '/mailer/admin.php');
@@ -218,13 +208,13 @@ function register_or_mailer_admin()
 
 add_action('init', 'register_or_mailer_admin');
 
-function my_custom_function()
+function populate_registration()
 {
   if (did_action('wp_footer') > 1)
     return;
   require_once (__DIR__ . '/registration/populate-form-fields.php');
 }
-add_action('wp_footer', 'my_custom_function');
+add_action('wp_footer', 'populate_registration');
 
 global $PRESENTATION_TYPE;
 $PRESENTATION_TYPE = [

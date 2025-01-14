@@ -1,5 +1,6 @@
-\documentclass[a4paper,10pt,english]{article}
+\documentclass[a4paper,5pt,english]{article}
 
+\usepackage{titlesec}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
@@ -7,23 +8,37 @@
 \usepackage{tikz}
 \usepackage{float}
 \usepackage{blindtext}
-\usepackage[1]{pagesel}
+\usepackage{tocloft}
+\usepackage{subcaption}
+\usepackage{forloop}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}  
+\usepackage{titletoc}
+\usepackage{pdfpages}
+\titleformat{name=\section,numberless}
+  {\center\large}{}{0em}{\vspace{0pt}\large\textbf}
+\titlespacing\section{0pt}{0pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
-\usepackage{fontspec}
-\setmainfont{Free Sans}
+\titlecontents{chapter}
+  [0em] % Left indent
+  {\vspace{1ex}} % Above code
+  {\bfseries} % Numbered entry format
+  {\bfseries} % Numberless entry format
+  {}
 
 
+\usepackage{mathptmx}
 \renewcommand{\familydefault}{\rmdefault}
 \usepackage{graphicx}
-\usepackage{babel}
-
 \usepackage{orstylet}
 \makeatother
 \usepackage{microtype}
-\graphicspath{{images}}
+\usepackage[font=footnotesize]{caption}
 
-\let\bold\bfseries
-\let\italic\itshape
+\usepackage[hidelinks,hypertexnames=false]{hyperref}
+
+\tocloftpagestyle{PageStyle}
+\cftpagenumbersoff{chapter}
+
 
 \begin{document}\sloppy
 
