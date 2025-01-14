@@ -38,6 +38,7 @@
 
 \tocloftpagestyle{PageStyle}
 \cftpagenumbersoff{chapter}
+\graphicspath{{images}}
 
 
 \begin{document}\sloppy
