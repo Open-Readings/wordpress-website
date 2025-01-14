@@ -740,6 +740,34 @@ class OpenReadingsRegistration
             return $update;
         }
 
+        function deleteFolder($folder) {
+            if (!is_dir($folder)) {
+                return false;
+            }
+        
+            $files = array_diff(scandir($folder), ['.', '..']);
+            foreach ($files as $file) {
+                $path = $folder . DIRECTORY_SEPARATOR . $file;
+                is_dir($path) ? deleteFolder($path) : unlink($path);
+            }
+            return rmdir($folder);
+        }
+
+        $temp_folder = WP_CONTENT_DIR . "/latex/temp/{$presentation_data->session_id}";
+        $perm_folder = WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}";
+
+        deleteFolder($perm_folder . '_old');
+        $result = rename($perm_folder, $perm_folder . '_old');
+        if ($result === false) {
+            return new WP_Error('folder_error', 'Failed to rename folder');
+        }
+
+        $result = rename($temp_folder, $perm_folder);
+        if ($result === false) {
+            rename($perm_folder . '_old', $perm_folder);
+            return new WP_Error('folder_error', 'Failed to rename folder');
+        }
+
 
         $vars = $this->email_vars_map($registration_data, $hash_id);
         global $or_mailer;

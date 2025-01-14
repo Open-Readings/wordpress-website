@@ -186,7 +186,7 @@ function populate_database()
             needs_visa varchar(255) NOT NULL,
             research_area varchar(255) NOT NULL,
             presentation_type varchar(255) NOT NULL,
-            submit_time DATETIME NOT NULL,
+            submit_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             agrees_to_email tinyint(1) NOT NULL
             )");
 
