@@ -65,7 +65,7 @@ class TitleField extends ElementorPro\Modules\Forms\Fields\Field_Base
 				var field_id = "<?php echo $field_id ?>";
 				var allowed_regex = "<?php echo $item['regex'] ?>"
 				if (allowed_regex == "") {
-					allowed_regex = "\\p{L}\\p{N}\\s&_^<>\\-\\\\(){}$=+;\\/";
+					allowed_regex = "\\p{L}\\p{N}\\s&_^<>\\-\\\\(){}$!@#%&*=+;\\/";
 				}
 				var allowed_sub_regex = "<?php echo $item['sub_regex'] ?>"
 				if (allowed_sub_regex == "") {

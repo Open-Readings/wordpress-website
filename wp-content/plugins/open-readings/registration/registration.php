@@ -98,7 +98,7 @@ class ORCheckForm
             ['email', 'Email', 300, ''],
             ['institution', 'Academic Institution', 500, ''],
             ['department', 'Department', 500, ''],
-            ['title', 'Presentation Title', 500, '/[&]/u'],
+            ['title', 'Presentation Title', 500, '/[&;]/u'],
             ['affiliations', 'Affiliations List', 500, ''],
             ['references', 'References (optional)', 1000, ''],
             ['abstract', 'Abstract content', 3000, ''],
