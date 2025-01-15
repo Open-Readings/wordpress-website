@@ -5,159 +5,251 @@ use OpenReadings\Registration\PersonData;
 use OpenReadings\Registration\PresentationData;
 use OpenReadings\Registration\RegistrationData;
 
-return;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
     return;
-// Get the ID from the URL (you can use your preferred method for getting the ID)
-$id = isset($_GET['id']) ? ($_GET['id']) : 0;
 
 $ORregistration = new OpenReadingsRegistration();
-$registration_data = $ORregistration->get($id);
+$update = false;
 
+// If id valid, get registration data
+if (isset($_GET['id'])){
+    $id = $_GET['id'];
+    $registration_data = $ORregistration->get($id);
+    if (!is_wp_error($registration_data))
+        $update = true;
+} else {
+    $registration_data = new WP_Error('no_id', 'No ID provided');
+}
+// Else try to get temporary reistration data
+if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
+    $registration_data =$ORregistration->get($_COOKIE['hash_id'], true);
+}
 
-$person_data_fields = [
-    ['form-field-person_title', 'person_title'],
-    ['form-field-firstname', 'first_name'],
-    ['form-field-lastname', 'last_name'],
-    ['form-field-email', 'email'],
-    ['form-field-repeat_email', 'email'],
-    ['form-field-country', 'country'],
-    ['form-field-institution', 'institution'],
-    ['form-field-department', 'department'],
-    ['form-field-research_area', 'research_area'],
-    ['form-field-abstract_title', 'title'],
-];
-
-$fields_group_checkbox = [
-    ['form-field-visa', 'needs_visa'],
-    ['form-field-privacy', 'privacy'],
-    ['form-field-email_agree', 'agrees_to_email']
-];
-
-
-$abstract_content = $registration_data->abstract;
-$abstract_content = str_replace('\\\\', '\\', $abstract_content);
-
-$title = $registration_data->title;
-$title = str_replace('\\\\', '\\', $title);
 ?>
 <script>
+    let isSubmittingForm = false;
+    const form = document.getElementsByClassName('elementor-form')[0];
+    if (form) {
+        form.addEventListener('submit', () => {
+            isSubmittingForm = true;
+        });
+}
+    window.onbeforeunload = closingCode;
+    function closingCode(event){
+        const checkbox = document.getElementById("save-form");
+             
+        const form = document.getElementsByClassName('elementor-form')[0];
+        const formData = new FormData(form);
+
+        fetch("<?=content_url()?>/plugins/open-readings/registration/autosave.php", {
+                method: "POST",
+                body: formData
+        });
+
+        if (checkbox && checkbox.checked){
+            return null;
+        } else if (!isSubmittingForm){
+            const confirmationMessage = "Are you sure you want to leave without saving your progress?";
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            return confirmationMessage;
+        }    
+    }
+</script>
+<?php
+if($update == false){?>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        console.log(1111);
+        let form = document.getElementsByName("or registration")[0];
+        let centeredDiv = document.createElement('div');
+        centeredDiv.className = 'save-checkbox';
 
-        document.getElementById('presentation_title_div').innerHTML = ' <?= str_replace('"', '', json_encode($title)) ?>';
-        document.getElementById('textArea').value = <?= json_encode($abstract_content, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
-        <?php
-        foreach ($person_data_fields as $field) {
-            ?>
-            document.getElementById('<?= $field[0] ?>').value = '<?= $registration_data->{$field[1]} ?>';
-            <?php
-        } ?>
+        // Create the label
+        let newLabel = document.createElement('label');
+        newLabel.setAttribute('for', 'save-form');
+        newLabel.textContent = "Autosave form";
 
+        // Create the checkbox
+        let newCheckbox = document.createElement('input');
+        newCheckbox.setAttribute('type', 'checkbox');
+        newCheckbox.setAttribute('id', 'save-form');
+        newCheckbox.setAttribute('name', 'save-form');
 
-        const affiliationList = document.getElementById("affList");
-        affiliationList.innerHTML = '';
+        // Create a question mark with a tooltip
+        let questionMark = document.createElement('span');
+        questionMark.textContent = '❔'; // Question mark emoji or use '?' text
+        questionMark.className = 'tooltip';
 
-        <?php
-        foreach ($registration_data->affiliations as $affiliation) {
-            ?>
-            var affiliationField = document.createElement("div");
-            var childDivs = affiliationList.querySelectorAll("div");
-            var divCount = childDivs.length;
-            affiliationField.innerHTML = `<label class="aff-label">` + (divCount + 1) + `.` + `</label>` +
-                `<input type="text" class="aff-width form-padding" maxlength="200" name="affiliation[]" value="<?= $affiliation ?>" placeholder="(e.g. Vilnius University)">
-                                                                                            `;
-            affiliationField.className = "aff-div";
-            affiliationList.appendChild(affiliationField);
-            <?php
-        } ?>
+        // Tooltip text
+        let tooltipText = document.createElement('span');
+        tooltipText.className = 'tooltiptext';
+        tooltipText.textContent = 'Automatically save form progress as you type. (Temporalily stores form in our database)';
 
+        // Add the tooltip text inside the question mark span
+        questionMark.appendChild(tooltipText);
 
-        const peopleList = document.getElementById("authList");
-        peopleList.innerHTML = '';
+        // Add label and checkbox to the div
+        centeredDiv.appendChild(newCheckbox);
+        centeredDiv.appendChild(newLabel);
+        centeredDiv.appendChild(questionMark);
 
-        <?php
-        $i = 0;
-        foreach ($registration_data->authors as $author) {
-            $i++;
-            ?>
-            var personField = document.createElement("div");
-            personField.innerHTML = `
-                                                                                            <input type="text" pattern="^[^&%\\$\\\\#^_\\{\\}~]*$" class="author-width form-padding" name="name[]" placeholder="(e.g. John Smith)" value="<?= $author[0] ?>" required>
-                                                                                            <input type="text" pattern="[0-9, ]*" class="narrow form-padding" name="aff_ref[]" placeholder="(e.g. 1,2)" value="<?= $author[1] ?>" required>
-                                                                                            <label class="text-like-elementor"> Corresponding author </label> <input class="contact-author" style="margin: 5px;" type="radio" name="contact_author" value="<?= $i ?>" <?php echo (isset($author[2])) ? 'checked' : ''; ?>>
-                                                                                            <?php echo isset($author[2]) ? ('<input id="email-author" class="form-padding" style="display:inline;" type="email" name="email-author" placeholder="john.smith@example.edu" value="' . $author[2] . '" required>') : (''); ?>
+        // Insert the div as the first element inside the form
+        form.prepend(centeredDiv);
+    });
+</script>
+<?php }
 
-                                                                                            `;
-            peopleList.appendChild(personField);
-            <?php
-        }
-        ?>
-        function getRadios() {
-            var contactRadio = document.querySelectorAll('.contact-author');
-            contactRadio.forEach(function (radio) {
-                radio.addEventListener('change', function () {
-                    console.log(1);
-                    if (document.getElementById('email-author') == null) {
-                        var emailField = '<input id="email-author" class="form-padding" style="display:none;" type="email" name="email-author" placeholder="john.smith@example.edu" required>'
-                        document.getElementById('authList').insertAdjacentHTML('afterend', emailField);
-                    }
-                    var fieldCopy = document.getElementById('email-author').cloneNode();
-
-                    fieldCopy.style.display = "inline";
-                    document.getElementById('email-author').remove();
-                    radio.insertAdjacentElement('afterend', fieldCopy);
-                });
-            });
-        }
-        getRadios();
-
-        const referenceList = document.getElementById("refList");
-        <?php
-        if (isset($registration_data->references)) {
-            foreach ($registration_data->references as $reference) {
-                ?>
-                var referenceField = document.createElement("div");
-                var childDivs = referenceList.querySelectorAll("div");
-                var divCount = childDivs.length;
-                referenceField.innerHTML = `<label class="ref-label">` + (divCount + 1) + `.` + `</label>` +
-                    `<input type="text" class="ref-width form-padding" maxlength="1000" name="references[]" value="<?= $reference ?>" placeholder="(e.g. M.A.Green, HighEfficiencySiliconSolarCells (Trans. Tech. Publications, Switzerland, 1987).)" required>
-                                                                                                                                                                                `;
-                referenceField.className = "ref-div";
-                referenceList.appendChild(referenceField);
-                <?php
-            }
-        }
-        ?>
+// If no registration data, return
+if (is_wp_error($registration_data)){
+    return;
+}
 
 
-        var presentation_radio = document.querySelector('input[name="form_fields[presentation_type]"][value="<?= $registration_data->presentation_type ?>"]');
+array_walk_recursive($registration_data->affiliations, function (&$value) {
+    $value = stripslashes($value);
+});
+array_walk_recursive($registration_data->authors, function (&$value) {
+    $value = stripslashes($value);
+});
+array_walk_recursive($registration_data->references, function (&$value) {
+    $value = stripslashes($value);
+});
+?>
+<script>
+    
+    // Set the values of the form fields
+    const personTitle = <?= json_encode($registration_data->person_title) ?>;
+    const firstName = <?= json_encode(stripslashes($registration_data->first_name)) ?>;
+    const lastName = <?= json_encode(stripslashes($registration_data->last_name)) ?>;
+    const email = <?= json_encode($registration_data->email) ?>;
+    const country = <?= json_encode($registration_data->country) ?>;
+    const institution = <?= json_encode(stripslashes($registration_data->institution)) ?>;
+    const department = <?= json_encode(stripslashes($registration_data->department)) ?>;
+    const researchArea = <?= json_encode($registration_data->research_area) ?>;
+    const presentationType = <?= json_encode($registration_data->presentation_type) ?>;
+    const presentationTitle = <?= json_encode(stripslashes($registration_data->title)) ?>;
+    const affiliations = <?= json_encode($registration_data->affiliations) ?>;
+    const authors = <?= json_encode($registration_data->authors) ?>;
+    const references = <?= json_encode($registration_data->references) ?>;
+    const acknowledgements = <?= json_encode(stripslashes($registration_data->acknowledgement)) ?>;
+    const abstractContent = <?= json_encode(stripslashes($registration_data->abstract), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
+    const needsVisa = <?= json_encode($registration_data->needs_visa) ?>;
+    const privacy = <?= json_encode($registration_data->privacy) ?>;
+    const agreesToEmail = <?= json_encode($registration_data->agrees_to_email) ?>;
+    const images = <?= json_encode($registration_data->images) ?>;
+    const pdfURL = <?= json_encode(content_url() . '/latex/temp/' . $registration_data->session_id . '/abstract.pdf#toolbar=0') ?>;
+    const saveCheckbox = <?= json_encode(!$update) ?>;
+    const abstractAgree = <?= json_encode($update) ?>;
+
+    // Array of form field names and their corresponding values
+    const personFields = [
+        ['form-field-person_title', personTitle],
+        ['form-field-firstname', firstName],
+        ['form-field-lastname', lastName],
+        ['form-field-email', email],
+        ['form-field-repeat_email', email],
+        ['form-field-country', country],
+        ['form-field-institution', institution],
+        ['form-field-department', department],
+        ['form-field-research_area', researchArea],
+        ['form-field-abstract_title', presentationTitle],
+        ['form-field-acknowledgement', acknowledgements],
+        ['textArea', abstractContent],
+        ['form-field-visa', needsVisa],
+        ['form-field-privacy', privacy],
+        ['form-field-abstract_agree', abstractAgree],
+        ['form-field-email_agree', agreesToEmail],
+        ['save-form', saveCheckbox]
+    ];
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     console.log('personTitle', personTitle, '\nfirstName', firstName, '\nlastName', lastName, '\nemail', email, '\ncountry', country, '\ninstitution', institution, '\ndepartment', department, '\nresearchArea', researchArea, '\npresentationType', presentationType, '\npresentationTitle', presentationTitle, '\naffiliations', affiliations, '\nauthors', authors, '\nreferences', references, '\nacknowledgements', acknowledgements, '\nabstractContent', abstractContent, '\nneedsVisa', needsVisa, '\nprivacy', privacy, '\nagreesToEmail', agreesToEmail);
+    // });
+    
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Set value of presentation title div
+        document.getElementById('presentation_title_div').innerHTML = presentationTitle;
+
+        // Set values of form fields
+        personFields.forEach(function(field) {
+                element = document.getElementById(field[0]);
+                if (element){
+                    if (element.type === 'checkbox')
+                        element.checked = field[1];
+                    else
+                        element.value = field[1];
+                }
+        });
+
+        // Set presentation type (oral/poster)
+        var presentation_radio = document.querySelector('input[name="form_fields[presentation_type]"][value="'+presentationType+'"]');
         presentation_radio.checked = true;
 
-
-        var imageMessage = document.getElementById('image-names');
-        <?php
-        foreach ($registration_data->images as $image) {
-            ?>
-            imageMessage.innerHTML += '<p style="font-weight:bold; display:inline">' + '<?= $image ?>' + '</p> <br>';
-            imageMessage.style.display = 'block';
-            <?php
+        // Set affiliations
+        const addAffiliation = document.querySelector('.aff-add');
+        for (let i = 1; i < affiliations.length; i++) {
+            addAffiliation.click();
+        }
+        const affiliationFields = document.getElementsByName('affiliation[]');
+        for (let i = 0; i < affiliations.length; i++) {
+            affiliationFields[i].value = affiliations[i];
         }
 
-
-        foreach ($fields_group_checkbox as $field) {
-            ?>
-            var checkbox = document.getElementById('<?= $field[0] ?>');
-            checkbox.checked = <?= ($registration_data->{$field[1]} == 1) ? 1 : 0 ?>;
-            <?php
+        // Set references
+        const addReference = document.querySelector('.ref-add');
+        for (let i = 0; i < references.length; i++) {
+            addReference.click();
         }
-        ?>
+        const refFields = document.getElementsByName('references[]');
+        for (let i = 0; i < references.length; i++) {
+            refFields[i].value = references[i];
+        }
 
-        var abstract = document.getElementById('abstract');
+        // Set authors
+        const addAuthor = document.querySelector('.auth-add');
+        for (let i = 1; i < authors.length; i++) {
+            addAuthor.click();
+        }
+        const authName = document.getElementsByName('name[]');
+        const authRef = document.getElementsByName('aff_ref[]');
+        const authEmail = document.getElementById('email-author');
+        const authRadio = document.getElementsByName('contact_author');
+        for (let i = 0; i < authors.length; i++) {
+            authName[i].value = authors[i][0];
+            authRef[i].value = authors[i][1];
+            if (authors[i].length == 3) {
+                authEmail.value = authors[i][2];
+                authRadio[i].click();
+            }
+        }
 
-        abstract.setAttribute("src", '<?= WP_CONTENT_URL ?>' + '/latex/' + '<?= $registration_data->session_id ?>' + '/abstract.pdf' + '?timestamp=' + new Date().getTime() + '#toolbar=0&view=FitH');
-        abstract.style.display = 'block';
+        // Set pdf
+        const pdfFrame = document.getElementById('abstract');
+        pdfFrame.src = pdfURL;
+
+        // Set the copy/paste code for images
+        let imageMessage = document.getElementById('image-names');
+
+        images.forEach((file) => {
+            imageMessage.innerHTML += '<p style="font-weight:bold; font-family:sans-serif; display:inline">' + file + ' –</p> <p class="image-code"> Copy image LaTeX code to clipboard' + "</p><br>";
+        });
+        
+        let imageCodeElements = document.querySelectorAll(".image-code");
+        imageMessage.style.display = 'block';
+        imageCodeElements.forEach((imageCode) => {
+            imageCode.addEventListener('click', async function() {
+                const precedingName = this.previousElementSibling;
+                const name = precedingName.textContent;
+                const textToCopy = `\\begin{figure}[H] \n\\center \n\\includegraphics[height=6cm]{${name}} \n\\caption{Add a caption} \n\\end{figure}`;
+        
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                } catch (err) {
+                }
+            });
+        });
+        
     });
-    console.log(9999);
 </script>

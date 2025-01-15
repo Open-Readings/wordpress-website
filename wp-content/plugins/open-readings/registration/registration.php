@@ -98,7 +98,7 @@ class ORCheckForm
             ['email', 'Email', 300, ''],
             ['institution', 'Academic Institution', 500, ''],
             ['department', 'Department', 500, ''],
-            ['title', 'Presentation Title', 500, '/[&]/u'],
+            ['title', 'Presentation Title', 500, '/[&;]/u'],
             ['affiliations', 'Affiliations List', 500, ''],
             ['references', 'References (optional)', 1000, ''],
             ['abstract', 'Abstract content', 3000, ''],
@@ -471,21 +471,20 @@ class OpenReadingsRegistration
             return new WP_Error('database_error', 'Database error');
         }
 
-        $result = rename(WP_CONTENT_DIR . "/latex/temp/{$presentation_data->session_id}/", WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}/");
-        
-        if ($result === false) {
-            return new WP_Error('folder_error', 'Failed to rename folder');
-        }
-
         return true;
 
 
     }
 
-    function get_person_data($hash_id)
+    function get_person_data($hash_id, $temp = false)
     {
+        if ($temp){
+            $table_name = 'wp_or_registration_save';
+        } else {
+            $table_name = 'wp_or_registration';
+        }
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table');
+        // $table_name = $wpdb->prefix . get_option('or_registration_database_table');
         $query = '
         SELECT * FROM ' . $table_name . '
         WHERE hash_id = %s
@@ -504,10 +503,15 @@ class OpenReadingsRegistration
         return $person_data;
     }
 
-    function get_presentation_data($hash_id)
+    function get_presentation_data($hash_id, $temp = false)
     {
+        if ($temp){
+            $table_name = 'wp_or_registration_presentations_save';
+        } else {
+            $table_name = 'wp_or_registration_presentations';
+        }
         global $wpdb;
-        $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
+        // $table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
         $query = '
         SELECT * FROM ' . $table_name . '
         WHERE person_hash_id = %s
@@ -522,6 +526,17 @@ class OpenReadingsRegistration
         //map result into a PresentationData object
         $presentation_data = new PresentationData();
         $presentation_data->map_from_query($result);
+
+        if ($temp){
+            $image_path = WP_CONTENT_DIR . '/latex/temp/' . $presentation_data->session_id . '/images/';
+        } else {
+            $image_path = WP_CONTENT_DIR . '/latex/perm/' . $presentation_data->session_id . '/images/';
+        }
+        $images = scandir($image_path);
+        $images = array_values(array_diff($images, array('.', '..')));
+
+
+        $presentation_data->images = json_encode($images, JSON_UNESCAPED_UNICODE);
 
         return $presentation_data;
     }
@@ -551,9 +566,9 @@ class OpenReadingsRegistration
 
         global $wpdb;
 
-        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s WHERE person_hash_id = %s';
+        $query = 'UPDATE ' . $table_name . ' SET title = %s, authors = %s, affiliations = %s, content = %s, `references` = %s, images = %s, pdf = %s, display_title= %s, acknowledgement=%s WHERE person_hash_id = %s';
 
-        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->display_title, $hash_id);
+        $query = $wpdb->prepare($query, $presentation_data->title, $presentation_data->authors, $presentation_data->affiliations, $presentation_data->abstract, $presentation_data->references, $presentation_data->images, $presentation_data->pdf, $presentation_data->display_title, $presentation_data->acknowledgement, $hash_id);
 
         $result = $wpdb->query($query);
         if ($result === false) {
@@ -606,10 +621,16 @@ class OpenReadingsRegistration
         }
 
         $presentation_data = new PresentationData();
-        $presentation_data->map_from_class($registration_data, $registration_data->hash_id, $registration_data->hash_id);
+        $presentation_data->map_from_class($registration_data, $registration_data->hash_id);
         $result = $this->register_presentation($presentation_data, $wpdb->prefix . get_option('or_registration_database_table') . '_presentations');
         if (is_wp_error($result)) {
             return $result;
+        }
+
+        $result = rename(WP_CONTENT_DIR . "/latex/temp/{$presentation_data->session_id}/", WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}/");
+        
+        if ($result === false) {
+            return new WP_Error('folder_error', 'Failed to rename folder');
         }
 
         $result = $this->register_evaluation($registration_data->hash_id);
@@ -719,6 +740,34 @@ class OpenReadingsRegistration
             return $update;
         }
 
+        function deleteFolder($folder) {
+            if (!is_dir($folder)) {
+                return false;
+            }
+        
+            $files = array_diff(scandir($folder), ['.', '..']);
+            foreach ($files as $file) {
+                $path = $folder . DIRECTORY_SEPARATOR . $file;
+                is_dir($path) ? deleteFolder($path) : unlink($path);
+            }
+            return rmdir($folder);
+        }
+
+        $temp_folder = WP_CONTENT_DIR . "/latex/temp/{$presentation_data->session_id}";
+        $perm_folder = WP_CONTENT_DIR . "/latex/perm/{$presentation_data->session_id}";
+
+        deleteFolder($perm_folder . '_old');
+        $result = rename($perm_folder, $perm_folder . '_old');
+        if ($result === false) {
+            return new WP_Error('folder_error', 'Failed to rename folder');
+        }
+
+        $result = rename($temp_folder, $perm_folder);
+        if ($result === false) {
+            rename($perm_folder . '_old', $perm_folder);
+            return new WP_Error('folder_error', 'Failed to rename folder');
+        }
+
 
         $vars = $this->email_vars_map($registration_data, $hash_id);
         global $or_mailer;
@@ -733,20 +782,24 @@ class OpenReadingsRegistration
 
     }
 
-    public function get($hash_id)
+    public function get($hash_id, $temp = false)
     {
-        $person_data = $this->get_person_data($hash_id);
+        $person_data = $this->get_person_data($hash_id, $temp);
+        
         if (is_wp_error($person_data))
             return new WP_Error('database_error', 'Database error');
-        $presentation_data = $this->get_presentation_data($hash_id);
+
+        $presentation_data = $this->get_presentation_data($hash_id, $temp);
+        
         if (is_wp_error($presentation_data))
             return new WP_Error('database_error', 'Database error');
+
         $registration_data = new RegistrationData();
         $registration_data->map_from_person_data($person_data);
         $registration_data->map_from_presentation_data($presentation_data);
+
         return $registration_data;
     }
-
 
 }
 

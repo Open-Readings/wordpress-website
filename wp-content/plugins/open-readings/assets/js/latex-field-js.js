@@ -73,7 +73,7 @@ document.querySelectorAll('input, textarea').forEach((input) => {
     });
 });
 
-window.addEventListener('beforeunload', warnOnExit);
+//window.addEventListener('beforeunload', warnOnExit);
 
 function warnOnExit(){
     
@@ -85,7 +85,7 @@ function warnOnExit(){
 jQuery(function($) {
     $( document ).on('submit_success', function(e, data) {
         if (data.data.registration_success) {
-            window.removeEventListener('beforeunload', warnOnExit);
+            //window.removeEventListener('beforeunload', warnOnExit);
             window.location.href = 'https://www.openreadings.eu/registration-success/';
         }
     });

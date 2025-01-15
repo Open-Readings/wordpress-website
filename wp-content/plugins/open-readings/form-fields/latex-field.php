@@ -30,7 +30,6 @@ class Elementor_Latex_Field extends \ElementorPro\Modules\Forms\Fields\Field_Bas
     {
         global $or_session;
         if (isset($or_session)){
-            $or_session->setup_folder();
             $folder = $or_session->folder_hash;
             $hash_id = $or_session->hash_id;
         } else {
