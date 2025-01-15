@@ -298,3 +298,21 @@ function or_registration_cookies() {
   }
 }
 add_action('template_redirect', 'or_registration_cookies');
+
+// Handle the AJAX request when logged-in user
+add_action('wp_ajax_evaluation', 'evaluation');
+add_action('wp_ajax_nopriv_evaluation', 'evaluation');
+
+require_once __DIR__ . '/evaluation/admin/registration-functions.php';
+
+function custom_admin_styles() {
+  // Check if we're on the 'or_evaluation' page in the admin panel
+  if ( isset( $_GET['page'] ) && $_GET['page'] == 'or_evaluation' ) {
+    // Enqueue the custom admin CS
+    $path = 'assets/css/evaluation-style.css';
+    $css_path = plugin_dir_path(OR_PLUGIN_FILE) . $path;
+    wp_register_style('first-evaluation-style', plugins_url($path, OR_PLUGIN_FILE), array(), filemtime($css_path));
+    wp_enqueue_style('first-evaluation-style');
+  }
+}
+add_action( 'admin_enqueue_scripts', 'custom_admin_styles' );

@@ -14,7 +14,7 @@ function register_styles(){
     ];
 
     foreach ($styles as $handle => $path) {
-        $css_path = plugin_dir_path(__FILE__) . $path;
+        $css_path = plugin_dir_path(OR_PLUGIN_FILE) . $path;
         wp_register_style($handle, plugins_url($path, OR_PLUGIN_FILE), array(), filemtime($css_path));
     }
 }

@@ -28,8 +28,17 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
 
 ?>
 <script>
+    let isSubmittingForm = false;
+    const form = document.getElementsByClassName('elementor-form')[0];
+    if (form) {
+        form.addEventListener('submit', () => {
+            isSubmittingForm = true;
+        });
+}
     window.onbeforeunload = closingCode;
-    function closingCode(){
+    function closingCode(event){
+        const checkbox = document.getElementById("save-form");
+             
         const form = document.getElementsByClassName('elementor-form')[0];
         const formData = new FormData(form);
 
@@ -37,7 +46,14 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
                 method: "POST",
                 body: formData
         });
-        return null;
+
+        if (checkbox && checkbox.checked){
+            return null;
+        } else if (!isSubmittingForm){
+            const confirmationMessage = "Are you sure you want to leave without saving your progress?";
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            return confirmationMessage;
+        }    
     }
 </script>
 <?php
@@ -89,25 +105,33 @@ if (is_wp_error($registration_data)){
 }
 
 
-
+array_walk_recursive($registration_data->affiliations, function (&$value) {
+    $value = stripslashes($value);
+});
+array_walk_recursive($registration_data->authors, function (&$value) {
+    $value = stripslashes($value);
+});
+array_walk_recursive($registration_data->references, function (&$value) {
+    $value = stripslashes($value);
+});
 ?>
 <script>
     
     // Set the values of the form fields
     const personTitle = <?= json_encode($registration_data->person_title) ?>;
-    const firstName = <?= json_encode($registration_data->first_name) ?>;
-    const lastName = <?= json_encode($registration_data->last_name) ?>;
+    const firstName = <?= json_encode(stripslashes($registration_data->first_name)) ?>;
+    const lastName = <?= json_encode(stripslashes($registration_data->last_name)) ?>;
     const email = <?= json_encode($registration_data->email) ?>;
     const country = <?= json_encode($registration_data->country) ?>;
-    const institution = <?= json_encode($registration_data->institution) ?>;
-    const department = <?= json_encode($registration_data->department) ?>;
+    const institution = <?= json_encode(stripslashes($registration_data->institution)) ?>;
+    const department = <?= json_encode(stripslashes($registration_data->department)) ?>;
     const researchArea = <?= json_encode($registration_data->research_area) ?>;
     const presentationType = <?= json_encode($registration_data->presentation_type) ?>;
-    const presentationTitle = <?= json_encode($registration_data->title) ?>;
+    const presentationTitle = <?= json_encode(stripslashes($registration_data->title)) ?>;
     const affiliations = <?= json_encode($registration_data->affiliations) ?>;
     const authors = <?= json_encode($registration_data->authors) ?>;
     const references = <?= json_encode($registration_data->references) ?>;
-    const acknowledgements = <?= json_encode($registration_data->acknowledgement) ?>;
+    const acknowledgements = <?= json_encode(stripslashes($registration_data->acknowledgement)) ?>;
     const abstractContent = <?= json_encode(stripslashes($registration_data->abstract), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
     const needsVisa = <?= json_encode($registration_data->needs_visa) ?>;
     const privacy = <?= json_encode($registration_data->privacy) ?>;
