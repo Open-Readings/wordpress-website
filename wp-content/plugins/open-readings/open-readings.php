@@ -212,7 +212,8 @@ function populate_registration()
 {
   if (did_action('wp_footer') > 1)
     return;
-  require_once (__DIR__ . '/registration/populate-form-fields.php');
+  if (is_page('registration'))
+    require_once (__DIR__ . '/registration/populate-form-fields.php');
 }
 add_action('wp_footer', 'populate_registration');
 
