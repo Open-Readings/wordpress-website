@@ -29,14 +29,10 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
 ?>
 <script>
     let isSubmittingForm = false;
-    const form = document.getElementsByClassName('elementor-form')[0];
-    if (form) {
-        form.addEventListener('submit', () => {
-            isSubmittingForm = true;
-        });
-}
+    
     window.onbeforeunload = closingCode;
     function closingCode(event){
+        
         const checkbox = document.getElementById("save-form");
              
         const form = document.getElementsByClassName('elementor-form')[0];
@@ -46,6 +42,12 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
                 method: "POST",
                 body: formData
         });
+
+        if (form) {
+            form.addEventListener('submit', () => {
+                isSubmittingForm = true;
+            });
+        }
 
         if (checkbox && checkbox.checked){
             return null;
