@@ -323,19 +323,19 @@ function display_main_page()
     return $result;
 }
 
-function fixUnclosedTags($text, $tagOpen, $tagClose)
-{
-    $countOpen = substr_count($text, $tagOpen);
-    $countClose = substr_count($text, $tagClose);
+// function fixUnclosedTags($text, $tagOpen, $tagClose)
+// {
+//     $countOpen = substr_count($text, $tagOpen);
+//     $countClose = substr_count($text, $tagClose);
 
-    $tagDiff = $countOpen - $countClose;
+//     $tagDiff = $countOpen - $countClose;
 
-    if ($tagDiff > 0) {
-        $text .= str_repeat($tagClose, $tagDiff);
-    }
+//     if ($tagDiff > 0) {
+//         $text .= str_repeat($tagClose, $tagDiff);
+//     }
 
-    return $text;
-}
+//     return $text;
+// }
 
 function generate_abstract()
 {
