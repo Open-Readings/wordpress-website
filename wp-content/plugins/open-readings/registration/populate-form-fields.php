@@ -29,13 +29,15 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
 ?>
 <script>
     let isSubmittingForm = false;
-    
+    const form = document.getElementsByClassName('elementor-form')[0];
+    if (form) {
+        form.addEventListener('submit', () => {
+            isSubmittingForm = true;
+        });
+    }
     window.onbeforeunload = closingCode;
     function closingCode(event){
-        
         const checkbox = document.getElementById("save-form");
-             
-        const form = document.getElementsByClassName('elementor-form')[0];
         const formData = new FormData(form);
 
         fetch("<?=content_url()?>/plugins/open-readings/registration/autosave.php", {
@@ -43,18 +45,13 @@ if (isset($_COOKIE['hash_id']) and is_wp_error($registration_data)){
                 body: formData
         });
 
-        if (form) {
-            form.addEventListener('submit', () => {
-                isSubmittingForm = true;
-            });
-        }
-
         if (checkbox && checkbox.checked){
             return null;
         } else if (!isSubmittingForm){
             const confirmationMessage = "Are you sure you want to leave without saving your progress?";
-            event.returnValue = confirmationMessage; // Standard for most browsers
-            return confirmationMessage;
+            //event.returnValue = confirmationMessage; // Standard for most browsers
+            //return confirmationMessage;
+            return null;
         }    
     }
 </script>
