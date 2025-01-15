@@ -73,7 +73,6 @@ class ORRegistrationSession {
         if(!is_dir($temp_folder . '/images'))
             mkdir($temp_folder . '/images');
 
-        copy(WP_CONTENT_DIR . '/latex/default/orstylet.sty', $temp_folder . '/orstylet.sty');
         foreach(scandir($perm_folder) as $file){
             if ($file == '.' or $file == '..' or $file == 'images')
                 continue;
@@ -85,6 +84,8 @@ class ORRegistrationSession {
                 continue;
             copy($perm_folder . '/images/' . $file, $temp_folder . '/images/' . $file);
         }
+        copy(WP_CONTENT_DIR . '/latex/default/orstylet.sty', $temp_folder . '/orstylet.sty');
+
 
     }
 
@@ -146,7 +147,7 @@ class ORRegistrationSession {
         $image_folder = $folder . '/images';
         if(!is_dir($image_folder))
             mkdir($image_folder);
-        copy(WP_CONTENT_DIR . '/latex/orstylet.sty', $folder . '/orstylet.sty');
+        copy(WP_CONTENT_DIR . '/latex/default/orstylet.sty', $folder . '/orstylet.sty');
         copy(WP_CONTENT_DIR . '/latex/default/nftmc-1024x631-1.jpg', $folder . '/nftmc-1024x631-1.jpg');
         copy(WP_CONTENT_DIR . '/latex/default/abstract.pdf', $folder . '/abstract.pdf');
         copy(WP_CONTENT_DIR . '/latex/default/abstract.log', $folder . '/abstract.log');
