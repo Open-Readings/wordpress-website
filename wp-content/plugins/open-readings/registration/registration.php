@@ -9,29 +9,29 @@ class ORReadForm
 {
     public function get_form(){
         $registration_data = new RegistrationData();
-        $registration_data->first_name = $_POST['form_fields']['firstname'];
-        $registration_data->last_name = $_POST['form_fields']['lastname'];
-        $registration_data->email = $_POST['form_fields']['email'];
-        $registration_data->institution = $_POST['form_fields']['institution'];
-        $registration_data->country = $_POST['form_fields']['country'];
-        $registration_data->department = $_POST['form_fields']['department'];
+        $registration_data->first_name = $_POST['form_fields']['firstname'] ?? '';
+        $registration_data->last_name = $_POST['form_fields']['lastname'] ?? '';
+        $registration_data->email = $_POST['form_fields']['email'] ?? '';
+        $registration_data->institution = $_POST['form_fields']['institution'] ?? '';
+        $registration_data->country = $_POST['form_fields']['country'] ?? '';
+        $registration_data->department = $_POST['form_fields']['department'] ?? '';
         $registration_data->privacy = isset($_POST['form_fields']['privacy']) ? true : false;
         $registration_data->needs_visa = isset($_POST['form_fields']['visa']) ? true : false;
-        $registration_data->research_area = $_POST['form_fields']['research_area'];
-        $registration_data->presentation_type = $_POST['form_fields']['presentation_type'];
+        $registration_data->research_area = $_POST['form_fields']['research_area'] ?? '';
+        $registration_data->presentation_type = $_POST['form_fields']['presentation_type'] ?? '';
         $registration_data->agrees_to_email = isset($_POST['form_fields']['email_agree']) ? true : false;
         $registration_data->hash_id = $_POST['hash_id'];
-        $registration_data->person_title = $_POST['form_fields']['person_title'];
+        $registration_data->person_title = $_POST['form_fields']['person_title'] ;
         $registration_data->title = $_POST['form_fields']['abstract_title'];
         $registration_data->authors = $this->get_authors_array();
-        $registration_data->affiliations = $_POST['affiliation'];
+        $registration_data->affiliations = $_POST['affiliation'] ?? [""];
         $registration_data->references = isset($_POST['references']) ? $_POST['references'] : [];
         $registration_data->images = $this->get_images();
-        $registration_data->abstract = $_POST['textArea'];
+        $registration_data->abstract = $_POST['textArea'] ?? '';
         $registration_data->acknowledgement = isset($_POST['form_fields']['acknowledgement']) ? $_POST['form_fields']['acknowledgement'] : '';
         $registration_data->pdf = content_url() . '/latex/perm/' . $_POST['session_id'] . '/abstract.pdf';
         $registration_data->session_id = $_POST['session_id'];
-        $registration_data->display_title = $_POST['form_fields']['abstract_title'];
+        $registration_data->display_title = $_POST['form_fields']['abstract_title'] ?? '';
 
         return $registration_data;
     }
