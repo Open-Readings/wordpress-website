@@ -1,7 +1,19 @@
 <?php
+
+use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
+use OpenReadings\Registration\OpenReadingsRegistration;
+use OpenReadings\Registration\ORLatexExport;
+
 // Include WordPress
 // define('WP_USE_THEMES', false);
-// require_once('../../../../../wp-load.php'); // Adjust the path as needed
+$path = preg_replace( '/wp-content.*$/', '', __DIR__ );
+require_once( $path . 'wp-load.php' );
+
+// use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
+
+require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
+
+
 $registration_functions_url = plugins_url('', __FILE__) . '/registration-functions.php';
 
 function evaluation()
@@ -153,7 +165,9 @@ ORDER BY RAND()
 
     }
 
-    $_SESSION['e_pdf'] = $presentation_row['pdf'];
+    ORRegistrationSession::copy_files_to_temp($presentation_row['session_id']);
+
+    $_SESSION['e_pdf'] = WP_CONTENT_URL . '/latex/temp/' . $presentation_row['session_id'] . '/abstract.pdf';
     $_SESSION['e_file'] = $presentation_row['session_id'];
     $_SESSION['e_email'] = $registration_row['email'];
     $_SESSION['e_hash'] = $registration_row['hash_id'];
@@ -193,10 +207,10 @@ ORDER BY RAND()
         $result['response'] .= '<p>' . $field[0] . '<b>' . $registration_row[$field[1]] . '</b>' . '</p>';
     }
 
-    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution: </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
+    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution [Jei raudona, pakeisti (pasirinkti iš atsirandančio sąrašo). Jei sąraše nėra, palikti raudoną] </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
     $result['response'] .= '<label for="department">Department: </label><b><input class="evaluation-input" name="department" type=text value="' . $registration_row['department'] . '"></input></b><br>';
 
-    // $result['response'] .= '<label for="abstract_title">Title: </label><b><input class="evaluation-input" name="abstract_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
+    $result['response'] .= '<label for="display_title">Title [Turi būti didžiosiomis + pataisyt, jei yra dingusių tarpų] ŠIS LAUKELIS RODOMAS ABSTRAKTE </label><b><input class="evaluation-input" name="display_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
 
     // $contact_index = 0;
     // foreach (json_decode($presentation_row['authors']) as $item) {
@@ -227,16 +241,17 @@ ORDER BY RAND()
     // }
     // $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
 
-    $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail">' . $evaluation_row['email_content'] . '</textarea><br>';
+    $result['response'] .= '<label for="sendMail"> Email [Nurodyti tik priežastį] Jei spaudžiat ACCEPT, šis laukelis neturi reikšmės: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail">' . $evaluation_row['email_content'] . '</textarea><br>';
 
 
-    $result['response'] .= '</form>';
 
     $result['response'] .= '<button class="button-style g-button" id="send-accept">Accept</button>';
     $result['response'] .= '<button class="button-style b-button" id="send-update">Ask to update</button>';
     $result['response'] .= '<button class="button-style r-button" id="send-reject">Reject & Email</button>';
 
     $result['response'] .= '<div id="send-email" class="message-div"></div>';
+    $result['response'] .= '<label for="abstract-content">Abstrakto turinys JEI MATOT LATEX ERROR IR MOKAT PATAISYT, GALIT. NEBŪTINA</label><textarea class="eval-content" id="abstract-content" name="abstract">' . stripslashes($presentation_row['content']) . '</textarea>';
+    $result['response'] .= '</form>';
 
 
 
@@ -246,7 +261,7 @@ ORDER BY RAND()
 
 
 
-    $result['response'] .= '<iframe id="abstract" class="pdf-frame" id="abstract" src="' . $presentation_row['pdf'] . '#toolbar=0&view=fit' . '"></iframe>';
+    $result['response'] .= '<iframe id="abstract" class="pdf-frame" id="abstract" src="' . $_SESSION['e_pdf'] . '#toolbar=0&view=fit' . '"></iframe>';
 
 
     $result['response'] .= '</div>
@@ -341,168 +356,34 @@ function generate_abstract()
 {
     session_start();
 
-    $i = 1;
-    $authors = '';
-
-
     $id = $_SESSION['e_hash'];
+    $ORRegistration = new OpenReadingsRegistration();
+    $registration_data = $ORRegistration->get($id);
+    $latex_export = new ORLatexExport($registration_data);
+    chdir(WP_CONTENT_DIR . '/latex/');
 
-    global $wpdb;
+    $latex_export->registration_data->title = $_POST['display_title'];
+    $latex_export->registration_data->abstract = $_POST['abstract'];
 
-    $query = $wpdb->prepare(
-        "SELECT * FROM wp_or_registration WHERE hash_id = %s",
-        $id
-    );
-
-    $registration_row = $wpdb->get_row($query, ARRAY_A);
-
-    $query = $wpdb->prepare(
-        "SELECT * FROM wp_or_registration_presentations WHERE person_hash_id = %s",
-        $id
-    );
-
-    $presentation_row = $wpdb->get_row($query, ARRAY_A);
-    $raw_names = json_decode($presentation_row['authors']);
-
-    $aff_ref = array();
-    $i = 1;
-    $names = array();
-    foreach ($raw_names as $raw_name) {
-
-        $names[] = $raw_name[0];
-        $aff_ref[] = $raw_name[1];
-
-        if (isset($raw_name[2])) {
-            $email = $raw_name[2];
-            $contact = $i;
-        }
-
-        $i++;
-    }
+    $latex_export->generate_tex();
+    $latex_export->generate_abstract();
 
 
-    $affiliations_raw = json_decode($presentation_row['affiliations']);
-    // echo var_dump($raw_names);
-    $i = 1;
-    foreach ($names as $name) {
+    $_SESSION['e_generated'] = 1;
 
-        $name = trim($name);
-        $name = preg_replace('/[^\p{L}\-\s.,;]/u', '', $name);
-        $aff_ref_var = trim($aff_ref[$i - 1]);
-        //replace everything that is not a digit or ,
-        $aff_ref_var = preg_replace('/[^\d,]/', '', $aff_ref_var);
 
-        if ($contact == $i)
-            $authors = $authors . '\underline{' . $name . '}$^{' . $aff_ref_var . '}$';
-        else
-            $authors = $authors . $name . '$^{' . $aff_ref_var . '}$';
+    $logContent = file_get_contents(WP_CONTENT_DIR . '/latex/temp/' . $_SESSION['e_file'] . '/abstract.log');
 
-        if ($i < count($names))
-            $authors = $authors . ', ';
-        $i++;
-    }
+    // Check if '!' exists in the log content
+    if (strpos($logContent, '!') !== false) {
+        $position = mb_strpos($logContent, '!', 0, 'UTF-8');
 
-    $affiliations = '';
-    $i = 1;
-    foreach ($affiliations_raw as $aff) {
-        $affiliations = $affiliations . '\address{$^{' . $i . '}$' . $aff . '}
-    ';
-        $i++;
-    }
-
-    $affiliations = $affiliations . '\rightaddress{' . $email . '}';
-
-    $raw_references = $presentation_row['references'];
-
-    if ($raw_references != NULL && $raw_references != '') {
-        $raw_references = json_decode($raw_references);
-        $references = '
-    \vfill    
-    \begin{thebibliography}{}
-    ';
-        $i = 1;
-        foreach ($raw_references as $ref) {
-            $references .= '\bibitem{' . $i . '} ' . stripslashes($ref) . '
-       ';
-            $i++;
-        }
-        $references .= '\end{thebibliography}
-    ';
+        $cutString = mb_substr($logContent, $position, null, 'UTF-8');
+        $result['error'] = '<pre id="pre-container" class="error-pre">' . htmlspecialchars($cutString) . '</pre>';
+        $_SESSION['e_error'] = 1;
     } else {
-        $references = '';
+        $_SESSION['e_error'] = 0;
     }
-
-
-
-    $titleField = $presentation_row['title'];
-
-
-
-    $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
-    $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
-
-    $sup_starting_tag = '<sup>';
-    $sub_starting_tag = '<sub>';
-    $sub_ending_tag = '</sub>';
-    $sup_ending_tag = '</sup>';
-    $layers = 0;
-    $is_in_math_mode = false;
-    for ($i = 0; $i < mb_strlen($titleField); $i++) {
-        if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
-            $sup_starting_tag_index = $i;
-            $layers++;
-            if ($layers == 1) {
-                $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
-            } else {
-                //replace <sup> with $^{
-                $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
-            }
-            $i -= mb_strlen($sup_starting_tag);
-        }
-        if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
-            $sub_starting_tag_index = $i;
-            $layers++;
-            if ($layers == 1) {
-                $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
-            } else {
-                //replace <sub> with $_{
-                $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
-            }
-            $i -= mb_strlen($sup_starting_tag);
-
-        }
-
-        if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
-            $sub_ending_tag_index = $i;
-            $layers--;
-            if ($layers == 0) {
-                //replace </sub> with }$
-                $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
-            } else {
-                //replace </sub> with }$
-                $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
-            }
-            //replace </sub> with }$
-            $i -= mb_strlen($sup_starting_tag);
-        }
-        if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
-            $sup_ending_tag_index = $i;
-            $layers--;
-            if ($layers == 0) {
-                //replace </sup> with }$
-                $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
-            } else {
-                //replace </sup> with }$
-                $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
-            }
-            $i -= mb_strlen($sup_starting_tag);
-        }
-
-    }
-
-    $titleField = str_replace('&nbsp;', '', $titleField);
-
-    $abstractContent = stripslashes($presentation_row['content']);
 
     if (!isset($_SESSION['e_pdf'])) {
         session_start();
@@ -518,54 +399,8 @@ function generate_abstract()
     <script>
     document.getElementById("abstract").setAttribute("src", \'http://localhost:10009/wp-content/latex/17061177252d0f36db/abstract.pdf\' + \'?timestamp=\' + new Date().getTime() + \'#toolbar=0&view=FitH\');
     setIframeHeight();
+    console.log("Generated");
     </script>';
-
-    $templateFilePath = plugin_dir_path(__FILE__) . 'template.txt';
-    $templateContent = file_get_contents($templateFilePath);
-
-    // Define your variables
-    // Add more variables as needed
-
-    // Create an associative array of placeholders and their corresponding values
-    $replacements = array(
-        '${title}' => $titleField,
-        '${authors}' => $authors,
-        '${affiliations}' => $affiliations,
-        '${content}' => $abstractContent,
-        '${references}' => $references
-
-        // Add more placeholders and values as needed
-    );
-
-    // Replace placeholders in the template content
-    $templateContent = str_replace(array_keys($replacements), array_values($replacements), $templateContent);
-
-
-    // Write the modified content to the abstract file
-    $folder = WP_CONTENT_DIR . '/latex/' . $_SESSION['e_file'];
-    if (!file_exists($folder . '/orstylet.sty')) {
-        copy(WP_CONTENT_DIR . '/latex/orstylet.sty', $folder . '/orstylet.sty');
-    }
-    $abstractFilePath = $folder . '/abstract.tex';
-    file_put_contents($abstractFilePath, $templateContent);
-    // $folder = '../wp-content/latex/' . $_SESSION['file'];
-
-    chdir($folder);
-    $abcd = shell_exec('/bin/pdflatex -interaction=nonstopmode abstract.tex');
-    $_SESSION['e_generated'] = 1;
-
-    $logContent = file_get_contents($folder . '/abstract.log');
-
-    // Check if '!' exists in the log content
-    if (strpos($logContent, '!') !== false) {
-        $position = mb_strpos($logContent, '!', 0, 'UTF-8');
-
-        $cutString = mb_substr($logContent, $position, null, 'UTF-8');
-        $result['error'] = '<pre id="pre-container" class="error-pre">' . htmlspecialchars($cutString) . '</pre>';
-        $_SESSION['e_error'] = 1;
-    } else {
-        $_SESSION['e_error'] = 0;
-    }
 
     return $result;
 
@@ -816,9 +651,31 @@ function save_changes()
         return $result;
     }
 
+    $presentation_table_name = 'wp_or_registration_presentations';
+
+    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, display_title = %s, content = %s WHERE person_hash_id = %s';
+
+    $query = $wpdb->prepare($query, $_POST['display_title'], $_POST['display_title'], $_POST['abstract'], $_SESSION['e_hash']);
+
+    $db_result = $wpdb->query($query);
+    if ($db_result === false) {
+        $result['response'] = '<p class="e-red">error</p>';
+        return $result;
+    }
+
+    $temp_folder = WP_CONTENT_DIR . '/latex/temp/' . $_SESSION['e_file'];
+    $perm_folder = WP_CONTENT_DIR . '/latex/perm/' . $_SESSION['e_file'];
+
+    copy($temp_folder . '/abstract.tex', $perm_folder . '/abstract.tex');
+    copy($temp_folder . '/abstract.pdf', $perm_folder . '/abstract.pdf');
+    copy($temp_folder . '/abstract.log', $perm_folder . '/abstract.log');
+    copy($temp_folder . 'orstylet.sty', $perm_folder . 'orstylet.sty');
+
     $result['response'] = '<p class="e-green">Success</p>';
     $_SESSION['e_saved'] = 1;
     return $result;
+
+    
 
 }
 

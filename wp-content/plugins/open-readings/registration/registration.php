@@ -5,6 +5,231 @@ use DateTime;
 use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 use WP_Error;
 
+
+
+class ORLatexExport {
+    public RegistrationData $registration_data;
+
+    public function __construct($registration_data = null){
+        if ($registration_data == null){
+            $or_get_fields = new ORReadForm;
+            $this->registration_data = $or_get_fields->get_form();
+        } else {
+            $this->registration_data = $registration_data;
+        }
+    }
+
+
+    public function process_field($field){
+        $field = stripslashes($field);
+        $replacements = array(
+            // Step 1: Temporarily replace `{` and `}` with placeholders
+            '{' => '?:OPEN:?',
+            '}' => '?:CLOSE:?',
+            
+            // Step 2: Other special character replacements
+            '\\' => '\textbackslash{}',
+            '#' => '\#{}',
+            '$' => '\${}',
+            '%' => '\%{}',
+            '^' => '\^{}',
+            '&' => '\&{}',
+            '_' => '\_{}',
+            '~' => '\~{}',
+            
+            // Step 3: Replace placeholders with safer LaTeX-escaped braces
+            '?:OPEN:?' => '\{{}',
+            '?:CLOSE:?' => '\}{}',
+        );
+
+        $field = str_replace(array_keys($replacements), array_values($replacements), $field);
+        return $field;
+    }
+
+    public function generate_authors(){
+        $authors_tex = '';
+        foreach ($this->registration_data->authors as $i => $author) {
+            if (count($author) == 3)           
+                $authors_tex .= '\underline{' . $this->process_field($author[0]) . '}$^{' . $author[1] . '}$';
+            else
+                $authors_tex .= $this->process_field($author[0]) . '$^{' . $author[1] . '}$';
+    
+            if ($i+1 < count($this->registration_data->authors))
+                $authors_tex .= ', ';
+        }
+        return $authors_tex;
+    }
+
+    public function generate_affiliations(){
+        $affiliations_tex = '';
+        foreach ($this->registration_data->affiliations as $i => $affiliation) {
+            $affiliations_tex .= '\address{$^{' . $i+1 . '}$' . $this->process_field($affiliation) . '}
+        ';
+        }
+        foreach ($this->registration_data->authors as $author){
+            if(count($author))
+                $contact_email = $author[2];
+        }
+        $affiliations_tex .= '\rightaddress{' . $this->process_field($contact_email) . '}';
+        return $affiliations_tex;
+    }
+
+    public function generate_references(){
+        if(count($this->registration_data->references) > 0){
+            $references = '
+            \vfill    
+            \begin{thebibliography}{}
+            ';
+            foreach ($this->registration_data->references as $i => $ref) {
+                $references .= '\bibitem{' . $i+1 . '} ' . $this->process_field($ref) . '
+                ';
+            }
+            $references .= '\end{thebibliography}
+            ';
+            } else{
+                $references = '';
+            return $references;
+        }
+        return $references;
+    }
+
+    public function generate_acknowledgement(){
+        if(trim($this->registration_data->acknowledgement) == ''){
+            $acknowledgement = '';
+        } else {
+            $ack_content = $this->process_field($this->registration_data->acknowledgement);
+            $acknowledgement = "\leavevmode\\newline
+        
+            {\\bfseries Acknowledgements} 
+            
+            {$ack_content}
+            ";
+        }
+        
+        return $acknowledgement;
+    }
+
+    public function generate_title(){
+        $titleField = $this->process_field($this->registration_data->title);
+        //$titleField = str_replace('"', '', $title);
+        function fixUnclosedTags($text, $tagOpen, $tagClose)
+        {
+            $countOpen = substr_count($text, $tagOpen);
+            $countClose = substr_count($text, $tagClose);
+
+            $tagDiff = $countOpen - $countClose;
+
+            if ($tagDiff > 0) {
+                $text .= str_repeat($tagClose, $tagDiff);
+            }
+
+            return $text;
+        }
+
+        // Add missing </sup> tags
+        $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
+
+        // Add missing </sub> tags
+        $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
+
+
+        $sup_starting_tag = '<sup>';
+        $sub_starting_tag = '<sub>';
+        $sub_ending_tag = '</sub>';
+        $sup_ending_tag = '</sup>';
+        $layers = 0;
+        $is_in_math_mode = false;
+
+        for ($i = 0; $i < mb_strlen($titleField); $i++) {
+            if (mb_substr($titleField, $i, mb_strlen($sup_starting_tag)) == $sup_starting_tag) {
+                $sup_starting_tag_index = $i;
+                $layers++;
+                if ($layers == 1) {
+                    $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '$^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
+                } else {
+                    //replace <sup> with $^{
+                    $titleField = mb_substr($titleField, 0, $sup_starting_tag_index) . '^{' . mb_substr($titleField, $sup_starting_tag_index + mb_strlen($sup_starting_tag));
+                }
+                $i -= mb_strlen($sup_starting_tag);
+            }
+            if (mb_substr($titleField, $i, mb_strlen($sub_starting_tag)) == $sub_starting_tag) {
+                $sub_starting_tag_index = $i;
+                $layers++;
+                if ($layers == 1) {
+                    $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '$_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+                } else {
+                    //replace <sub> with $_{
+                    $titleField = mb_substr($titleField, 0, $sub_starting_tag_index) . '_{' . mb_substr($titleField, $sub_starting_tag_index + mb_strlen($sub_starting_tag));
+                }
+                $i -= mb_strlen($sup_starting_tag);
+
+            }
+
+            if (mb_substr($titleField, $i, mb_strlen($sub_ending_tag)) == $sub_ending_tag) {
+                $sub_ending_tag_index = $i;
+                $layers--;
+                if ($layers == 0) {
+                    //replace </sub> with }$
+                    $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}$' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+                } else {
+                    //replace </sub> with }$
+                    $titleField = mb_substr($titleField, 0, $sub_ending_tag_index) . '}' . mb_substr($titleField, $sub_ending_tag_index + mb_strlen($sub_ending_tag));
+                }
+                //replace </sub> with }$
+                $i -= mb_strlen($sup_starting_tag);
+            }
+            if (mb_substr($titleField, $i, mb_strlen($sup_ending_tag)) == $sup_ending_tag) {
+                $sup_ending_tag_index = $i;
+                $layers--;
+                if ($layers == 0) {
+                    //replace </sup> with }$
+                    $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+                } else {
+                    //replace </sup> with }$
+                    $titleField = mb_substr($titleField, 0, $sup_ending_tag_index) . '}$' . mb_substr($titleField, $sup_ending_tag_index + mb_strlen($sup_ending_tag));
+                }
+                $i -= mb_strlen($sup_starting_tag);
+            }
+        }
+
+        $titleField = str_replace('&nbsp;', ' ', $titleField);
+        return $titleField;
+    }
+
+    public function generate_content(){
+        $content = stripslashes($this->registration_data->abstract);
+
+        return $content;
+    }
+
+    public function generate_tex(){
+        $templateFilePath = '../plugins/open-readings/evaluation/admin/template.txt';
+        $templateContent = file_get_contents($templateFilePath);
+
+        $filename = "temp/" . $this->registration_data->session_id . "/abstract.tex";
+        
+        $replacements = array(
+            '${title}' => $this->generate_title(),
+            '${authors}' => $this->generate_authors(),
+            '${affiliations}' => $this->generate_affiliations(),
+            '${content}' => $this->generate_content(),
+            '${acknowledgement}' => $this->generate_acknowledgement(),
+            '${references}' => $this->generate_references(),
+        );
+
+        $templateContent = str_replace(array_keys($replacements), array_values($replacements), $templateContent);
+        $_ = file_put_contents($filename, $templateContent);
+    }
+
+    public function generate_abstract(){
+        $d = chdir("temp/{$this->registration_data->session_id}");
+        // $_ = shell_exec('/bin/lualatex -interaction=nonstopmode --output-directory="temp/' . $this->folder . '" "temp/' . $this->folder . '/abstract.tex"');
+        $_ = shell_exec('TEXMFCACHE=../../.texlive2022 /bin/lualatex -interaction=nonstopmode abstract.tex');
+
+    }
+
+}
+
 class ORReadForm
 {
     public function get_form(){
@@ -22,7 +247,7 @@ class ORReadForm
         $registration_data->agrees_to_email = isset($_POST['form_fields']['email_agree']) ? true : false;
         $registration_data->hash_id = $_POST['hash_id'];
         $registration_data->person_title = $_POST['form_fields']['person_title'] ;
-        $registration_data->title = $_POST['form_fields']['abstract_title'];
+        $registration_data->title = $_POST['form_fields']['abstract_title'] ?? '';
         $registration_data->authors = $this->get_authors_array();
         $registration_data->affiliations = $_POST['affiliation'] ?? [""];
         $registration_data->references = isset($_POST['references']) ? $_POST['references'] : [];
@@ -666,7 +891,7 @@ class OpenReadingsRegistration
             $table_name,
             array(
                 'evaluation_hash_id' => $hash_id,
-                'evaluation_id' => md5($hash_id)
+                'evaluation_id' => $hash_id,
             )
         );
         return $result;
@@ -702,6 +927,13 @@ class OpenReadingsRegistration
     public function update(RegistrationData $registration_data, $hash_id)
     {
         global $wpdb;
+        $result = $wpdb->get_row($wpdb->prepare('SELECT * FROM wp_or_registration_evaluation WHERE evaluation_hash_id = %s', $hash_id));
+        if ($result) {
+            if ($result->status == 3) {
+                return new WP_Error('evaluation_error', 'Your submission has been rejected. You cannot update it.');
+            }
+        }
+
         $start_date = get_option('or_registration_start');
         $end_date = get_option('or_registration_update_end');
 
@@ -768,8 +1000,11 @@ class OpenReadingsRegistration
             return new WP_Error('folder_error', 'Failed to rename folder');
         }
 
+        $wpdb->query($wpdb->prepare('UPDATE wp_or_registration_evaluation SET status = 0 WHERE evaluation_hash_id = %s', $hash_id));
+
 
         $vars = $this->email_vars_map($registration_data, $hash_id);
+
         global $or_mailer;
 
         $sent = $or_mailer->send_registration_update_success_email($vars, $registration_data->email);
