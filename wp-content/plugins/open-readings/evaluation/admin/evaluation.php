@@ -7,6 +7,7 @@ wp_enqueue_style('registration-evaluation-style');
 wp_enqueue_script('jquery');
 wp_enqueue_script('institutions-list-js', '');
 wp_enqueue_script('evaluation-js', '');
+require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
 
 
 

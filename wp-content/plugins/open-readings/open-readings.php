@@ -311,9 +311,13 @@ function custom_admin_styles() {
   if ( isset( $_GET['page'] ) && $_GET['page'] == 'or_evaluation' ) {
     // Enqueue the custom admin CS
     $path = 'assets/css/evaluation-style.css';
-    $css_path = plugin_dir_path(OR_PLUGIN_FILE) . $path;
+    $css_path = plugin_dir_path(file: OR_PLUGIN_FILE) . $path;
     wp_register_style('first-evaluation-style', plugins_url($path, OR_PLUGIN_FILE), array(), filemtime($css_path));
     wp_enqueue_style('first-evaluation-style');
+    $path = 'assets/js/evaluation-js.js';
+    $js_path = plugin_dir_path(file: OR_PLUGIN_FILE) . $path;
+    wp_register_script('first-evaluation-js', plugins_url($path, OR_PLUGIN_FILE), array(), filemtime($js_path));
+    wp_enqueue_script('first-evaluation-js');
   }
 }
 add_action( 'admin_enqueue_scripts', 'custom_admin_styles' );
