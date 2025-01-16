@@ -40,7 +40,7 @@
 \cftpagenumbersoff{chapter}
 \graphicspath{{images}}
 
-
+\usepackage{nopageno}
 \begin{document}\sloppy
 
 \renewcommand{\figurename}{Fig.} 

@@ -63,7 +63,7 @@ class ORRegistrationSession {
         $this->set_registration_cookies();
     }
 
-    public function copy_files_to_temp($folder_hash){
+    public static function copy_files_to_temp($folder_hash){
         $temp_folder = WP_CONTENT_DIR . '/latex/temp/' . $folder_hash;
         $perm_folder = WP_CONTENT_DIR . '/latex/perm/' . $folder_hash;
 

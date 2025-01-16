@@ -370,8 +370,8 @@ function update_evaluation_table()
     }
     $presentation_table_results = $wpdb->get_col("SELECT person_hash_id FROM $presentation_table_name");
 
-    foreach ($presentation_table_results as $result) {
-        $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE presentation_id = %s", $result));
+    foreach ($presentation_table_results as $hash_id) {
+        $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE evaluation_id = %s", $result));
 
         if (!$exists_in_evaluation_table) {
             $evaluation_id = md5($result);
@@ -381,7 +381,7 @@ function update_evaluation_table()
                 VALUES (%s, %s, %d)
                 ';
 
-            $query = $wpdb->prepare($query, $result, $evaluation_id, 0);
+            $query = $wpdb->prepare($query, $hash_id, $hash_id, 0);
             $result = $wpdb->query($query);
             if (!$result) {
                 echo '<div class="notice notice-error"><p>Error: ' . $wpdb->last_error . '</p></div>';
