@@ -207,10 +207,10 @@ ORDER BY RAND()
         $result['response'] .= '<p>' . $field[0] . '<b>' . $registration_row[$field[1]] . '</b>' . '</p>';
     }
 
-    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution: </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
+    $result['response'] .= '<form id="presentationForm"><label for="institution">Institution [Jei raudona, pakeisti (pasirinkti iš atsirandančio sąrašo). Jei sąraše nėra, palikti raudoną] </label><b><input id="institution-field" class="evaluation-input" autocomplete="off" name="institution" type=text value="' . $registration_row['institution'] . '"></input><div id="institution-wrapper"></div></b><br>';
     $result['response'] .= '<label for="department">Department: </label><b><input class="evaluation-input" name="department" type=text value="' . $registration_row['department'] . '"></input></b><br>';
 
-    $result['response'] .= '<label for="display_title">Title: </label><b><input class="evaluation-input" name="display_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
+    $result['response'] .= '<label for="display_title">Title [Turi būti didžiosiomis + pataisyt, jei yra dingusių tarpų] ŠIS LAUKELIS RODOMAS ABSTRAKTE </label><b><input class="evaluation-input" name="display_title" type=text value="' . stripslashes($presentation_row['title']) . '"></input></b><br><br>';
 
     // $contact_index = 0;
     // foreach (json_decode($presentation_row['authors']) as $item) {
@@ -241,16 +241,17 @@ ORDER BY RAND()
     // }
     // $result['response'] .= '<label for="textArea"> Abstract: </label><br><textarea class="evaluation-input" cols=70 rows=20 name="textArea">' . stripslashes($presentation_row['content']) . '</textarea><br>';
 
-    $result['response'] .= '<label for="sendMail"> Email [ONLY USED FOR UPDATE OR REJECT]: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail">' . $evaluation_row['email_content'] . '</textarea><br>';
+    $result['response'] .= '<label for="sendMail"> Email [Nurodyti tik priežastį] Jei spaudžiat ACCEPT, šis laukelis neturi reikšmės: </label><br><textarea class="evaluation-input" cols=30 rows=5 id="email-content" name="sendMail">' . $evaluation_row['email_content'] . '</textarea><br>';
 
 
-    $result['response'] .= '</form>';
 
     $result['response'] .= '<button class="button-style g-button" id="send-accept">Accept</button>';
     $result['response'] .= '<button class="button-style b-button" id="send-update">Ask to update</button>';
     $result['response'] .= '<button class="button-style r-button" id="send-reject">Reject & Email</button>';
 
     $result['response'] .= '<div id="send-email" class="message-div"></div>';
+    $result['response'] .= '<label for="abstract-content">Abstrakto turinys JEI MATOT LATEX ERROR IR MOKAT PATAISYT, GALIT. NEBŪTINA</label><textarea class="eval-content" id="abstract-content" name="abstract">' . stripslashes($presentation_row['content']) . '</textarea>';
+    $result['response'] .= '</form>';
 
 
 
@@ -362,6 +363,7 @@ function generate_abstract()
     chdir(WP_CONTENT_DIR . '/latex/');
 
     $latex_export->registration_data->title = $_POST['display_title'];
+    $latex_export->registration_data->abstract = $_POST['abstract'];
 
     $latex_export->generate_tex();
     $latex_export->generate_abstract();
@@ -651,9 +653,9 @@ function save_changes()
 
     $presentation_table_name = 'wp_or_registration_presentations';
 
-    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, display_title = %s WHERE person_hash_id = %s';
+    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, display_title = %s, content = %s WHERE person_hash_id = %s';
 
-    $query = $wpdb->prepare($query, $_POST['display_title'], $_POST['display_title'], $_SESSION['e_hash']);
+    $query = $wpdb->prepare($query, $_POST['display_title'], $_POST['display_title'], $_POST['abstract'], $_SESSION['e_hash']);
 
     $db_result = $wpdb->query($query);
     if ($db_result === false) {

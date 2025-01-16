@@ -75,6 +75,48 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
                 šabloną.</li>
             Norėdami tikrinti kitą dalyvį, paspauskite 'NEXT' mygtuką.
         </ul>
+        <strong> <p>EIGA:</p>
+            <ol>
+                <li>[OPTIONAL] --- ATLIKOTE KAŽKOKIUS LAUKELIŲ (pvz. institution) PAKEITIMUS </li>
+                <li>SPAUDŽIAT GENERATE, KAD SUGENERUOT ABSTRAKTĄ</li>
+                <li>[OPTIONAL, KAS MOKA] --- JEI YRA LATEX ERROR, GALIT BANDYT PATAISYT ABSTRATO TURINĮ IR VĖL SPAUST GENERATE</li>
+                <li>JEI KAŽKĄ SULAUŽĖTE/IŠTRYNĖTE SPAUSKITE NEXT IR ATNAUJINIMAI NEBUS IŠSAUGOTI</li>
+                <li>JEI VISKAS OK, SPAUDŽIAT SAVE. DALYVIO DUOMENYS IR ABSTRAKTAS BUS ATNAUJINTI, JEI KAŽKĄ KEITĖT.</li>
+                <li>JEI VISKAS ABSTRAKTAS ATITINKA REIKALAVIMUS SPAUSKITE ACCEPT. EMAIL NEBUS IŠSIŲSTAS.</li>
+                <li>JEI REIKIA, ĮRAŠYKITE Į EMAIL LAUKELĮ PRIEŽASTĮ IR SPAUSKIT "ASK FOR UPDATE" ARBA "REJECT"</li>
+            </ol>
+        </strong>
+
+        <p style="background-color: #ccf;">
+            <strong>UPDATE LAIŠKO TURINYS ATRODO TAIP:</strong><br>
+            Dear participant,<br><br>
+
+            You must make the following adjustments to your submission before we can send it to our programme committee for further evaluation:<br><br>
+
+            <strong>[ČIA EMAIL LAUKELIO TURINYS]</strong><br><br>
+
+            The reference ID of your registration:<br>
+            07f48e97464bf852d43a9a15757229ba<br>
+            To update your submission please click HERE<br><br>
+
+            Best regards, <br>
+            Open Readings team <br>
+
+        </p><br><br>
+
+        <p style="background-color: #fcc;">
+            <strong>REJECT LAIŠKO TURINYS ATRODO TAIP:</strong><br>
+            Dear participant,<br><br>
+            We regret to inform you that your submission has not been accepted for the following reason:<br><br>
+            
+            <strong>[ČIA EMAIL LAUKELIO TURINYS]</strong><br><br>
+
+            Best regards, <br>
+            Open Readings team
+            <br>
+            <br>
+
+        </p>
 
 
         </p>
