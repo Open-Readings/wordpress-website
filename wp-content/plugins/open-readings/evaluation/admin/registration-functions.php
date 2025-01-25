@@ -283,6 +283,7 @@ ORDER BY RAND()
        check_institution();
        institutionInputChange();
     });
+    console.log(\'loaded\' + new Date().toLocaleTimeString());
     </script>';
 
 
