@@ -35,6 +35,7 @@
 \usepackage[font=footnotesize]{caption}
 
 \usepackage[hidelinks,hypertexnames=false]{hyperref}
+\usepackage[1]{pagesel}
 
 \tocloftpagestyle{PageStyle}
 \cftpagenumbersoff{chapter}
