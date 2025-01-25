@@ -365,6 +365,14 @@ class ORCheckForm
                 }
             }
         }
+        if (strpos($registration_data->abstract, '\begin{document}') !== false) {
+            return "The \\begin{document} in the abstract content field is unnecessary. Please remove it.";
+        }
+
+        if (strpos($registration_data->abstract, '\end{document}') !== false) {
+            return "The \\end{document} in the abstract content field is unnecessary. Please remove it.";
+        }
+
         return true;
     }
 
