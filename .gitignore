@@ -65,6 +65,7 @@ wp-config.php
 /wp-content/plugins/open-readings/vendor/
 /wp-content/plugins/open-readings/composer.phar
 
+/wp-content/plugins/open-readings/app/*.json
 
 
 
