@@ -58,10 +58,14 @@ wp-config.php
 !/wp-content/plugins/open-readings/
 !/wp-content/plugins/open-readings/**
 
+!/wp-content/plugins/or-fcm/
+!/wp-content/plugins/or-fcm/**
+
 #ignore composer:
 /wp-content/plugins/open-readings/vendor/
 /wp-content/plugins/open-readings/composer.phar
 
+/wp-content/plugins/open-readings/app/*.json
 
 
 
