@@ -103,33 +103,64 @@ function display_evaluation_page()
 
     global $wpdb;
 
-    $table_name = 'wp_or_registration_evaluation';
-    $column_name = `current_user`;
+    if ($_POST['direction'] == "next"){
+        $order = "ASC";
+        $compare = ">";
+    } else {
+        $order = "DESC";
+        $compare = "<";
+    }
 
-    // Update rows in the specified table where the column has the value 'example' to NULL
-    $wpdb->query(
+    isset($_POST['needs_visa']) ? $visa_condition = " AND t2.needs_visa = 1" : $visa_condition = '';
+    
+    isset($_POST['is_foreign']) ? $foreign_condition = " AND t2.country != 'Lithuania'" : $foreign_condition = '';
+
+    $current_user = wp_get_current_user()->user_login;
+
+    $current_user_id = $wpdb->get_var(
         $wpdb->prepare(
-            "UPDATE wp_or_registration_evaluation AS t1
-        JOIN wp_or_registration_evaluation AS t2 ON t1.current_user = t2.current_user
-        SET t1.current_user = NULL
-        WHERE t1.current_user = %s",
-            wp_get_current_user()->user_login
-
+            "SELECT evaluation_hash_id FROM wp_or_registration_evaluation WHERE `current_user` = %s ORDER BY evaluation_hash_id ASC LIMIT 1",
+            $current_user
         )
     );
 
-    $registration_table = $wpdb->prefix . 'or_registration';
-    $presentations_table = $wpdb->prefix . 'or_registration_presentations';
-    $evaluation_table = $wpdb->prefix . 'or_registration_evaluation';
 
-    $query = $wpdb->prepare("
-select evaluation_hash_id from wp_or_registration_evaluation 
-where `current_user` is NULL and `status` = 0 or `status` = 4
-ORDER BY RAND()
-");
-
-
+    if ($current_user_id) {
+        // Get the "next" output: row by ordering by evaluation_hash_id
+        $query = $wpdb->prepare(
+            "
+            SELECT t1.evaluation_hash_id
+            FROM wp_or_registration_evaluation t1
+            INNER JOIN wp_or_registration t2 ON t1.evaluation_hash_id = t2.hash_id
+            WHERE t1.current_user IS NULL 
+              AND t1.evaluation_hash_id $compare %s
+              AND (t1.status = 0 OR t1.status = 4) $visa_condition $foreign_condition
+            ORDER BY t1.evaluation_hash_id $order 
+            LIMIT 1;
+            ",
+            $current_user_id
+        );
+    }
     $evaluation_hash = $wpdb->get_row($query, ARRAY_A)['evaluation_hash_id'];
+    if (!$evaluation_hash) {
+        $wpdb->query(query: $wpdb->prepare("UPDATE wp_or_registration_evaluation SET `current_user` = NULL WHERE evaluation_hash_id = %s", $current_user_id));
+        // Get the first output: row by ordering by evaluation_hash_id
+        $query = "
+            SELECT t1.evaluation_hash_id
+            FROM wp_or_registration_evaluation t1
+            INNER JOIN wp_or_registration t2 ON t1.evaluation_hash_id = t2.hash_id
+            WHERE t1.current_user IS NULL 
+              AND (t1.status = 0 OR t1.status = 4) $visa_condition $foreign_condition
+            ORDER BY t1.evaluation_hash_id $order 
+            LIMIT 1;
+            ";
+        
+        $evaluation_hash = $wpdb->get_row($query, ARRAY_A)['evaluation_hash_id'];
+    }
+
+    $wpdb->query(query: $wpdb->prepare("UPDATE wp_or_registration_evaluation SET `current_user` = NULL WHERE evaluation_hash_id = %s", $current_user_id));
+
+
     if ($evaluation_hash == NULL) {
         $result['response'] = '<h1>No more evaluations are needed for now.</h1>';
         return $result;
