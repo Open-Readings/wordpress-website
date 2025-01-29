@@ -121,7 +121,12 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
 
         </p>
     </div>
-    <button class="button-style r-button" id="evaluationButton">NEXT</button>
+    <form method="post">
+        <input type="checkbox" name="needs_visa" value="1"> Needs visa<br>
+        <input type="checkbox" name="is_foreign" value="1"> Is foreign<br>
+        <button class="button-style r-button" id="previousButton">PREVIOUS</button>
+        <button class="button-style r-button" id="nextButton">NEXT</button>
+    </form>
     <div id=displayContainer></div>
     <div id="scriptContainer"></div>
 
@@ -149,11 +154,35 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
     </script>
 
     <script>
-        jQuery(document).on('click', '#evaluationButton', function (e) {
+        jQuery(document).on('click', '#nextButton', function (e) {
             e.preventDefault();
-            var formData = new FormData();
+            var form = this.form;
+            var formData = new FormData(form);
             formData.append('action', 'evaluation');
             formData.append('function', 'show_evaluation');
+            formData.append('direction', 'next');
+            jQuery.ajax({
+                method: 'post',
+                url: '<?= admin_url('admin-ajax.php') ?>',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    var parsed = JSON.parse(response);
+                    jQuery("#displayContainer").html(parsed.response)
+                }
+            });
+        });
+    </script>
+
+    <script>
+        jQuery(document).on('click', '#previousButton', function (e) {
+            e.preventDefault();
+            var form = this.form;
+            var formData = new FormData(form);
+            formData.append('action', 'evaluation');
+            formData.append('function', 'show_evaluation');
+            formData.append('direction', 'previous');
             jQuery.ajax({
                 method: 'post',
                 url: '<?= admin_url('admin-ajax.php') ?>',
