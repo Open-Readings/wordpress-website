@@ -82,6 +82,15 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
             ]
         );
 
+        $widget->add_control(
+            'limit_fields',
+            [
+                'label' => __('Field entries limit:', 'elementor-pro'),
+                'type' => Controls_Manager::TEXTAREA,
+                'description' => __('Enter limits for fields in format: field_name|value=max_entries', 'elementor-pro'),
+            ]
+        );
+
         $widget->end_controls_section();
     }
 
@@ -163,6 +172,8 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
             'value' => $hash_id,
         );
 
+        
+
         if (in_array('email', $form_fields) && in_array('repeat_email', $form_fields)) {
             if ($form_fields['email']['value'] != $form_fields['repeat_email']['value']) {
                 $ajax_handler->add_error_message(_e('Emails do not match'));
@@ -181,6 +192,41 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
                 return;
             }
         }
+
+        // Get the field limit data
+        $pattern = '/(\w+)\|(\w+)=(\d+)/';
+        preg_match_all($pattern, $record->get_form_settings('limit_fields'), $matches, PREG_SET_ORDER);
+
+        $field_limit_arr = [];
+        foreach ($matches as $match) {
+            $field_name = $match[1]; // Captured field name
+            $value = $match[2];  // Captured value name
+            $number = (int) $match[3]; // Captured number
+
+            $field_limit_arr[] = [
+                'field_name' => $field_name,
+                'value' => $value,
+                'number' => $number
+            ];
+        }
+
+        // Check if the field limit is reached
+        foreach ($field_limit_arr as $field_limit) {
+            $field_name = $field_limit['field_name'];
+            $value = $field_limit['value'];
+            $number = $field_limit['number'];
+
+            $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE $field_name = '$value'");
+
+
+            if ($count >= $number) {
+                if ($form_fields[$field_name]['value'] == $value) {
+                    $ajax_handler->add_error_message("(Maximum number of submissions for $field_name: $value has been reached)");
+                    return;
+                }
+            }
+        }
+
         // Iterate through form fields and update the database
         foreach ($form_fields as $field_id => $field_data) {
             $sanitized_value = sanitize_text_field($field_data['value']);
