@@ -232,7 +232,7 @@ array_walk_recursive($registration_data->references, function (&$value) {
         let imageMessage = document.getElementById('image-names');
 
         images.forEach((file) => {
-            imageMessage.innerHTML += '<p style="font-weight:bold; font-family:sans-serif; display:inline">' + file + ' –</p> <p class="image-code"> Copy image LaTeX code to clipboard' + "</p><br>";
+            imageMessage.innerHTML += '<p style="font-weight:bold; font-family:sans-serif; display:inline">' + file + '</p> <p class="image-code"> Copy image LaTeX code to clipboard' + "</p><br>";
         });
         
         let imageCodeElements = document.querySelectorAll(".image-code");
