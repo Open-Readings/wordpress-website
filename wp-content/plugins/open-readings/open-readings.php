@@ -325,3 +325,10 @@ add_action( 'admin_enqueue_scripts', 'custom_admin_styles' );
 
 require_once __DIR__ . '/app/ordle.php';
 add_action('rest_api_init', 'register_daily_word_endpoint');
+
+function register_pupils_workshop_script()
+{
+  if (is_page(page: 'moksleiviu-sesijos-registracija'))
+    require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
+}
+add_action('wp_footer', 'register_pupils_workshop_script');
