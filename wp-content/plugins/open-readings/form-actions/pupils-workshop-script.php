@@ -15,7 +15,7 @@ $excursion_arr = [
     'excursion3' => 1,
 ];
 
-$table_name = 'wp_custom_table_test';
+$table_name = 'wp_pupils_registration_25';
 
 $places_left = [];
 
