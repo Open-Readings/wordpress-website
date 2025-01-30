@@ -67,7 +67,7 @@ class ORLatexExport {
         ';
         }
         foreach ($this->registration_data->authors as $author){
-            if(count($author))
+            if(count($author) == 3)
                 $contact_email = $author[2];
         }
         $affiliations_tex .= '\rightaddress{' . $this->process_field($contact_email) . '}';
