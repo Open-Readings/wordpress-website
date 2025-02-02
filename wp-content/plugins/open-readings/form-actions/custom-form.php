@@ -90,6 +90,15 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
                 'description' => __('Enter limits for fields in format: field_name|value=max_entries', 'elementor-pro'),
             ]
         );
+        $widget->add_control(
+            'check_pupils_workshops',
+            [
+                'label' => __('Pupils workshops check', 'elementor-pro'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'description' => __('Makes sure one workshop and excursion is selected', 'elementor-pro'),
+            ]
+        );
 
         $widget->end_controls_section();
     }
@@ -171,6 +180,22 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
         $form_fields['hash_id'] = array(
             'value' => $hash_id,
         );
+
+        $check_pupils_workshops = $record->get_form_settings('check_pupils_workshops');
+        if($check_pupils_workshops == "yes"){
+            $workshop1 = $form_fields['workshop1']['value'];
+            $workshop2 = $form_fields['workshop2']['value'];
+
+            // I want to check that one is workshop and one is excursion. Do a check if contains. and if both contain then return error
+            if(strpos($workshop1, 'workshop') !== false && strpos($workshop2, 'workshop') !== false){
+                $ajax_handler->add_error_message("Pasirinkite vienas dirbtuves ir vieną ekskursiją");
+                return;
+            }
+            if(strpos($workshop1, 'excursion') !== false && strpos($workshop2, 'excursion') !== false){
+                $ajax_handler->add_error_message("Pasirinkite vienas dirbtuves ir vieną ekskursiją");
+                return;
+            }
+        }
 
         
 

@@ -3,18 +3,20 @@
 $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
-$workshop_arr = [
+$workshop1_arr = [
     'workshop1' => 15,
     'workshop2' => 15,
-    'workshop3' => 15,
-    'workshop4' => 15,
-];
-
-$excursion_arr = [
     'excursion1' => 10,
     'excursion2' => 10,
     'excursion3' => 10,
+];
+
+$workshop2_arr = [
+    'workshop3' => 15,
+    'workshop4' => 15,
     'excursion4' => 10,
+    'excursion5' => 10,
+    'excursion6' => 10,
 ];
 
 $table_name = 'wp_pupils_registration_25';
@@ -44,9 +46,9 @@ $places_left = [];
 
 global $wpdb;
 
-   foreach($workshop_arr as $value => $limit){
+   foreach($workshop1_arr as $value => $limit){
         $result = $wpdb->get_results($wpdb->prepare(
-            "SELECT COUNT(*) as count FROM $table_name WHERE workshop = %s",
+            "SELECT COUNT(*) as count FROM $table_name WHERE workshop1 = %s",
             $value
         ));
         
@@ -59,9 +61,9 @@ global $wpdb;
         <?php
     }
 
-    foreach($excursion_arr as $value => $limit){
+    foreach($workshop2_arr as $value => $limit){
         $result = $wpdb->get_results($wpdb->prepare(
-            "SELECT COUNT(*) as count FROM $table_name WHERE excursion = %s",
+            "SELECT COUNT(*) as count FROM $table_name WHERE workshop2 = %s",
             $value
         ));
         
