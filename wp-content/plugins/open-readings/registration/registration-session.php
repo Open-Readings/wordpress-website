@@ -91,6 +91,8 @@ class ORRegistrationSession {
 
     public function check_validity(){
         global $wpdb;
+        if(!isset($_COOKIE['hash_id']) or !isset($_COOKIE['folder_hash']))
+            return false;
         $saved = $wpdb->get_var($wpdb->prepare(
             "SELECT saved FROM wp_or_registration_temp WHERE hash_id = %s",
             $_COOKIE['hash_id']
