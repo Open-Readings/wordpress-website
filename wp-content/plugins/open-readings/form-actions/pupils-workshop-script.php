@@ -4,15 +4,17 @@ $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
 $workshop_arr = [
-    'workshop1' => 1,
-    'workshop2' => 1,
-    'workshop3' => 1,
+    'workshop1' => 15,
+    'workshop2' => 15,
+    'workshop3' => 15,
+    'workshop4' => 15,
 ];
 
 $excursion_arr = [
-    'excursion1' => 1,
-    'excursion2' => 1,
-    'excursion3' => 1,
+    'excursion1' => 10,
+    'excursion2' => 10,
+    'excursion3' => 10,
+    'excursion4' => 10,
 ];
 
 $table_name = 'wp_pupils_registration_25';
