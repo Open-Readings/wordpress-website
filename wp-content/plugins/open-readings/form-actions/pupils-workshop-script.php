@@ -3,20 +3,20 @@
 $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
-$workshop1_arr = [
-    'workshop1' => 15,
-    'workshop2' => 15,
-    'excursion1' => 10,
-    'excursion2' => 10,
-    'excursion3' => 10,
+$workshop_arr = [
+    'chem1' => 15,
+    'fiz1' => 15,
+    'bio2' => 15,
+    'inz2' => 15,
 ];
 
-$workshop2_arr = [
-    'workshop3' => 15,
-    'workshop4' => 15,
-    'excursion4' => 10,
-    'excursion5' => 10,
-    'excursion6' => 10,
+$excursion_arr = [
+    'gmc1' => 10,
+    'ftmc1' => 10,
+    'lightcon1' => 10,
+    'gmc2' => 10,
+    'ftmc2' => 10,
+    'lightcon2' => 10,
 ];
 
 $table_name = 'wp_pupils_registration_25';
@@ -41,14 +41,63 @@ $places_left = [];
     }
     let fieldValue;
     let fieldLimit;
+
+    function hide_radios(r1, r2, r3){
+        r1.parentNode.style.display = 'none';
+        r2.parentNode.style.display = 'none';
+        r3.parentNode.style.display = 'none';
+
+        r1.checked = false;
+        r2.checked = false;
+        r3.checked = false;
+    }
+
+    function show_radios(r1, r2, r3){
+        r1.parentNode.style.display = 'block';
+        r2.parentNode.style.display = 'block';
+        r3.parentNode.style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('hi mom');
+
+        const radio1 = document.querySelector('input[type="radio"][value="gmc1"]');
+        const radio2 = document.querySelector('input[type="radio"][value="ftmc1"]');
+        const radio3 = document.querySelector('input[type="radio"][value="lightcon1"]');
+        const radio4 = document.querySelector('input[type="radio"][value="gmc2"]');
+        const radio5 = document.querySelector('input[type="radio"][value="ftmc2"]');
+        const radio6 = document.querySelector('input[type="radio"][value="lightcon2"]');
+
+        hide_radios(radio1, radio2, radio3);
+
+        document.querySelector('input[type="radio"][value="fiz1"]').addEventListener('change', function(){
+            show_radios(radio4, radio5, radio6);
+            hide_radios(radio1, radio2, radio3);
+        });
+        document.querySelector('input[type="radio"][value="chem1"]').addEventListener('change', function(){
+            show_radios(radio4, radio5, radio6);
+            hide_radios(radio1, radio2, radio3);
+        });
+        document.querySelector('input[type="radio"][value="bio2"]').addEventListener('change', function(){
+            show_radios(radio1, radio2, radio3);
+            hide_radios(radio4, radio5, radio6);
+        });
+        document.querySelector('input[type="radio"][value="inz2"]').addEventListener('change', function(){
+            show_radios(radio1, radio2, radio3);
+            hide_radios(radio4, radio5, radio6);
+        });
+    });
+
+    // on form chage i need to run js
+
 </script>
 <?php
 
 global $wpdb;
 
-   foreach($workshop1_arr as $value => $limit){
+   foreach($excursion_arr as $value => $limit){
         $result = $wpdb->get_results($wpdb->prepare(
-            "SELECT COUNT(*) as count FROM $table_name WHERE workshop1 = %s",
+            "SELECT COUNT(*) as count FROM $table_name WHERE excursion = %s",
             $value
         ));
         
@@ -61,9 +110,9 @@ global $wpdb;
         <?php
     }
 
-    foreach($workshop2_arr as $value => $limit){
+    foreach($workshop_arr as $value => $limit){
         $result = $wpdb->get_results($wpdb->prepare(
-            "SELECT COUNT(*) as count FROM $table_name WHERE workshop2 = %s",
+            "SELECT COUNT(*) as count FROM $table_name WHERE workshop = %s",
             $value
         ));
         
