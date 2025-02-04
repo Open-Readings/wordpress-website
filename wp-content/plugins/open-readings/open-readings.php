@@ -132,7 +132,7 @@ function add_menu_roles()
   );
   $role = add_role(
     'or_main_evaluator',
-    'Abstract Evaluator (OR programme commitee)',
+    'Programme Committee',
     array(
       'read' => true, // True allows that capability
       'manage_or_registration' => false,
