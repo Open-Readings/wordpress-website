@@ -4,56 +4,6 @@
 <p> If you decide to reject the participant, please provide a comment. </p>
 <strong> Please note that you can only evaluate abstracts that have not been evaluated by you before. </strong>
 
-
-
-
-<?php
-
-function send_confirmation_email($email, $comment, $decision, $presentation_title)
-{
-    global $PRESENTATION_TYPE;
-    global $or_mailer;
-    $subject = "Open Readings 2023 - Abstract Evaluation";
-    $message = "Dear participant, <br><br> Thank you for your abstract submission to Open Readings 2023. 
-    <br><br> Your abstract has been evaluated by the conference program committee.
-     <br><br> The conference program committee has decided to allow you to present your work '$presentation_title' in the form of: " . array_search($decision, $PRESENTATION_TYPE) . "
-         <br><br> $comment <br><br> 
-     We hope to see you at Open Readings 2023! <br><br> Best regards, <br><br> Open Readings 2023";
-    $sent = $or_mailer->send_mail($email, $subject, $message);
-    return $sent;
-
-}
-
-function send_rejection_email($email, $comment, $presentation_title)
-{
-    global $PRESENTATION_TYPE;
-    global $or_mailer;
-    $subject = "Open Readings 2023 - Abstract Evaluation";
-    $message = "Dear participant, <br><br> Thank you for your abstract submission to Open Readings 2023. 
-    <br><br> Your abstract has been evaluated by the conference program committee.
-     <br><br> The conference program committee has decided to reject your abstract '$presentation_title'. 
-         <br><br> $comment <br><br> 
-         Thank you for your interest in our conference and for taking the time to submit your abstract.<br><br> Best regards, <br><br> Open Readings 2023!";
-    $sent = $or_mailer->send_mail($email, $subject, $message);
-    return $sent;
-
-}
-
-function send_emails($email, $comment, $decision, $presentation_title)
-{
-    if ($decision == 3) {
-        send_rejection_email($email, $comment, $presentation_title);
-    } else {
-        send_confirmation_email($email, $comment, $decision, $presentation_title);
-    }
-}
-
-
-
-?>
-
-
-
 <div>
     <table cellspacing=0 cellpadding=1 border=1 bordercolor=black width=100%>
 
@@ -75,10 +25,10 @@ function send_emails($email, $comment, $decision, $presentation_title)
         global $wpdb;
         global $RESEARCH_AREAS;
         global $PRESENTATION_TYPE;
-        $presentation_table = 'wp_or_registration_presentations';
-        $registration_table = "wp_or_registration";
-        $evaluation_table = "wp_or_registration_evaluation";
-        $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id LEFT JOIN (SELECT hash_id, title as person_title FROM wp_or_registration) as t ON t.hash_id = r.hash_id";
+        $pres_table = 'wp_or_registration_presentations';
+        $reg_table = "wp_or_registration";
+        $eval_table = "wp_or_registration_evaluation";
+        $joined_table = "$eval_table t1 INNER JOIN $reg_table t2 ON t1.evaluation_hash_id = t2.hash_id INNER JOIN $pres_table t3 ON t3.person_hash_id = t1.evaluation_hash_id";
         $user_id = get_current_user_id();
         $user_roles = get_userdata($user_id)->roles;
         $is_admin = in_array('administrator', $user_roles);
@@ -102,6 +52,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
             }
             echo "</select>";
             echo "</form>";
+            echo "<h2 style=\"color:#d00\">Šis puslapis matomas VERTINTOJŲ, esant reikalui or komandai per čia galima pakeisti Grade/Research Area/Decision</h2>";
 
         }
 
@@ -110,45 +61,46 @@ function send_emails($email, $comment, $decision, $presentation_title)
         }
 
         if (isset($_POST['save_settings'])) {
+            $comment = $_POST['comment'];
+            $research_ar = $_POST['research_area'];
+            
 
             $eval_id = $_POST['save_settings'];
+            $update = $wpdb->update($reg_table, array('research_area' => $research_ar), array('hash_id' => $eval_id));
 
             if (!isset($_POST['decision'])) {
                 $error = "Please select a decision";
                 $save_error = true;
+            } else {
+                $decision = $_POST['decision'];
             }
-
 
             if (!isset($_POST['grade']) || $_POST['grade'] == 0) {
                 $error = 'Please select a grade';
                 $save_error = true;
+            } else {
+                $grade = $_POST['grade'];
             }
-            $decision = $_POST['decision'];
-            $grade = $_POST['grade'];
-            $comment = $_POST['comment'];
 
-            $decision_before = $wpdb->get_var("SELECT decision FROM $evaluation_table WHERE evaluation_hash_id = '$eval_id'");
+            
+            $decision_before = $wpdb->get_var("SELECT decision FROM $eval_table WHERE evaluation_hash_id = '$eval_id'");
             if ($decision_before != 0 && !$is_admin) {
                 $error = "You have already evaluated this abstract";
                 $save_error = true;
-
             }
 
             if (!$save_error) {
-                $update = $wpdb->update($evaluation_table, array('decision' => $decision, 'evaluation' => $grade, 'comment' => $comment), array('evaluation_hash_id' => $eval_id));
-
+                $update = $wpdb->update($eval_table, array('decision' => $decision, 'evaluation' => $grade, 'comment' => $comment), array('evaluation_hash_id' => $eval_id));
                 if ($update) {
-
-                    $email = $wpdb->get_var("SELECT email FROM $registration_table WHERE hash_id = '$eval_id'");
-                    $presentation_title = $wpdb->get_var("SELECT title FROM $presentation_table WHERE person_hash_id = '$eval_id'");
-                    //send_emails($email, $comment, $decision, $presentation_title);
+                    $email = $wpdb->get_var("SELECT email FROM $reg_table WHERE hash_id = '$eval_id'");
+                    $presentation_title = $wpdb->get_var("SELECT title FROM $pres_table WHERE person_hash_id = '$eval_id'");
                 }
             }
             if (!empty($error))
                 echo '<p style="background-color:red">' . $error . '</p>';
 
         }
-        $evals = $wpdb->get_results("SELECT * FROM $joint_table WHERE checker = '$user_id'");
+        $evals = $wpdb->get_results("SELECT t1.* , t2.title as person_title, t2.*, t3.* FROM $joined_table WHERE checker = '$user_id'");
         $person_index = 0;
         foreach ($evals as $eval) {
             $person_index++;
@@ -165,6 +117,7 @@ function send_emails($email, $comment, $decision, $presentation_title)
                 $color = '#ff6666';
             }
 
+            $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $eval->pdf);
 
             echo '<tr style="background-color:' . $color . '">';
             echo '<form method="post">';
@@ -174,11 +127,14 @@ function send_emails($email, $comment, $decision, $presentation_title)
             echo '<td>' . $eval->last_name . '</td>';
             echo '<td>' . $eval->institution . '</td>';
             echo '<td>' . $eval->title . '</td>';
+            echo "<td><a href='" . $pdf_url . "?" . time() . "'><strong>" . basename($eval->pdf) . "</strong></a></td>";
+            echo '<td><select name="research_area">';
+            foreach ($RESEARCH_AREAS as $key => $value) {
+                echo '<option value="' . $value . '" ' . (($ra == $value) ? "selected>" : ">") . $value . '</option>';
+            }
+            echo '</select></td>';
 
-            echo "<td><a href='" . $eval->pdf . "?" . time() . "'><strong>" . basename($eval->pdf) . "</strong></a></td>";
-            echo '<td>' . $ra . '</td>';
-
-            echo '<td> preffered presentation type: <strong>' . $eval->presentation_type . '</strong> <br>';
+            echo '<td> preferred presentation type: <strong>' . $eval->presentation_type . '</strong> <br>';
             echo '<input type="radio" name="decision" value="3" ' . (($decision == 3) ? "checked>" : ">") . 'Reject</input>';
             echo '<br>';
             echo '<input type="radio" name="decision" value="1" ' . (($decision == 1) ? "checked>" : ">") . array_search(1, $PRESENTATION_TYPE) . '</input>';
@@ -186,34 +142,27 @@ function send_emails($email, $comment, $decision, $presentation_title)
             echo '<input type="radio" name="decision" value="2" ' . (($decision == 2) ? "checked>" : ">") . array_search(2, $PRESENTATION_TYPE) . '</input>';
             echo ' </td>';
 
-            echo '<td>
-                <select name="grade" checked=' . $eval->evaluation . '>
-                    <option value="0">unassigned</option>
-                    ';
+            echo '<td>';
+            echo '<select name="grade" checked=' . $eval->evaluation . '>';
+            echo '<option value="0">unassigned</option>';
+
             for ($i = 1; $i <= 10; $i++) {
                 echo '<option value="' . $i . '" ' . (($eval->evaluation == $i) ? "selected>" : ">") . $i . '</option>';
             }
 
-
-            echo '
-                </select>
-                </td>';
-            echo '<td>
-                <textarea name="comment" rows="4" cols="50">' . $eval->comment . '</textarea>
-                </td>
-            
-            </td>';
+            echo '</select>';
+            echo '</td>';
+            echo '<td>';
+            echo '<textarea name="comment" rows="4" cols="50">' . $eval->comment . '</textarea></td>';
+            echo '</td>';
             if ($eval->decision == 0 || $is_admin)
                 echo '<td><button type="submit" name="save_settings"  value=' . $eval->evaluation_hash_id . '>Save</button></td>';
             echo '</form>';
             echo '</tr>';
         }
-
         ?>
 
     </table>
-
-
 </div>
 
 <script>
@@ -221,21 +170,5 @@ function send_emails($email, $comment, $decision, $presentation_title)
         $('#user_select_field').change(function () {
             $('#filter').submit();
         });
-
     });
-
-//     var buttons = document.getElementsByName('save_settings');
-    
-//     Array.from(buttons).forEach(function(button) {
-//     button.addEventListener('click', function(e) {
-//        e.preventDefault();
-//        var form1 = button.closest('form');
-//        console.log(form1);
-//        var userSelectField = document.getElementById('user_select_field');
-//        var formData = new FormData(form1);
-//        formData.append('user', userSelectField.value);
-//        formData.submit();
-//     });
-// });
-
 </script>

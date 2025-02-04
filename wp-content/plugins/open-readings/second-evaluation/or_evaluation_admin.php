@@ -23,7 +23,7 @@ class ORSecondEvaluationAdmin
     function add_admin_pages()
     {
 
-        add_menu_page('OpenReadings Evaluation System', 'OpenReadings evaluation system', 'or_main_evaluator', 'or_evaluation_two', array($this, 'admin_index'), 'dashicons-list-view', 4);
+        add_menu_page('OpenReadings Evaluation System', 'Evaluation system 2', 'or_main_evaluator', 'or_evaluation_two', array($this, 'admin_index'), 'dashicons-list-view', 4);
         if (current_user_can('manage_options')) {
             add_submenu_page('or_evaluation_two', 'OR Evaluation List', 'Or evaluation admin', 'manage_options', 'or_evaluation_admin', array($this, 'admin_index'), 4);
             add_submenu_page('or_evaluation_two', 'OR Evaluation Settings', 'OR evaluation system settings', 'manage_options', 'or_evaluation_settings_two', array($this, 'admin_settings'), 5);
@@ -53,7 +53,6 @@ class ORSecondEvaluationAdmin
 
     }
 
-
     function download_csv()
     {
         if (isset($_POST['export_csv'])) {
@@ -64,7 +63,6 @@ class ORSecondEvaluationAdmin
             $evaluation_table = 'wp_or_registration_evaluation';
             $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id";
             $ra_filter = 'none';
-
 
             if (isset($_POST['save_settings'])) {
                 foreach ($_POST['decision'] as $id => $decision) {
@@ -77,11 +75,8 @@ class ORSecondEvaluationAdmin
                 $ra_filter = $_POST['ra_filter'];
             }
 
-
-
             global $STATUS_CODES;
             $query = "SELECT * FROM $joint_table WHERE status=" . $STATUS_CODES["Accepted"] . "";
-
 
             if ($ra_filter != 'none') {
                 $query .= " AND research_area=$ra_filter";
@@ -93,10 +88,7 @@ class ORSecondEvaluationAdmin
                 }
             }
 
-
             $results = $wpdb->get_results($query);
-
-
 
             ob_end_clean();
             $fp = fopen('php://output', 'w');
