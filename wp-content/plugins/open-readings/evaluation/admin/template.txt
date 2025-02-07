@@ -42,6 +42,10 @@
 \graphicspath{{images}}
 
 \usepackage{nopageno}
+
+\let\bold\bfseries
+\let\italic\itshape
+
 \begin{document}\sloppy
 
 \renewcommand{\figurename}{Fig.} 
