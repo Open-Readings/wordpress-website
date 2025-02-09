@@ -122,7 +122,6 @@ $places_left = [];
     
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('hi mom');
 
         const radio1 = document.querySelector('input[type="radio"][value="gmc1"]');
         const radio2 = document.querySelector('input[type="radio"][value="ftmc1"]');
