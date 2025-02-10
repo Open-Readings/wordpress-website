@@ -93,7 +93,7 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
 
             You must make the following adjustments to your submission before we can send it to our programme committee for further evaluation:<br><br>
 
-            <strong>[ČIA EMAIL LAUKELIO TURINYS] <a style="color:red"> <---- pls, rašykit į laukelį tik šitą, NEDARYKIT copy/paste visko kas mėlyna, likusi dalis automatiškai įdedama</a></strong><br><br>
+            <strong>[ČIA EMAIL LAUKELIO TURINYS] <a style="color:red"> <---- pls, rašykit į laukelį tik šitą dalį, NEDARYKIT copy/paste visko kas mėlyna, likusi dalis automatiškai įdedama</a></strong><br><br>
 
             The reference ID of your registration:<br>
             07f40453255688743fas3234<br>
@@ -109,7 +109,7 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
             Dear participant,<br><br>
             We regret to inform you that your submission has not been accepted for the following reason:<br><br>
             
-            <strong>[ČIA EMAIL LAUKELIO TURINYS] <a style="color:red"> <---- pls, rašykit į laukelį tik šitą, NEDARYKIT copy/paste visko kas raudona, visa kita automatiškai įdedama</a></strong><br><br>
+            <strong>[ČIA EMAIL LAUKELIO TURINYS] <a style="color:red"> <---- pls, rašykit į laukelį tik šitą dalį, NEDARYKIT copy/paste visko kas raudona, visa kita automatiškai įdedama</a></strong><br><br>
 
             Best regards, <br>
             Open Readings team
