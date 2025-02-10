@@ -40,8 +40,23 @@ include_once __DIR__ . '/../second-eval-functions.php';
 </div>
 
 <div>
-    <h3>Filter research areas: </h3>
+    <h3>Filters</h3>
+    <label>Research area: </label>
     <?php research_area_filter(); ?>
+    <?php
+        echo "<label for='visa-filter'>Needs visa: </label>";
+        if (isset($_POST['visa-filter'])) {
+            echo "<input type='checkbox' id='visa-filter' name='visa-filter' checked>";
+        } else {
+            echo "<input type='checkbox' id='visa-filter' name='visa-filter'>";
+        }
+        echo "<label for='foreign-filter'>Foreign: </label>";
+        if (isset($_POST['foreign-filter'])) {
+            echo "<input type='checkbox' id='foreign-filter' name='foreign-filter' checked>";
+        } else {
+            echo "<input type='checkbox' id='foreign-filter' name='foreign-filter'>";
+        }
+    ?>
 
 </div>
 <button name="save_settings" type="submit">Save Settings</button>
@@ -62,12 +77,21 @@ include_once __DIR__ . '/../second-eval-functions.php';
         $evaluation_table = 'wp_or_registration_evaluation';
         $user_id = -1;
         $ra_filter = 'none';
+        $visa_filter = false;
+        $foreign_filter = false;
         if (isset($_POST['user'])) {
             $user_id = $_POST['user'];
         }
 
         if (isset($_POST['ra_filter'])) {
             $ra_filter = $_POST['ra_filter'];
+        }
+
+        if (isset($_POST['visa-filter'])) {
+            $visa_filter = true;
+        }
+        if (isset($_POST['foreign-filter'])) {
+            $foreign_filter = true;
         }
 
         if (isset($_POST['save_settings'])) {
@@ -99,6 +123,12 @@ include_once __DIR__ . '/../second-eval-functions.php';
 
         if ($ra_filter != 'none') {
             $query .= " AND research_area='$RESEARCH_AREAS[$ra_filter]'";
+        }
+        if ($visa_filter) {
+            $query .= " AND needs_visa=1";
+        }
+        if ($foreign_filter) {
+            $query .= " AND country!='Lithuania'";
         }
         $query .= " ORDER BY checker DESC;";
         $results = $wpdb->get_results($query);
@@ -147,6 +177,12 @@ include_once __DIR__ . '/../second-eval-functions.php';
             $('#filter').submit();
         });
         $('#ra_filter_select').change(function () {
+            $('#filter').submit();
+        });
+        $('#visa-filter').change(function () {
+            $('#filter').submit();
+        });
+        $('#foreign-filter').change(function () {
             $('#filter').submit();
         });
     });
