@@ -62,6 +62,7 @@
             <th>Grade</th>
             <th>Decision</th>
             <th>Comment</th>
+            <th>Evaluator</th>
         </tr>
         <?php
             if (isset($_POST['ra_filter'])) {
@@ -92,6 +93,13 @@
                 $research_area = $result->research_area;
                 $presentation_type = "";
                 $comment = $result->comment;
+                $user_info = get_userdata($result->checker);
+                if ($user_info){
+                    $evaluator = $user_info->first_name . " " . $user_info->last_name;
+                } else {
+                    $evaluator = "";
+                }
+                
                 if ($result->decision == 1) {
                     $presentation_type = "Oral";
                 } else if ($result->decision == 2) {
@@ -125,6 +133,7 @@
 
                 echo "</td>";
                 echo "<td>$comment</td>";
+                echo "<td>$evaluator</td>";
 
                 echo "</tr>";
             }

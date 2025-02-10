@@ -33,13 +33,13 @@
         ?>
 
         <form method="POST" id="settings">
-            <label for="email_subject">Email Subject</label>
-            <input id="email_subject" name="email_subject" value="<?php echo $subject; ?>">
-            <?php echo $subject; ?></input>
+            <label for="email_subject">Email Subject</label><br>
+            <input id="email_subject" name="email_subject" style="width:500px" value="<?php echo $subject; ?>">
+            <?php echo $subject; ?></input><br><br>
             <label for="acceptance_body">Acceptance Body</label>
-            <textarea name="acceptance_body"><?php echo $acceptance_body; ?></textarea>
+            <textarea cols="80" rows="20" name="acceptance_body" style="background-color:#cfc"><?php echo $acceptance_body; ?></textarea>
             <label for="rejection_body">Rejection Body</label>
-            <textarea name="rejection_body"><?php echo $rejection_body; ?></textarea>
+            <textarea cols="80" rows="20" name="rejection_body" style="background-color:#fcc"><?php echo $rejection_body; ?></textarea>
 
             <button type="submit" name="save_settings"> Save Settings</button>
         </form>
@@ -90,62 +90,63 @@
                 return;
             }
 
-            // foreach ($check as $id) {
+            foreach ($check as $id) {
 
-            //     $query = "SELECT * FROM $joint_table WHERE hash_id='$id'";
+                $query = "SELECT * FROM $joint_table WHERE hash_id='$id'";
 
-            //     $result = $wpdb->get_results($query);
-            //     $email = $result[0]->email;
-            //     $args = array(
-            //         'post_type' => 'presentation',
-            //         'meta_query' => array(
-            //             array(
-            //                 'key' => 'hash_id',
-            //                 'value' => $id,
-            //                 'compare' => '='
-            //             )
-            //         )
+                $result = $wpdb->get_results($query);
+                $email = $result[0]->email;
+                // $args = array(
+                //     'post_type' => 'presentation',
+                //     'meta_query' => array(
+                //         array(
+                //             'key' => 'hash_id',
+                //             'value' => $id,
+                //             'compare' => '='
+                //         )
+                //     )
 
-            //     );
-            //     $presentation_post = get_posts($args)[0];
-            //     $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
-            //     $presentation_day = date('d/m/Y', strtotime($presentation_time));
-            //     $presentation_hour = date('H:i', strtotime($presentation_time));
+                // );
+                // $presentation_post = get_posts($args)[0];
+                // $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
+                // $presentation_day = date('d/m/Y', strtotime($presentation_time));
+                // $presentation_hour = date('H:i', strtotime($presentation_time));
 
-            //     $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
-            //     $session_post = get_post($presentation_session);
-            //     $session_title = get_post_meta($session_post->ID, 'short_title', true);
+                // $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
+                // $session_post = get_post($presentation_session);
+                // $session_title = get_post_meta($session_post->ID, 'short_title', true);
 
-            //     if ($result[0]->decision == 1) {
-            //         $duration = "15 minutes (account 2-3 minutes for Q&A as part of the duration).";
-            //     } else if ($result[0]->decision == 2) {
-            //         $duration = "90 minutes (Poster presenter has to be present at their poster at all times during the Poster session; only one presenter per poster)";
-            //     }
+                if ($result[0]->decision == 1) {
+                    $duration = "Oral Presentation";
+                } else if ($result[0]->decision == 2) {
+                    $duration = "Poster Presentation";
+                }
 
-            //     $other_vars = array(
-            //         '{$day}' => $presentation_day,
-            //         '{$hour}' => $presentation_hour,
-            //         '{$session}' => $session_title,
-            //         '{$duration}' => $duration,
-            //         '{$first_name}' => $result[0]->first_name,
-            //         '{$last_name}' => $result[0]->last_name,
-            //     );
+                $other_vars = array(
+                    // '{$day}' => $presentation_day,
+                    // '{$hour}' => $presentation_hour,
+                    // '{$session}' => $session_title,
+                    '${type}' => $duration,
+                    '${first_name}' => $result[0]->first_name,
+                    '${last_name}' => $result[0]->last_name,
+                    '${research_area}' => $result[0]->research_area,
+                );
 
-            //     if ($result[0]->sent_email == 0) {
-            //         $sent = send_emails($email, $result[0]->decision, $result[0]->display_title, $other_vars);
-            //         if ($sent) {
-            //             echo "<p>Email sent to $email</p>";
-            //         } else {
-            //             echo "<p>Email failed for $email, please try again</p>";
-            //         }
-            //     } else {
-            //         echo "<p>Already sent an email to $email</p>";
-            //         $sent = 1;
+                if ($result[0]->sent_email == 0) {
+                    $sent = send_emails($email, $result[0]->decision, $result[0]->display_title, $other_vars);
+                    if ($sent) {
+                        echo "<p>Email sent to $email</p>";
+                    } else {
+                        echo "<p>Email failed for $email, please try again</p>";
+                    }
+                } else {
+                    echo "<p>Already sent an email to $email</p>";
+                    $sent = 1;
 
-            //     }
-            //     $wpdb->update($evaluation_table, array('sent_email' => $sent), array('evaluation_hash_id' => $id));
+                }
+                $wpdb->update($evaluation_table, array('sent_email' => $sent), array('evaluation_hash_id' => $id));
 
-            // }
+            }
 
         }
 
