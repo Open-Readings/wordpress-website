@@ -142,6 +142,20 @@ function add_menu_roles()
   );
 }
 
+function committee_login_redirect($redirect_to, $request, $user) {
+  // Check if the user is logged in and is an object
+  if (isset($user->roles) && is_array($user->roles)) {
+      // Redirect subscribers to a specific page
+      if (in_array('or_main_evaluator', $user->roles)) {
+          return home_url('/wp-admin/admin.php?page=or_evaluation_two'); // Replace with your desired URL
+      }
+  }
+  // Default redirect for other roles or if no role is matched
+  return $redirect_to;
+}
+add_filter('login_redirect', 'committee_login_redirect', 10, 3);
+
+
 
 function register_admin()
 {
