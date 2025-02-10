@@ -62,16 +62,16 @@ function print_eval_statistics()
         if ($decision == 3) {
             $vars =
                 array(
-                    '{$title}' => $presentation_title,
+                    '${title}' => $presentation_title,
                 );
             $template = strtr($rej_body, $vars);
             return $or_mailer->send_or_mail($email, $subj, $template);
         } else {
             $vars =
                 array(
-                    '{$title}' => $presentation_title,
-                    '{$decision}' => array_search($decision, $PRESENTATION_TYPE),
-                    '{$link}' => '<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFMjHLhjOXPNJf432hsvh-hxtBA0SvU06jovlNjkIcgYyDTQ/viewform">link</a>'
+                    '${title}' => $presentation_title,
+                    '${decision}' => array_search($decision, $PRESENTATION_TYPE),
+                    '${link}' => '<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFMjHLhjOXPNJf432hsvh-hxtBA0SvU06jovlNjkIcgYyDTQ/viewform">link</a>'
                 );
             $vars = array_merge($vars, $other_vars);
             $template = strtr($acc_body, $vars);
