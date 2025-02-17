@@ -19,7 +19,54 @@ class ORRegistrationSession {
             "SELECT session_id FROM wp_or_registration_presentations WHERE person_hash_id = %s",
             $id
         ));
-        if (count($result) > 0){
+        $late = $wpdb->get_var($wpdb->prepare(
+            "SELECT used FROM wp_or_registration_late WHERE late_hash_id = %s",
+            $id
+        ));
+
+        if ($late === "0"){
+            $this->hash_id = $id;
+            $folder_hash = hash('sha256', $id);
+            $this->folder_hash = $folder_hash;
+            setcookie('hash_id', $id, [
+                'httponly' => true, 
+                'secure' => true, // If using HTTPS
+                'samesite' => 'Strict',
+                'path' => '/'
+            ]);
+            
+            setcookie('folder_hash', $folder_hash, [
+                'httponly' => false, 
+                'secure' => true,
+                'samesite' => 'Strict',
+                'path' => '/'
+            ]);
+            $_COOKIE['hash_id'] = $id;
+            $_COOKIE['folder_hash'] = $folder_hash;
+            $result = $wpdb->get_results($wpdb->prepare(
+                "SELECT saved FROM wp_or_registration_temp WHERE hash_id = %s",
+                $id
+            ));
+
+            if (count($result) > 0)
+                $result = $wpdb->query($wpdb->prepare(
+                    "UPDATE wp_or_registration_temp SET saved = %d, last_export = %s WHERE hash_id = %s",
+                     0, current_time('mysql'), $id
+                ));
+            else
+                $result = $wpdb->query($wpdb->prepare(
+                    "INSERT INTO wp_or_registration_temp (hash_id, saved, last_export) VALUES (%s, %d, %s)",
+                    $id, 0, current_time('mysql')
+                ));
+
+            $this->setup_folder();
+
+            if($this->check_validity()){
+                $this->hash_id = $_COOKIE['hash_id'];
+                $this->folder_hash = $_COOKIE['folder_hash'];
+                return;
+            }
+        } else if (count($result) > 0){
             $folder_hash = $result[0]->session_id;
             setcookie('hash_id', $id, [
                 'httponly' => true, 
