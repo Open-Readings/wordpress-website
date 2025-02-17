@@ -163,9 +163,11 @@ function register_admin()
   require_once (__DIR__ . '/second-evaluation/or_evaluation_admin.php');
   require_once (__DIR__ . '/evaluation/admin.php');
   require_once (__DIR__ . '/programme/admin.php');
+  require_once (__DIR__ . '/app/admin.php');
   $admin = new OREvaluationAdmin();
   $admin = new ORSecondEvaluationAdmin();
   $admin = new ORregistrationAdmin();
+  $admin = new ORApp();
   $programme_admin = new ORProgrammeAdmin();
   $programme_admin->init();
 
@@ -214,13 +216,13 @@ function add_new_form_field($form_fields_registrar)
 }
 add_action('elementor_pro/forms/fields/register', 'add_new_form_field');
 
-function register_or_mailer_admin()
-{
-  require_once (__DIR__ . '/mailer/admin.php');
-  $admin = new ORmailerAdmin();
-}
+// function register_or_mailer_admin()
+// {
+//   require_once (__DIR__ . '/mailer/admin.php');
+//   $admin = new ORmailerAdmin();
+// }
 
-add_action('init', 'register_or_mailer_admin');
+// add_action('init', 'register_or_mailer_admin');
 
 function populate_registration()
 {

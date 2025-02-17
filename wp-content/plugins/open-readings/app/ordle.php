@@ -16,13 +16,28 @@ function get_ordle_daily_word(WP_REST_Request $request) {
       return new WP_Error('unauthorized', 'Invalid API key', array('status' => 401));
   }
 
-  $words = json_decode(file_get_contents(__DIR__ . '/' . $file_name));
-  if ($words === null) {
-      return new WP_Error('internal_error', 'Failed to read word file', array('status' => 500));
-  }
+  
+
+  // Step 1: Remove newlines and extra spaces
+  $string = stripslashes(get_option('or_wordle_list'));
+  $string = str_replace(["\r", "\n"], '', $string); // Remove newlines
+  $string = preg_replace('/\s+/', ' ', $string); // Replace multiple spaces with a single space
+
+  // Step 2: Remove double quotes and trim the string
+  $string = str_replace('"', '', $string); // Remove double quotes
+  $string = trim($string, ', '); // Remove leading/trailing commas and spaces
+
+  // Step 3: Split the string into an array using comma as the delimiter
+  $array = explode(',', $string);
+
+  // Step 4: Trim each element in the array
+  $array = array_map('trim', $array);
+
   $day_of_year = date('z');
-  $word_index = $day_of_year % count($words);
-  $word = $words[$word_index];
+  $word_index = $day_of_year % count($array);
+
+
+  $word = $array[$word_index];
 
   return rest_ensure_response(array(
       'word' => $word,
