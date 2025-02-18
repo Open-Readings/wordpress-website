@@ -11,7 +11,7 @@ affAddButtons.forEach(function (button) {
             `<input type="text" class="aff-width form-padding elementor-field elementor-field-textual" name="affiliation[]" placeholder="(e.g. Vilnius University)">
         `;
         affiliationField.className = "aff-div";
-        if (divCount < 7)
+        if (divCount < 10)
             affiliationList.appendChild(affiliationField);
     });
 });
