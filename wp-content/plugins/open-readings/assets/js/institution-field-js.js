@@ -1,9 +1,7 @@
-const institutionInputElement = document.getElementById("form-field-" + institution_field_ajax.institution_id);
-
-
-
-institutionInputElement.addEventListener("input", institutionInputChange);
-
+document.addEventListener("DOMContentLoaded", function () {
+    const institutionInputElement = document.getElementById("form-field-" + institution_field_ajax.institution_id);
+    institutionInputElement.addEventListener("input", institutionInputChange);
+});
 
 
 function institutionInputChange() {
