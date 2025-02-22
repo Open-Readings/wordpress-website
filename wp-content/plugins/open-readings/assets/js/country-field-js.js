@@ -1,19 +1,17 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const inputElement = document.getElementById("form-field-" + registration_ajax.custom_id);
-    const items = registration_ajax.items;
+const inputElement = document.getElementById("form-field-" + registration_ajax.custom_id);
+const items = registration_ajax.items;
 
-    inputElement.addEventListener("input", onInputChange);
-    inputElement.addEventListener("blur", function () {
-        // Clear the input field when it loses focus
-        const value = inputElement.value;
-        var inList = 0;
-        Object.values(items).forEach(name => {
-            if (name == value) {
-                inList = 1;
-            }
-        });
-        if (inList == 0) inputElement.value = "";
+inputElement.addEventListener("input", onInputChange);
+inputElement.addEventListener("blur", function () {
+    // Clear the input field when it loses focus
+    const value = inputElement.value;
+    var inList = 0;
+    Object.values(items).forEach(name => {
+        if (name == value) {
+            inList = 1;
+        }
     });
+    if (inList == 0) inputElement.value = "";
 });
 
 
