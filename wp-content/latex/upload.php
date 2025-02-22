@@ -21,7 +21,6 @@ if (isset($filenames))
 
 $max_files = get_option('or_registration_max_images');
 $max_files = $max_files ? $max_files : 2;
-$max_files = 1;
 
 
 
