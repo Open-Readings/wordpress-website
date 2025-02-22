@@ -1,18 +1,22 @@
-const inputElement = document.getElementById("form-field-" + registration_ajax.custom_id);
-const items = registration_ajax.items;
+document.addEventListener("DOMContentLoaded", function () {
+    const inputElement = document.getElementById("form-field-" + registration_ajax.custom_id);
+    const items = registration_ajax.items;
 
-inputElement.addEventListener("input", onInputChange);
-inputElement.addEventListener("blur", function () {
-    // Clear the input field when it loses focus
-    const value = inputElement.value;
-    var inList = 0;
-    Object.values(items).forEach(name => {
-        if (name == value) {
-            inList = 1;
-        }
+    inputElement.addEventListener("input", onInputChange);
+    inputElement.addEventListener("blur", function () {
+        // Clear the input field when it loses focus
+        const value = inputElement.value;
+        var inList = 0;
+        Object.values(items).forEach(name => {
+            if (name == value) {
+                inList = 1;
+            }
+        });
+        if (inList == 0) inputElement.value = "";
     });
-    if (inList == 0) inputElement.value = "";
 });
+
+
 
 function onInputChange() {
     removeCountryDropdown();
