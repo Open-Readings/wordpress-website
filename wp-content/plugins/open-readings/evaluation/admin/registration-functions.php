@@ -469,6 +469,9 @@ function send_update()
             ' . $_SESSION['e_hash'] . '<br>
             To update your submission please click <strong><a href="https://openreadings.eu/registration?id=' . $_SESSION['e_hash'] . '">HERE</a></strong><br><br>
 
+            Note: In order to be accepted into the conference, you must make these changes until March 3rd <br>
+            If you have further questions, please reach out to <a href="mailto:info@openreadings.eu">info@openreadings.eu</a><br><br>
+
             Best regards, <br>
             Open Readings team
             <br>
@@ -524,6 +527,7 @@ function send_reject()
         <p>
             Dear participant,<br><br>
             We regret to inform you that your submission has not been accepted for the following reason:<br><br>' . $_POST['sendMail'] . '<br><br>
+            If you have further questions, please reach out to <a href="mailto:info@openreadings.eu">info@openreadings.eu</a><br><br>
 
             Best regards, <br>
             Open Readings team

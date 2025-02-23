@@ -97,7 +97,10 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
 
             The reference ID of your registration:<br>
             07f40453255688743fas3234<br>
-            To update your submission please click HERE<br><br>
+            To update your submission please click <strong><a href="https://openreadings.eu/registration?id=exampleid">HERE</a></strong><br><br>
+
+            Note: In order to be accepted into the conference, you must make these changes until March 3rd <br>
+            If you have further questions, please reach out to <a href="mailto:info@openreadings.eu">info@openreadings.eu</a><br><br>
 
             Best regards, <br>
             Open Readings team <br>
@@ -110,6 +113,8 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
             We regret to inform you that your submission has not been accepted for the following reason:<br><br>
             
             <strong>[ČIA EMAIL LAUKELIO TURINYS] <a style="color:red"> <---- pls, rašykit į laukelį tik šitą dalį, NEDARYKIT copy/paste visko kas raudona, visa kita automatiškai įdedama</a></strong><br><br>
+
+            If you have further questions, please reach out to <a href="mailto:info@openreadings.eu">info@openreadings.eu</a><br><br>
 
             Best regards, <br>
             Open Readings team
