@@ -47,7 +47,7 @@ class OREvaluationAdmin
             4 => 'Waiting for review'
         );
 
-        add_menu_page('Open Readings Evaluation', 'Primary Evaluations', 'manage_evaluations', 'or_evaluation', array($this, 'admin_index'), 'dashicons-trash', 6);
+        add_menu_page('Open Readings Evaluation', 'Primary Evaluations', 'manage_evaluations', 'or_evaluation', array($this, 'admin_index'), 'dashicons-trash', 4);
         if (current_user_can('manage_options')) {
             add_submenu_page('or_evaluation', 'or_evaluation_settings', 'Evaluation List', 'manage_options', 'or_evaluation_settings', array($this, 'admin_settings'), 2);
         }

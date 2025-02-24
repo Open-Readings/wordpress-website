@@ -72,7 +72,7 @@ class Elementor_Faq_Widget extends \Elementor\Widget_Base
             foreach ($posts as $post) {
                 if ($post->ID == $print_id->object_id) {
 ?>
-                    <div class="collapsible"><i class="arrow"></i>&ensp;<?php echo $post->post_title ?></div>
+                    <div class="collapsible"><div class="faq-plus">+</div><div class="faq-question"><?php echo $post->post_title ?></div></div>
                     <div class="content">
                         <?php echo wpautop($post->post_content) ?>
                     </div>

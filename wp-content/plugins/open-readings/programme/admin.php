@@ -174,6 +174,7 @@ class ORProgrammeAdmin
             'menu_icon' => 'dashicons-megaphone',
             'show_in_rest' => true,
             'show_in_menu' => true,
+            'menu_position' => 6,
             'in_menu' => true,
             'query_var' => true
 
@@ -293,9 +294,9 @@ class ORProgrammeAdmin
 
     function add_admin_pages()
     {
-        add_menu_page('Open Readings Programme', 'OR programme', 'manage_programme', 'or_programme', array($this, 'admin_index'), 'dashicons-excerpt-view', 6);
-        add_submenu_page('or_programme', 'or_programme_settings', 'OR programme settings', 'manage_programme', 'or_programme_settings', array($this, 'admin_settings'), 2);
-        add_submenu_page('or_programme', 'or_programme_abstract', 'OR programme abstract', 'manage_programme', 'or_programme_abstract', array($this, 'admin_abstract'), 3);
+        add_menu_page('Open Readings Programme', 'OR Programme', 'manage_programme', 'or_programme', array($this, 'admin_index'), 'dashicons-excerpt-view', 6);
+        add_submenu_page('or_programme', 'or_programme_settings', 'Session Manager', 'manage_programme', 'or_programme_settings', array($this, 'admin_settings'), 2);
+        add_submenu_page('or_programme', 'or_programme_abstract', 'Abstract Book', 'manage_programme', 'or_programme_abstract', array($this, 'admin_abstract'), 3);
 
     }
 
