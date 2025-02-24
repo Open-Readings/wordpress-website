@@ -1,6 +1,7 @@
 <form method="POST">
     <button name="add-session-name">UPDATE</button>
 </form>
+
 <?php
 
 $date_query = array(
@@ -47,8 +48,16 @@ if(isset($_POST['add-session-name'])){
     }
 }
 ?>
-<h2>Presentation Manager</h2>
+<h1>Presentation Manager</h1>
+<h2>Instrukcijos</h2>
+<ol>
+    <li>Session reikia sukurti kitame puslapyje (Session Manager)</li>
+    <strong><li>Būtinai priskiriame session, kitaip neišsisaugos</li></strong>
+    <li>Galima priskirti laiką (ir posterio nr., jeigu poster pristatymas) arba galima palikti ir priskirti vėliau</li>
+    <strong><li>Spaudžiame 'Save All', kad išsaugot. Galima po vieną eilutę editint, galima kelias.</li></strong>
+    <strong><li>Poster session numerio priskyrimas! Kai nustatyti "Session" ir "Type:Poster" filtrai atsiranda magiškas mygtukas</li></strong>
 
+</ol>
 
 <form method='POST' id="get_session">
 
@@ -86,7 +95,7 @@ if(isset($_POST['add-session-name'])){
 
     if ($type_filter == 2 && $type_filter == 2 && $session_filter != 'none') {
         ?>
-        <button id="incrementButton"> Increment </button>
+        <button id="incrementButton" class="button button-primary">Automatiškai priskirti session numerius</button>
         <?
     }
 
@@ -142,9 +151,9 @@ if(isset($_POST['add-session-name'])){
             global $PRESENTATION_TYPE;
             for ($i = 1; $i < count($PRESENTATION_TYPE); $i++) {
                 if (isset($_POST['type_filter']) && $_POST['type_filter'] == $i) {
-                    echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '" selected>' . array_search($i, $PRESENTATION_TYPE) . '</option>';
+                    echo '<option value="' . $i . '" selected>' . array_search($i, $PRESENTATION_TYPE) . '</option>';
                 } else
-                    echo '<option value="' . array_search($i, $PRESENTATION_TYPE) . '">' . array_search($i, $PRESENTATION_TYPE) . '</option>';
+                    echo '<option value="' . $i . '">' . array_search($i, $PRESENTATION_TYPE) . '</option>';
             }
 
             ?>
@@ -167,9 +176,9 @@ if(isset($_POST['add-session-name'])){
             ?>
         </select>
 
-</div>
+</div><br>
 <form method=post>
-    <button name="save_settings" type="submit">Save All</button>
+    <button name="save_settings" class="button button-primary" type="submit">Save All</button>
     <div>
         <table cellspacing=0 cellpadding=1 border=1 bordercolor=white width=100%>
             <tr>
@@ -235,6 +244,7 @@ if(isset($_POST['add-session-name'])){
                                 $final_start = $start_day . ' ' . $start_time;
                                 $final_end = $start_day . ' ' . $end_time->format('H:i');
                             }
+                            $decision = array_search($result->decision, $PRESENTATION_TYPE);
 
                             $presentation_data = array(
                                 'post_title' => $result->first_name . ' ' . $result->last_name,
@@ -247,7 +257,7 @@ if(isset($_POST['add-session-name'])){
                                     'research_area' => $result->research_area,
                                     'presentation_title' => $result->display_title,
                                     'abstract_pdf' => $result->pdf,
-                                    'presentation_type' => $presentation_type,
+                                    'presentation_type' => $decision,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
@@ -304,6 +314,7 @@ if(isset($_POST['add-session-name'])){
                                 $final_end = $start_day . ' ' . $end_time->format('H:i');
                             }
 
+                            $decision = array_search($result->decision, $PRESENTATION_TYPE);
                             $update_presentation_data = array(
                                 'ID' => $_POST['field-id'][$id],
                                 'post_title' => $result->first_name . ' ' . $result->last_name,
@@ -316,7 +327,7 @@ if(isset($_POST['add-session-name'])){
                                     'research_area' => $result->research_area,
                                     'presentation_title' => $result->display_title,
                                     'abstract_pdf' => $result->pdf,
-                                    'presentation_type' => $presentation_type,
+                                    'presentation_type' => $decision,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
@@ -362,7 +373,7 @@ if(isset($_POST['add-session-name'])){
                     $query .= " AND decision=$type_filter";
                     $query_array[] = array(
                         'key' => 'presentation_type',
-                        'value' => $type_filter,
+                        'value' => array_search($type_filter, $PRESENTATION_TYPE),
                         'compare' => '=',
                     );
                 }

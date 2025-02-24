@@ -6,12 +6,16 @@ jQuery(window).on('elementor/frontend/init', function() {
       coll[i].addEventListener("click", function() {
         var content = this.nextElementSibling;
         var arrows = this.querySelector('.arrow');
+        var plus = this.querySelector('.faq-plus');
         if (content.style.maxHeight){
           content.style.maxHeight = null;
-          arrows.style.transform = 'rotate(0deg)'
+          // arrows.style.transform = 'rotate(0deg)'
+          plus.innerHTML = '+';
         } else {
           content.style.maxHeight = content.scrollHeight + "px";
-          arrows.style.transform = 'rotate(90deg)'
+          // arrows.style.transform = 'rotate(90deg)'
+          plus.innerHTML = '−';
+          console.log(plus.content);
         }
       });
   }
