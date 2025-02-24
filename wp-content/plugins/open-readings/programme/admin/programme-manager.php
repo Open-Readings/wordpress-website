@@ -96,7 +96,7 @@ if(isset($_POST['add-session-name'])){
     if ($type_filter == 2 && $type_filter == 2 && $session_filter != 'none') {
         ?>
         <button id="incrementButton" class="button button-primary">Automatiškai priskirti session numerius</button>
-        <?
+        <?php
     }
 
     ?>
