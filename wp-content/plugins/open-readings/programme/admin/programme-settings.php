@@ -1,4 +1,4 @@
-<h2>Sessions manager</h2>
+<h2>Sessions Manager</h2>
 <?php
 if (isset($_POST['session-name'])) {
     echo "<p><strong>" . add_session() . "</strong></p>'";
@@ -83,8 +83,11 @@ if (isset($_POST['session-name'])) {
                 $type = get_post_meta(get_the_ID(), 'session_type', true);
                 $start = get_post_meta(get_the_ID(), 'session_start', true);
                 $end = get_post_meta(get_the_ID(), 'session_end', true);
+                $current_time_obj = new DateTime('2025-01-01 00:00:00');
+                $compare_time_obj = new DateTime($start);
+                $color = ($current_time_obj > $compare_time_obj) ? '#fcc' : '';
                 if ($type >= 0) {
-                    echo '<tr>';
+                    echo '<tr style="background-color:' . $color . '">';
                     echo '<td>' . get_the_ID() . '</td>';
                     echo '<td>' . $short . '</td>';
                     echo '<td>' . $display . '</td>';
