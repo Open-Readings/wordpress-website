@@ -2,6 +2,15 @@
     <button name="add-session-name">UPDATE</button>
 </form>
 <?php
+
+$date_query = array(
+    'after' => array(
+        'year' => 2025,
+        'month' => 01,
+        'day' => 01,
+    ),
+);
+
 global $wpdb;
 if(isset($_POST['add-session-name'])){
     global $wpdb;
@@ -44,33 +53,38 @@ if(isset($_POST['add-session-name'])){
 <form method='POST' id="get_session">
 
 <?php
-echo '<select name="download">';
-echo '<option value="none">Select session</option>';
-$args = array(
-    'post_type' => 'session',
-    'posts_per_page' => -1, // To retrieve all posts, use -1
-);
-$query = new WP_Query($args);
-if ($query->have_posts()) {
-     while ($query->have_posts()) {
-         $query->the_post();
-         // Retrieve and display the custom field values
-         $display = get_post_meta(get_the_ID(), 'display_title', true);
-         $short_name = get_post_meta(get_the_ID(), 'short_title', true);
-         if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
-             echo '<option value="' . $short_name . '">' . $display . '</option>';
-     }
- }
- echo '</select>';
+// echo '<select name="download">';
+// echo '<option value="none">Select session</option>';
+// $args = array(
+//     'post_type' => 'session',
+//     'posts_per_page' => -1, // To retrieve all posts, use -1
+// );
+// $query = new WP_Query($args);
+// if ($query->have_posts()) {
+//      while ($query->have_posts()) {
+//          $query->the_post();
+//          // Retrieve and display the custom field values
+//          $display = get_post_meta(get_the_ID(), 'display_title', true);
+//          $short_name = get_post_meta(get_the_ID(), 'short_title', true);
+//          if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
+//              echo '<option value="' . $short_name . '">' . $display . '</option>';
+//      }
+//  }
+//  echo '</select>';
 ?>
-<button type='submit' label='download'> Download Presentations </button>
+<!-- <button type='submit' label='download'> Download Presentations </button> -->
 </form>
 
 
 
 <div>
-    <?
-    if ($_POST['type_filter'] == 2 && $_POST['assigned_filter'] == 2 && $_POST['session_filter'] != 'none') {
+    <?php
+
+    $type_filter = isset($_POST['type_filter']) ? $_POST['type_filter'] : 'none';
+    $assigned_filter = isset($_POST['assigned_filter']) ? $_POST['assigned_filter'] : 'none';
+    $session_filter = isset($_POST['session_filter']) ? $_POST['session_filter'] : 'none';    
+
+    if ($type_filter == 2 && $type_filter == 2 && $session_filter != 'none') {
         ?>
         <button id="incrementButton"> Increment </button>
         <?
@@ -82,7 +96,7 @@ if ($query->have_posts()) {
 
 
 
-    <h3>filter research areas: </h3>
+    <h3>Filter research areas: </h3>
     <form method="POST" id="filter">
         <label>Session: </label>
         <select name="session_filter" id="session_filter_select">
@@ -91,6 +105,7 @@ if ($query->have_posts()) {
             $args = array(
                 'post_type' => 'session',
                 'posts_per_page' => -1, // To retrieve all posts, use -1
+                'date_query' => $date_query,
             );
             $query = new WP_Query($args);
             if ($query->have_posts()) {
@@ -99,7 +114,7 @@ if ($query->have_posts()) {
                     // Retrieve and display the custom field values
                     $display = get_post_meta(get_the_ID(), 'display_title', true);
                     if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
-                        echo '<option value="' . get_the_ID() . '"' . ((get_the_ID() == $_POST['session_filter']) ? 'selected' : '') . '>' . $display . '</option>';
+                        echo '<option value="' . get_the_ID() . '"' . ((get_the_ID() == $session_filter) ? 'selected' : '') . '>' . $display . '</option>';
                 }
             }
             ?>
@@ -331,7 +346,7 @@ if ($query->have_posts()) {
             global $STATUS_CODES;
             $query = "SELECT * FROM $joint_table WHERE (decision = 1 OR decision = 2)";
 
-
+            $query_array = array();
 
             if ($ra_filter != 'none') {
                 $query .= " AND research_area='$RESEARCH_AREAS[$ra_filter]'";
@@ -369,6 +384,7 @@ if ($query->have_posts()) {
                 array(
                     'post_type' => 'presentation', // Replace with your custom post type
                     'posts_per_page' => -1,
+                    'date_query' => $date_query,
                 )
             );
 
@@ -391,11 +407,12 @@ if ($query->have_posts()) {
                     'meta_query' => array(
                         'relation' => 'AND',
                         $query_array
-                    )
+                    ),
+                    'date_query' => $date_query,
                 )
             );
 
-            if ($_POST['assigned_filter'] != '1')
+            if ($assigned_filter != '1')
                 while ($presentation_posts->have_posts()) {
                     $presentation_posts->the_post();
                     $post_id = get_the_ID();
@@ -415,6 +432,7 @@ if ($query->have_posts()) {
                     $session_args = array(
                         'post_type' => 'session',
                         'posts_per_page' => -1, // To retrieve all posts, use -1
+                        'date_query' => $date_query,
                     );
                     $session_query = new WP_Query($session_args);
                     if ($session_query->have_posts()) {
@@ -459,7 +477,7 @@ if ($query->have_posts()) {
 
 
 
-            if ($_POST['assigned_filter'] != '2')
+            if ($assigned_filter != '2')
                 foreach ($results as $result) {
                     $id = $result->hash_id;
                     if (!in_array($id, $presentation_post_ids)) {
@@ -475,6 +493,7 @@ if ($query->have_posts()) {
                         $args = array(
                             'post_type' => 'session',
                             'posts_per_page' => -1, // To retrieve all posts, use -1
+                            'date_query' => $date_query,
                         );
                         $query = new WP_Query($args);
                         echo '<tr style="background-color:;">';
