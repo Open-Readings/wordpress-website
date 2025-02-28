@@ -1,0 +1,36 @@
+  .image-scroll-container {
+    width: 85%;
+    overflow-x: auto;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+  }
+  
+  .image-scroll-container img {
+    display: inline-block;
+    height: 1080px
+    width: 1920px;
+  }
+  
+  .scroll-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .image-scroll-container {
+    width: 80%;
+    height: 80%;
+    overflow-x: auto;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    border: 2px solid #ccc;
+    padding: 10px;
+    margin: 2px
+  }
+  
+  button {
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 2px;
+  }
