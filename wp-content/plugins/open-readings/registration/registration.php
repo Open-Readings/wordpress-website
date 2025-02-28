@@ -817,6 +817,8 @@ class OpenReadingsRegistration
         $start_date = get_option('or_registration_start');
         $end_date = get_option('or_registration_end');
         $late_end_date = get_option(('or_registration_late_end'));
+        $is_late = $wpdb->get_var($wpdb->prepare('SELECT used FROM wp_or_registration_late WHERE late_hash_id = %s', $registration_data->hash_id));
+        $is_late = $is_late === "0" ? true : false;
 
         $now = new DateTime();
 
@@ -830,6 +832,13 @@ class OpenReadingsRegistration
             }
         }
 
+        if (!empty($end_date)) {
+            $endDate = new DateTime($end_date);
+            if ($now > $endDate && !$is_late) {
+                return new WP_Error('registration_closed', 'Registration is closed');
+            }
+        }
+
         if (!empty($late_end_date)){
             $lateEndDate = new DateTime($late_end_date);
             if ($now > $lateEndDate){
@@ -837,12 +846,6 @@ class OpenReadingsRegistration
             }
         }
 
-        if (!empty($end_date)) {
-            $endDate = new DateTime($end_date);
-            if ($now > $endDate) {
-                return new WP_Error('registration_closed', 'Registration is closed');
-            }
-        }
 
 
         $person_data = new PersonData();
@@ -876,6 +879,14 @@ class OpenReadingsRegistration
             array('saved' => 1),
             array('hash_id' => $registration_data->hash_id)
         );
+
+        if ($is_late) {
+            $wpdb->update(
+                'wp_or_registration_late',
+                array('used' => 1),
+                array('late_hash_id' => $registration_data->hash_id)
+            );
+        }
 
         global $or_mailer;
 

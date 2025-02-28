@@ -14,6 +14,8 @@ inputElement.addEventListener("blur", function () {
     if (inList == 0) inputElement.value = "";
 });
 
+
+
 function onInputChange() {
     removeCountryDropdown();
     const value = inputElement.value.toLowerCase();

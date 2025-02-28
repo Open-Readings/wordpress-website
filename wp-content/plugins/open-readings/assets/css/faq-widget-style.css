@@ -1,17 +1,19 @@
 .collapsible,
 .collapsible:hover {
-  background-color: #fff;
-  font-weight: bold;
+  background-color: #FAFAFA;
+  font-weight: normal;
   color: #272727;
   cursor: pointer;
   width: 100%;
-  text-justify: inter-word;
-
+  border: 1px solid #CCC;
+  margin-top: 2px;
+  border-radius: 3px;
+  display:flex;
 }
 
 
 .content {
-  padding: 0 50px;
+  padding: 0 15px 0 40px;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
@@ -26,4 +28,25 @@
   padding: 3px;
   rotate: -45deg;
   transition: transform .3s;
+  margin: 0px 5px;
+}
+
+.faq-question{
+  font-family: 'Arial';
+  align-items: center;
+  display: flex;
+  padding: 5px 15px 5px 0px; 
+  text-align: justify;
+  text-justify: inter-word;
+  width: auto;
+}
+
+.faq-plus {
+  font-weight: normal;
+  color: #272727;
+  font-family: 'Arial';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px;
 }
