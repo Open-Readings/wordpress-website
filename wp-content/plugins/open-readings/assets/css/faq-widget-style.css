@@ -5,7 +5,6 @@
   color: #272727;
   cursor: pointer;
   width: 100%;
-  text-justify: inter-word;
   border: 1px solid #CCC;
   margin-top: 2px;
   border-radius: 3px;
@@ -50,5 +49,4 @@
   align-items: center;
   justify-content: center;
   padding: 10px 15px;
-  width: 50px;
 }

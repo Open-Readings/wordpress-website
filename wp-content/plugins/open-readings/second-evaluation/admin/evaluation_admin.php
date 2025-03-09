@@ -1,8 +1,12 @@
+<?php
+    include_once __DIR__ . '/../second-eval-functions.php';
+?>
+
 <h1>Open Readings Evaluation System</h1>
-<p> Please evaluate each given abstract on scale 1-10 and decide on the acceptance of the participant. </p>
-<p> If you decide to accept the participant, please select the presentation type. </p>
-<p> If you decide to reject the participant, please provide a comment. </p>
-<strong> Please note that you can only evaluate abstracts that have not been evaluated by you before. </strong>
+<p> 1) Please evaluate each given abstract on a scale of 1-10 and decide on the acceptance of the participant. </p>
+<p> 2) If you decide to accept the participant, please select the presentation type. </p>
+<p> 3) Please provide a comment and press "Save" </p>
+<strong> Please note that once you click "Save" you won't be able to change the evaluation for that participant. If you click "Save" by accident, contact the Open Readings team</strong>
 
 <div>
     <table cellspacing=0 cellpadding=1 border=1 bordercolor=black width=100%>
@@ -117,7 +121,8 @@
                 $color = '#ff6666';
             }
 
-            $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $eval->pdf);
+            // $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $eval->pdf);
+            $pdf_url = normalize_url($eval->pdf);
 
             echo '<tr style="background-color:' . $color . '">';
             echo '<form method="post">';
@@ -134,7 +139,7 @@
             }
             echo '</select></td>';
 
-            echo '<td> preferred presentation type: <strong>' . $eval->presentation_type . '</strong> <br>';
+            echo '<td> Preferred presentation type: <strong>' . $eval->presentation_type . '</strong> <br>';
             echo '<input type="radio" name="decision" value="3" ' . (($decision == 3) ? "checked>" : ">") . 'Reject</input>';
             echo '<br>';
             echo '<input type="radio" name="decision" value="1" ' . (($decision == 1) ? "checked>" : ">") . array_search(1, $PRESENTATION_TYPE) . '</input>';
@@ -153,7 +158,7 @@
             echo '</select>';
             echo '</td>';
             echo '<td>';
-            echo '<textarea name="comment" rows="4" cols="50">' . $eval->comment . '</textarea></td>';
+            echo '<textarea name="comment" rows="4" cols="50" required>' . $eval->comment . '</textarea></td>';
             echo '</td>';
             if ($eval->decision == 0 || $is_admin)
                 echo '<td><button type="submit" name="save_settings"  value=' . $eval->evaluation_hash_id . '>Save</button></td>';

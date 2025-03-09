@@ -138,7 +138,8 @@ include_once __DIR__ . '/../second-eval-functions.php';
             $affiliation = $result->institution;
             $presentation_title = $result->title;
             $abstract_pdf = $result->pdf;
-            $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf);
+            // $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf);
+            $pdf_url = normalize_url($result->pdf) . "?" . time();
             $research_area = $result->research_area;
             $color = "";
             if ($result->decision == 1 || $result->decision == 2) {
