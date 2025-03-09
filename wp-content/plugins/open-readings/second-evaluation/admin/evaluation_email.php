@@ -181,7 +181,7 @@
             }
             
             // Replace the base path with the base URL
-            $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf);
+            $pdf_url = normalize_url($result->pdf) . "?" . time();
 
             echo '<tr style="background-color: ' . $color . ';">';
             echo "<td>$first_name</td>";

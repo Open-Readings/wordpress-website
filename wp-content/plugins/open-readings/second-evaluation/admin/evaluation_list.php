@@ -85,6 +85,8 @@
 
             $results = $wpdb->get_results($query);
 
+            
+
             foreach ($results as $result) {
                 $first_name = $result->first_name;
                 $last_name = $result->last_name;
@@ -114,7 +116,8 @@
                     $color = "#ff7777";
                 }
                 $decision = $result->decision;
-                $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf);
+                // $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf) . "?" . time();
+                $pdf_url = normalize_url($result->pdf) . "?" . time();
                 echo '<tr style="background-color: ' . $color . ';">';
                 echo "<td>$first_name</td>";
                 echo "<td>$last_name</td>";

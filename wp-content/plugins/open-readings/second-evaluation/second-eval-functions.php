@@ -99,6 +99,20 @@ function research_area_filter(){
     <?php
 }
 
+function normalize_url($url) {
+    // Find the position of 'wp-content' in the URL
+    $wp_content_pos = strpos($url, 'wp-content');
+
+    // If 'wp-content' is found, extract the part after it
+    if ($wp_content_pos !== false) {
+        $relative_path = substr($url, $wp_content_pos + strlen('wp-content'));
+        return WP_CONTENT_URL . $relative_path;
+    }
+
+    // If 'wp-content' is not found, return the original URL
+    return $url;
+}
+
 function expand_evaluation_table(){
     global $wpdb;
 
