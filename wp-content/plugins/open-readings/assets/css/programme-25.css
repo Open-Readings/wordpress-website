@@ -1,0 +1,72 @@
+.programme-table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.row-height {
+    height: 32px;
+}
+
+.or-bottom {
+    vertical-align: bottom;
+    width: 0%;
+}
+
+.or-center {
+    text-align: center;
+}
+
+.or-border {
+}
+
+.or-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.or-bottom-border {
+    border-bottom: 1px solid blue;
+}
+
+.or-speaker {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #121f47;
+}
+
+.or-oral {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #ff6600;
+}
+
+.or-poster {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #ffcc00;
+}
+
+.or-special-event {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #ff0000;
+}
+
+.or-other {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #00cc00;
+}
+
+.or-workshop {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    background-color: #0066ff;
+}
