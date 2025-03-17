@@ -104,12 +104,6 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         );
         $sessions = new WP_Query($args);
 
-        // while ($sessions->have_posts()){
-        //     $sessions->the_post();
-        //     echo '<h2>' . get_the_title() . '</h2>';
-        //     echo '<p>' . get_the_content() . '</p>';
-        // }
-
         $posts = [];
         $row_data = [];
         $row_count = 52;
@@ -128,6 +122,8 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             $posts[$id]['type'] = get_field('session_type');
             $posts[$id]['rows'] = 0;
             $posts[$id]['printed'] = false;
+            $posts[$id]['link'] = get_field('link');
+            $posts[$id]['link']= empty($posts[$id]['link']) ? 'javascript:void(0);' : $posts[$id]['link'];
         }
 
         // Go through all rows and get the sessions
@@ -175,6 +171,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             'poster' => 'or-poster',
             'special_event' => 'or-special-event',
             'other' => 'or-other',
+            'sponsor' => 'or-sponsor',
         ];
 
 
@@ -186,12 +183,11 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             $time = $hour . ':' . $minute;
             $time = date('H:i', strtotime($time));
             $border_class = $i % 4 == 0 ? 'or-bottom-border' : '';
-
             echo '<tr class="row-height">';
             
             // Print time every 4 rows
             if ($i % 4 == 0)
-                echo '<td rowspan="1" class="or-bottom or-width or-bottom-border">' . $time . '</td>';
+                echo '<td rowspan="1" class="or-bottom or-width or-bottom-border or-time-font">' . $time . '&nbsp;</td>';
             // Else print empty cell
             else
                 echo '<td class="or-width"></td>';
@@ -213,19 +209,126 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             break;
                         }
                     }
-
+                    $hover = '';
+                    $popup = '';
                     // How wide should an entry be
-                    $width = 'grid-column: ' . ($posts[$id]['col'] + 1) . ' / span 1;';
+                    $width = 'width: ' . (100 / count($row_data[$i])) . '%;';
                     // How many rows should an entry span (how tall should it be)
                     $rowspan = isset($posts[$id]['rows']) ? $posts[$id]['rows'] : 1;
                     // For the rightmost element, span all the way to the right
-                    $colspan = $key == count($row_data[$i]) - 1 ? 1 : 1;
+                    $colspan = 12 / count($row_data[$i]);
                     // If the timeslot is empty, no need for a border
-                    $border_box = (isset($posts[$id]['title']) and $posts[$id]['title'] != null) ? 'or-box' : '';
+                    $border_box = (isset($posts[$id]['title']) and $posts[$id]['title'] != null) ? 'or-box' : 'or-white-box';
                     $content = (isset($posts[$id]['title']) and $posts[$id]['title'] != null) ? $posts[$id]['title'] : '';
+                    $link = $posts[$id]['link'];
+                    if ($posts[$id]['type'] == 'speaker'){
+                        $hover = 'or-hover';
+                        $speaker_id = get_field('invited_speaker', post_id: $id)->ID;
+                        $speaker_image = get_the_post_thumbnail($speaker_id, ['100', '100']);
+                        $speaker_affiliation = get_field('affiliation', post_id: $speaker_id);
+                        $speaker_url = get_permalink($speaker_id);
+                        $link = empty($speaker_url) ? 'javascript:void(0);' : $speaker_url;
+                        $content = '
+                        <div style="display:flex; align-items:center;">' .
+                            '<div style="width: 80%; padding:10px;">' .
+                                '<div class="or-font or-p-left">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal or-p-left">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-left">' . $speaker_affiliation . '</div>' .
+                                '<div class="or-font or-p-small or-p-left">' . get_field('location', $id) . '</div>' .
+                            '</div>' .
+                            '<div style="" class="or-speaker-image">' . $speaker_image .'</div>'.
+                        '</div>';
+                    }
+                    if ($posts[$id]['type'] == 'oral'){
+                        $args = array(
+                            'post_type'      => 'presentation', // Your custom post type for presentations
+                            'posts_per_page' => -1, // Retrieve all matching posts
+                            'meta_query'     => array(
+                                array(
+                                    'key'   => 'presentation_session', // Custom field key
+                                    'value' => $id, // Session ID to match
+                                    'compare' => '=', // Exact match
+                                ),
+                            ),
+                            'meta_key'       => 'presentation_start', // Custom field to sort by
+                            'orderby'        => 'meta_value', // Sort by the custom field value
+                            'order'          => 'ASC', // Sort in ascending order (earliest first)
+                        );
+                        
+                        // Run the query
+                        $presentations_query = new WP_Query($args);
+                        $presentations = '';
+                        $presentations .= '<h1 style=\"display:inline;\">' . $posts[$id]['title'] . ' | </h1>';
+                        $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
+                        $presentations .= '<h1 class=\"or-blue-font\" style=\"display:inline;\">' . $time_string . '</h1>';
+                        $presentations .= '<br>';
+
+                        // Check if there are any presentations
+                        if ($presentations_query->have_posts()) {
+                            while ($presentations_query->have_posts()) {
+                                $presentations_query->the_post();
+                        
+                                // Output the presentation title or other details
+                                $time = date('H:i', strtotime(get_field('presentation_start')));
+                                $presentations .= '<div>' .
+                                    '<div style=\"display:inline-block; width:50px; vertical-align:top;\"><p class=\"or-blue-font or-p-bold\">' . 
+                                    $time . 
+                                    '</p></div>' .
+                                '<div style=\"display:inline-block; overflow:wrap; width:90%;\">' . 
+                                    '<p class=\"or-dark-font\"><strong>' .
+                                    get_the_title() .
+                                    '</strong><br>' .
+                                    get_field('presentation_title') .
+                                    '</p></div></div>';
+                                // Add more presentation details as needed
+                            }
+                        } else {
+                            // No presentations found for this session
+                            echo 'No presentations found for this session.';
+                        }
+                        $popup = "onclick='showModal(\"$presentations\")'";
+
+                        // Reset the post data
+                        wp_reset_postdata();
+                        $hover = 'or-hover';
+                        $content =
+                            '<div class="oral-hidden">' . $presentations . '</div>' .
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'poster'){
+                        $popup = "onclick='showModal()'";
+                        $hover = 'or-hover';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'workshop'){
+                        $hover = 'or-hover';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'sponsor'){
+                        $hover = 'or-hover';
+                    }
+
+                    $bottom_border = ($i + $rowspan) % 4 == 1 ? 'or-bottom-border' : '';
+
                  
                     // Print element
-                    echo "<td class='or-center or-width $border_box $cell_style' style='$width' colspan='$colspan' rowspan='$rowspan'><div>" . $content . "</div></td>";
+                    echo "<td class='or-center or-width $border_box $hover $cell_style $bottom_border' $popup style='$width' colspan='$colspan' rowspan='$rowspan'><a href='$link'  style='text-decoration: none; color: inherit; display: block; cursor:inherit;'><div class='or-font'>" . $content . "</div></a></td>";
                     $posts[$id]['printed'] = true;
                     
                 }
@@ -233,12 +336,51 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             // Empty line if no content
             else 
             {
-                echo "<td class='or-center or-width $border_class' colspan='3'></td>";
+                echo "<td class='or-center or-width $border_class' colspan='12'></td>";
             }
             echo '</tr>';
         }
         echo '</table>';
+        echo '<div class="overlay" onclick="hideModal()"></div>
+                <div class="modal" id="modal">
+                <div id="modal-content"></div>
+            </div>';
 
         
     }
 }
+
+?>
+
+<!-- <script>
+    function toggleContent(cell) {
+      // Toggle the 'active' class on the clicked cell
+      cell.getElementsByClassName('oral-hidden')[0].style.display = 'fixed';
+    }
+  </script> -->
+
+<script>
+    // Function to show the modal
+    function showModal(content) {
+      const modal = document.getElementById('modal');
+      const modalContent = document.getElementById('modal-content');
+      const overlay = document.querySelector('.overlay');
+
+      // Populate the modal with the cell's content
+      modalContent.innerHTML = content;
+
+      // Show the modal and overlay
+      modal.classList.add('active');
+      overlay.classList.add('active');
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+      const modal = document.getElementById('modal');
+      const overlay = document.querySelector('.overlay');
+
+      // Hide the modal and overlay
+      modal.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+  </script>
