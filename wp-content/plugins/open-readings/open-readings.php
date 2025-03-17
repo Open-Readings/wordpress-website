@@ -40,6 +40,8 @@ function register_programme_day_widget($widgets_manager)
 {
   require_once (__DIR__ . '/widgets/programme-day.php');
   $widgets_manager->register(new \ElementorProgrammeDay());
+  require_once (__DIR__ . '/widgets/programme-widget-25.php');
+  $widgets_manager->register(new \Elementor_Programme_25());
 }
 
 add_action('elementor/widgets/register', 'register_programme_day_widget');

@@ -1,0 +1,195 @@
+.programme-table {
+    border-collapse: collapse;
+    /* border-spacing: 5px; */
+    width: 100%;
+}
+
+.row-height {
+    height: 32px;
+}
+
+.or-bottom {
+    vertical-align: bottom;
+    width: 0%;
+}
+
+.or-center {
+    text-align: center;
+}
+
+.or-box {
+    border: 1px solid #fff;
+    border-radius: 7px;
+    padding: 0px 10px; 
+}
+
+.or-hover:hover {
+    background-color: rgb(0, 11, 61);
+    cursor: pointer;
+    color: #fff;
+}
+
+.or-font {
+    font-family: metropolis, arial;
+}
+
+.or-bottom-border {
+    /* border-bottom: 1px solid #2386f3 !important; */
+    border-bottom: 1px solid #999 !important;
+
+}
+
+.or-top-border {
+    /* border-top: 1px solid #2386f3; */
+    border-top: 1px solid #999;
+
+}
+
+.or-speaker {
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background-color: #121f47;
+}
+
+.or-speaker-affiliation {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.or-speaker-image {
+    border-radius: 50%;
+    margin: 10px;
+    overflow: hidden;
+}
+
+.or-speaker-description {
+    font-size: 0.8em;
+    font-weight: normal;
+    font-family: metropolis, arial;
+}
+
+.or-oral {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #ddd;
+}
+
+.or-poster {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #bccbee;
+}
+
+.or-special-event {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c0ddef;
+}
+
+.or-other {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c2d3ee;
+}
+
+.or-workshop {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c0ddef;
+}
+
+.or-break {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #fff3d2;
+}
+
+.or-sponsor {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #ddd;
+}
+
+.or-white-box {
+    background-color: #fff;
+}
+
+.or-time-font {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #777777;
+    font-family: metropolis, arial;
+}
+
+.or-dark-font {
+    color: #272727;
+}
+
+.or-light-font {
+    color: #ffffff;
+}
+
+.or-p-bold {
+    font-weight: bold;
+}
+
+.or-p-small {
+    font-size: 0.8em;
+}
+
+.or-p-normal {
+    font-weight: normal;
+}
+
+.or-p-left {
+    text-align: left;
+}
+
+.oral-hidden {
+    display: none;
+}
+
+/* Modal styling */
+.modal {
+    display: block; /* Hidden by default */
+    position: fixed;
+    /* top: 50%; */
+    /* left: 50%; */
+    transform: translate(50%, 50%); /* Center the modal */
+    width: 50vw !important; /* Adjust width as needed */
+    height: 50vh !important; /* Adjust height as needed */
+    background-color: white !important;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    z-index: 1000 !important; /* Ensure it appears above other content */
+  }
+
+  /* Overlay styling */
+  .overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999 !important; /* Below the modal but above everything else */
+  }
+
+  /* Show the modal and overlay when active */
+  .modal.active, .overlay.active {
+    display: block;
+  }
+
+  .or-blue-font {
+    color: #2386f3;
+}
