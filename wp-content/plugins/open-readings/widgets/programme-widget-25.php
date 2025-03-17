@@ -258,11 +258,11 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         // Run the query
                         $presentations_query = new WP_Query($args);
                         $presentations = '';
-                        $presentations .= '<h1 style=\"display:inline;\">' . $posts[$id]['title'] . ' | </h1>';
+                        $presentations .= '<h1 style="display:inline;">' . $posts[$id]['title'] . ' | </h1>';
                         $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
-                        $presentations .= '<h1 class=\"or-blue-font\" style=\"display:inline;\">' . $time_string . '</h1>';
-                        $presentations .= '<br>';
-
+                        $presentations .= '<h1 class="or-blue-font" style="display:inline;">' . $time_string . '</h1>';
+                        $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
+                        
                         // Check if there are any presentations
                         if ($presentations_query->have_posts()) {
                             while ($presentations_query->have_posts()) {
@@ -271,28 +271,28 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 // Output the presentation title or other details
                                 $time = date('H:i', strtotime(get_field('presentation_start')));
                                 $presentations .= '<div>' .
-                                    '<div style=\"display:inline-block; width:50px; vertical-align:top;\"><p class=\"or-blue-font or-p-bold\">' . 
+                                    '<div style="display:inline-block; width:50px; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
                                     $time . 
                                     '</p></div>' .
-                                '<div style=\"display:inline-block; overflow:wrap; width:90%;\">' . 
-                                    '<p class=\"or-dark-font\"><strong>' .
+                                '<div style="display:inline-block; overflow:wrap; width:90%;">' . 
+                                    '<p class="or-dark-font"><strong>' .
                                     get_the_title() .
                                     '</strong><br>' .
                                     get_field('presentation_title') .
-                                    '</p></div></div>';
+                                    '</p></div></div><hr>';
                                 // Add more presentation details as needed
                             }
                         } else {
                             // No presentations found for this session
                             echo 'No presentations found for this session.';
                         }
-                        $popup = "onclick='showModal(\"$presentations\")'";
-
+                        $presentations = json_encode($presentations);
+                        $popup = "onclick='showModal($presentations)'";
+                        
                         // Reset the post data
                         wp_reset_postdata();
                         $hover = 'or-hover';
                         $content =
-                            '<div class="oral-hidden">' . $presentations . '</div>' .
                             '<div style="width: 100%; padding:10px;">' .
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .

@@ -163,9 +163,9 @@
     position: fixed;
     /* top: 50%; */
     /* left: 50%; */
-    transform: translate(20%, 20%); /* Center the modal */
-    width: 60% !important; /* Adjust width as needed */
-    height: 60% !important; /* Adjust height as needed */
+    transform: translate(50%, 50%); /* Center the modal */
+    width: 50vw !important; /* Adjust width as needed */
+    height: 50vh !important; /* Adjust height as needed */
     background-color: white !important;
     padding: 20px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
