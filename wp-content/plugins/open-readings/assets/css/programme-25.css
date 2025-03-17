@@ -158,8 +158,8 @@
 }
 
 /* Modal styling */
-.modal {
-    display: block; /* Hidden by default */
+.or-modal {
+    display: none; /* Hidden by default */
     position: fixed;
     /* top: 50%; */
     /* left: 50%; */
@@ -171,6 +171,10 @@
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     z-index: 1000 !important; /* Ensure it appears above other content */
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow: auto;
   }
 
   /* Overlay styling */
@@ -186,10 +190,18 @@
   }
 
   /* Show the modal and overlay when active */
-  .modal.active, .overlay.active {
+  .or-modal.active, .overlay.active {
     display: block;
   }
 
   .or-blue-font {
     color: #2386f3;
+}
+
+.or-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
 }
