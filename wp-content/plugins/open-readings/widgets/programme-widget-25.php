@@ -342,7 +342,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         }
         echo '</table>';
         echo '<div class="overlay" onclick="hideModal()"></div>
-                <div class="modal" id="modal">
+                <div class="or-modal" id="or-modal">
                 <div id="modal-content"></div>
             </div>';
 
@@ -362,7 +362,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
 <script>
     // Function to show the modal
     function showModal(content) {
-      const modal = document.getElementById('modal');
+      const modal = document.getElementById('or-modal');
       const modalContent = document.getElementById('modal-content');
       const overlay = document.querySelector('.overlay');
 
@@ -376,7 +376,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
 
     // Function to hide the modal
     function hideModal() {
-      const modal = document.getElementById('modal');
+      const modal = document.getElementById('or-modal');
       const overlay = document.querySelector('.overlay');
 
       // Hide the modal and overlay
