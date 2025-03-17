@@ -302,7 +302,52 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                     }
 
                     if ($posts[$id]['type'] == 'poster'){
-                        $popup = "onclick='showModal()'";
+                        $args = array(
+                            'post_type'      => 'presentation', // Your custom post type for presentations
+                            'posts_per_page' => -1, // Retrieve all matching posts
+                            'meta_query'     => array(
+                                array(
+                                    'key'   => 'presentation_session', // Custom field key
+                                    'value' => $id, // Session ID to match
+                                    'compare' => '=', // Exact match
+                                ),
+                            ),
+                            'meta_key'       => 'poster_number', // Custom field to sort by
+                            'orderby'        => 'meta_value_num', // Sort by the custom field value
+                            'order'          => 'ASC', // Sort in ascending order (earliest first)
+                        );
+                        
+                        // Run the query
+                        $presentations_query = new WP_Query($args);
+                        $presentations = '';
+                        $presentations .= '<h1 style="display:inline;">' . $posts[$id]['title'] . '</h1>';
+                        $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
+                        
+                        // Check if there are any presentations
+                        if ($presentations_query->have_posts()) {
+                            while ($presentations_query->have_posts()) {
+                                $presentations_query->the_post();
+                        
+                                // Output the presentation title or other details
+                                $nr = get_field('poster_number');
+                                $presentations .= '<div>' .
+                                    '<div style="display:inline-block; width:50px; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
+                                    $nr . 
+                                    '</p></div>' .
+                                '<div style="display:inline-block; overflow:wrap; width:90%;">' . 
+                                    '<p class="or-dark-font"><strong>' .
+                                    get_the_title() .
+                                    '</strong><br>' .
+                                    get_field('presentation_title') .
+                                    '</p></div></div><hr>';
+                                // Add more presentation details as needed
+                            }
+                        } else {
+                            // No presentations found for this session
+                            echo 'No presentations found for this session.';
+                        }
+                        $presentations = json_encode($presentations);
+                        $popup = "onclick='showModal($presentations)'";
                         $hover = 'or-hover';
                         $content =
                             '<div style="width: 100%; padding:10px;">' .
