@@ -23,12 +23,12 @@ class ORSecondEvaluationAdmin
     function add_admin_pages()
     {
 
-        add_menu_page('OpenReadings Evaluation System', 'Committee Evaluations', 'or_main_evaluator', 'or_evaluation_admin', array($this, 'admin_index'), 'dashicons-list-view', 4);
+        add_menu_page('OpenReadings Evaluation System', 'Committee Evaluations', 'or_main_evaluator', 'or_evaluation_two', array($this, 'admin_index'), 'dashicons-list-view', 4);
         if (current_user_can('manage_options')) {
-            add_submenu_page('or_evaluation_admin', 'OR Evaluation List', 'Evaluation System', 'manage_options', 'or_evaluation_two', array($this, 'admin_index'), 4);
-            add_submenu_page('or_evaluation_admin', 'OR Evaluation Settings', 'Abstract Assignment', 'manage_options', 'or_evaluation_settings_two', array($this, 'admin_settings'), 5);
-            add_submenu_page('or_evaluation_admin', 'OR Evaluation Emailer', 'Decision Mailer', 'manage_options', 'or_evaluation_emailer', array($this, 'admin_emailer'), 6);
-            add_submenu_page('or_evaluation_admin', 'OR Evaluation List', 'Decision List', 'manage_options', 'or_evaluation_list', array($this, 'admin_list'), 7);
+            add_submenu_page('or_evaluation_two', 'OR Evaluation List', 'Evaluation System', 'manage_options', 'or_evaluation_admin', array($this, 'admin_index'), 4);
+            add_submenu_page('or_evaluation_two', 'OR Evaluation Settings', 'Abstract Assignment', 'manage_options', 'or_evaluation_settings_two', array($this, 'admin_settings'), 5);
+            add_submenu_page('or_evaluation_two', 'OR Evaluation Emailer', 'Decision Mailer', 'manage_options', 'or_evaluation_emailer', array($this, 'admin_emailer'), 6);
+            add_submenu_page('or_evaluation_two', 'OR Evaluation List', 'Decision List', 'manage_options', 'or_evaluation_list', array($this, 'admin_list'), 7);
         }
 
     }
