@@ -62,6 +62,12 @@ class ORSecondEvaluationAdmin
             $registration_table = "23_registration";
             $evaluation_table = 'wp_or_registration_evaluation';
             $joint_table = "wp_or_registration as r LEFT JOIN wp_or_registration_evaluation as e ON r.hash_id = e.evaluation_hash_id LEFT JOIN wp_or_registration_presentations as p ON p.person_hash_id = e.evaluation_hash_id";
+            $reg_table = "wp_or_registration";
+            $eval_table = 'wp_or_registration_evaluation';
+            $pres_table = 'wp_or_registration_presentations';
+            $joint_table = "$eval_table t1 INNER JOIN $reg_table t2 ON t1.evaluation_hash_id = t2.hash_id INNER JOIN $pres_table t3 ON t3.person_hash_id = t1.evaluation_hash_id";
+    
+            
             $ra_filter = 'none';
 
             if (isset($_POST['save_settings'])) {
@@ -99,9 +105,9 @@ class ORSecondEvaluationAdmin
             header('Content-Disposition: attachment; filename="export.csv"');
             header('Pragma: no-cache');
             header('Expires: 0');
-            fputcsv($fp, array('First Name', 'Last Name', 'Email', 'Affiliation','Country' , 'Presentation Title', 'Abstract PDF', 'Research Area', 'Decision'));
+            fputcsv($fp, array('First Name', 'Last Name', 'Email', 'Affiliation','Country' , 'Presentation Title', 'Abstract PDF', 'Research Area', 'Decision', 'Grade'));
             foreach ($results as $result) {
-                fputcsv($fp, array($result->first_name, $result->last_name, $result->email, $result->institution, $result->country, $result->display_title, $result->pdf, $result->research_area, array_search($result->decision, $PRESENTATION_TYPE)));
+                fputcsv($fp, array($result->first_name, $result->last_name, $result->email, $result->institution, $result->country, $result->display_title, $result->pdf, $result->research_area, array_search($result->decision, $PRESENTATION_TYPE), $result->evaluation));
             }
             fclose($fp);
             die;
