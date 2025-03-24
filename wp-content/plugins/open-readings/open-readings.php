@@ -38,8 +38,8 @@ require_once __DIR__ . '/include/register-scripts.php';
 
 function register_programme_day_widget($widgets_manager)
 {
-  require_once (__DIR__ . '/widgets/programme-day.php');
-  $widgets_manager->register(new \ElementorProgrammeDay());
+  // require_once (__DIR__ . '/widgets/programme-day.php');
+  // $widgets_manager->register(new \ElementorProgrammeDay());
   require_once (__DIR__ . '/widgets/programme-widget-25.php');
   $widgets_manager->register(new \Elementor_Programme_25());
 }

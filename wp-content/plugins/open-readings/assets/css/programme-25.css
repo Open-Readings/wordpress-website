@@ -1,7 +1,7 @@
 .programme-table {
     border-collapse: collapse;
     /* border-spacing: 5px; */
-    width: 100%;
+    width: 100% !important;
 }
 
 .row-height {
@@ -44,6 +44,8 @@
     border-top: 1px solid #999;
 
 }
+
+
 
 .or-speaker {
     font-size: 1em;
@@ -225,4 +227,44 @@
 
 .or-modal::-webkit-scrollbar-thumb:hover {
     background: #555; /* Color of the scrollbar thumb on hover */
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+@media (max-width: 600px) {
+    .or-font {
+        font-size: 85%; /* Reduce base font size by 20% on mobile */
+    }
+    .or-time-font {
+        font-size: 0.7em;
+    }
+    .or-modal {
+        width: 90vw !important; /* Adjust width as needed */
+        height: 90vh !important; /* Adjust height as needed */
+        transform: translate(5%, 5%); /* Center the modal */
+    }
+
+    .or-modal-content {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .or-font {
+        font-size: 90%; /* Reduce base font size by 20% on mobile */
+    }
+    .or-time-font {
+        font-size: 0.8em;
+    }
+    .or-modal {
+        width: 70vw !important; /* Adjust width as needed */
+        height: 70vh !important; /* Adjust height as needed */
+        transform: translate(15%, 15%); /* Center the modal */
+    }
+
+    .or-modal-content {
+        padding: 10px;
+    }
 }
