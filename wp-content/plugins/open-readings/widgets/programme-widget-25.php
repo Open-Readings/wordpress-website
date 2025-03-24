@@ -7,12 +7,12 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
 
     public function get_style_depends()
     {
-        return ['programme-25-style'];
+        return ['programme-25-style', 'faq-widget-style'];
     }
 
     public function get_script_depends()
     {
-        return ['programme-25-js'];
+        return ['programme-25-js', 'faq-widget-js'];
     }
 
     public function get_name()
@@ -54,16 +54,28 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         $this->add_control(
             'Date',
             [
-                'label' => esc_html__('Date', 'elementor-faq-control'),
+                'label' => esc_html__('Date', 'elementor-programme-new-control'),
                 'type' => \Elementor\Controls_Manager::DATE_TIME,
                 'input_type' => 'date',
-                'placeholder' => esc_html__('Enter your date', 'elementor-faq-control'),
+                'placeholder' => esc_html__('Enter your date', 'elementor-programme-new-control'),
                 'default' => date('Y-m-d'),
                 'description' => 'Select the date for the programme day',
                 //default return only day
                 'format' => 'Y-m-d',
 
 
+            ]
+
+        );
+
+        $this->add_control(
+            'Description',
+            [
+                'label' => esc_html__('Description', 'elementor-programme-new-control'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'placeholder' => esc_html__('Enter your description', 'elementor-programme-new-control'),
+                'default' => 'Programme for the day',
+                'description' => 'Enter the description for the programme day',
             ]
 
         );
@@ -174,8 +186,8 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             'sponsor' => 'or-sponsor',
         ];
 
-
-        echo '<table class="programme-table">';
+        $display_title = $settings['Description'];
+        echo '<div class="collapsible"><div class="faq-plus">+</div><div class="faq-question">' . $display_title . '</div></div><div class="content no-padding"><table class="programme-table">';
         // Print table one row at a time
         for ($i = 0; $i < $row_count; $i++) {
             $hour = floor($i/4) + 8;
@@ -385,7 +397,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             }
             echo '</tr>';
         }
-        echo '</table>';
+        echo '</table></div>';
         echo '<div class="overlay" onclick="hideModal()"></div>
                 <div class="or-modal" id="or-modal">
                 <div id="modal-content"></div>
