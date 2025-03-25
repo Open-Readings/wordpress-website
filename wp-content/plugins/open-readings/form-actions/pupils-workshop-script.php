@@ -20,6 +20,7 @@ $excursion_arr = [
 ];
 
 $table_name = 'wp_pupils_registration_25';
+$table_name_listener = 'wp_pupils_listener_25';
 
 $places_left = [];
 
@@ -167,11 +168,18 @@ global $wpdb;
             "SELECT COUNT(*) as count FROM $table_name WHERE excursion = %s",
             $value
         ));
+
+        $count = $result[0]->count;
+        $result = $wpdb->get_results($wpdb->prepare(
+            "SELECT COUNT(*) as count FROM $table_name_listener WHERE excursion = %s",
+            $value
+        ));
+        $count += $result[0]->count;
         
         ?>
         <script>
             fieldValue = '<?=$value; ?>';
-            fieldLimit = '<?=$limit - $result[0]->count; ?>';
+            fieldLimit = '<?=$limit - $count; ?>';
             appendToLabelByValue(fieldValue, "(liko vietų: " + fieldLimit + ")");
         </script>
         <?php
@@ -182,11 +190,18 @@ global $wpdb;
             "SELECT COUNT(*) as count FROM $table_name WHERE workshop = %s",
             $value
         ));
+
+        $count = $result[0]->count;
+        $result = $wpdb->get_results($wpdb->prepare(
+            "SELECT COUNT(*) as count FROM $table_name_listener WHERE workshop = %s",
+            $value
+        ));
+        $count += $result[0]->count;
         
         ?>
         <script>
             fieldValue = '<?=$value; ?>';
-            fieldLimit = '<?=$limit - $result[0]->count; ?>';
+            fieldLimit = '<?=$limit - $count; ?>';
             workshopDescriptions(fieldValue, workshopData[fieldValue], fieldLimit);
             
         </script>
