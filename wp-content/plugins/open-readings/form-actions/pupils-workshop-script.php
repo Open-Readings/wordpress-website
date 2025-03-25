@@ -174,7 +174,9 @@ global $wpdb;
             "SELECT COUNT(*) as count FROM $table_name_listener WHERE excursion = %s",
             $value
         ));
-        $count += $result[0]->count;
+        if ($result) {
+            $count += $result[0]->count;
+        }
         
         ?>
         <script>
@@ -196,7 +198,9 @@ global $wpdb;
             "SELECT COUNT(*) as count FROM $table_name_listener WHERE workshop = %s",
             $value
         ));
-        $count += $result[0]->count;
+        if ($result) {
+            $count += $result[0]->count;
+        }
         
         ?>
         <script>
