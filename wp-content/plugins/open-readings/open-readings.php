@@ -348,5 +348,7 @@ function register_pupils_workshop_script()
 {
   if (is_page(page: 'moksleiviu-sesijos-registracija'))
     require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
+  else if (is_page(page: 'mokiniu-sesijos-klausytojo-registracija'))
+    require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
 }
 add_action('wp_footer', 'register_pupils_workshop_script');
