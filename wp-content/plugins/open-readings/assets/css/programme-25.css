@@ -231,9 +231,31 @@
 
 .no-padding {
     padding: 0px !important;
+    overflow: scroll;
 }
 
 @media (max-width: 600px) {
+    .or-font {
+        font-size: 80%; /* Reduce base font size by 20% on mobile */
+    }
+    .or-time-font {
+        font-size: 0.7em;
+    }
+    .or-modal {
+        width: 100vw !important; /* Adjust width as needed */
+        height: 100vh !important; /* Adjust height as needed */
+    }
+
+    .or-modal-content {
+        padding: 10px;
+    }
+
+    .or-box {
+        padding: 0px 5px; 
+    }
+}
+
+@media (max-width: 1100px) {
     .or-font {
         font-size: 85%; /* Reduce base font size by 20% on mobile */
     }
@@ -241,30 +263,16 @@
         font-size: 0.7em;
     }
     .or-modal {
-        width: 90vw !important; /* Adjust width as needed */
-        height: 90vh !important; /* Adjust height as needed */
-        transform: translate(5%, 5%); /* Center the modal */
+        width: 80vw !important; /* Adjust width as needed */
+        height: 80vh !important; /* Adjust height as needed */
+        transform: translate(10%, 10%); /* Center the modal */
     }
 
     .or-modal-content {
         padding: 10px;
     }
-}
 
-@media (max-width: 1100px) {
-    .or-font {
-        font-size: 90%; /* Reduce base font size by 20% on mobile */
-    }
-    .or-time-font {
-        font-size: 0.8em;
-    }
-    .or-modal {
-        width: 70vw !important; /* Adjust width as needed */
-        height: 70vh !important; /* Adjust height as needed */
-        transform: translate(15%, 15%); /* Center the modal */
-    }
-
-    .or-modal-content {
-        padding: 10px;
+    .or-box {
+        padding: 0px 5px; 
     }
 }

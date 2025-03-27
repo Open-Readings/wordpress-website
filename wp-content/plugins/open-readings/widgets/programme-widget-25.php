@@ -309,7 +309,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
                                 '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
-                                '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
+                                // '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
                             '</div>';
                     }
 
@@ -356,7 +356,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             }
                         } else {
                             // No presentations found for this session
-                            echo 'No presentations found for this session.';
+                            // echo 'No presentations found for this session.';
                         }
                         $presentations = json_encode($presentations);
                         $popup = "onclick='showModal($presentations)'";
@@ -377,8 +377,20 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             '</div>';
                     }
 
-                    if ($posts[$id]['type'] == 'sponsor'){
+                    if ($posts[$id]['type'] == 'sponsor' or $posts[$id]['type'] == 'special_event' or $posts[$id]['type'] == 'other'){
                         $hover = 'or-hover';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'break'){
+                        $hover = '';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                            '</div>';
                     }
 
                     $bottom_border = ($i + $rowspan) % 4 == 1 ? 'or-bottom-border' : '';
