@@ -244,10 +244,15 @@
     .or-modal {
         width: 100vw !important; /* Adjust width as needed */
         height: 100vh !important; /* Adjust height as needed */
+        font-size: 0.8em !important;
     }
 
     .or-modal-content {
         padding: 10px;
+    }
+
+    .or-modal h1 {
+        font-size: 1.8em !important;
     }
 
     .or-box {
@@ -266,10 +271,19 @@
         width: 80vw !important; /* Adjust width as needed */
         height: 80vh !important; /* Adjust height as needed */
         transform: translate(10%, 10%); /* Center the modal */
+        font-size: 0.8em !important;
+    }
+
+    .or-modal h1 {
+        font-size: 1.8em !important;
     }
 
     .or-modal-content {
         padding: 10px;
+    }
+
+    .or-modal-content:p {
+        font-size: 0.6em;
     }
 
     .or-box {
