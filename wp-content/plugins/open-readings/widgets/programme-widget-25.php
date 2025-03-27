@@ -283,10 +283,10 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 // Output the presentation title or other details
                                 $time = date('H:i', strtotime(get_field('presentation_start')));
                                 $presentations .= '<div>' .
-                                    '<div style="display:inline-block; width:50px; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
+                                    '<div style="display:inline-block; width:55px; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
                                     $time . 
                                     '</p></div>' .
-                                '<div style="display:inline-block; overflow:wrap; width: calc(100% - 50px);">' . 
+                                '<div style="display:inline-block; overflow:wrap; width: calc(100% - 55px);">' . 
                                     '<p class="or-dark-font"><strong>' .
                                     get_the_title() .
                                     '</strong><br>' .
@@ -332,7 +332,9 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         // Run the query
                         $presentations_query = new WP_Query($args);
                         $presentations = '';
-                        $presentations .= '<h1 style="display:inline;">' . $posts[$id]['title'] . '</h1>';
+                        $presentations .= '<h1 style="display:inline;">' . $posts[$id]['title'] . ' | </h1>';
+                        $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
+                        $presentations .= '<h1 class="or-blue-font" style="display:inline; white-space: nowrap;">' . $time_string . ' </h1>';
                         $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
                         
                         // Check if there are any presentations
