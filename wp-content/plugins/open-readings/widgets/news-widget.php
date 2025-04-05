@@ -59,7 +59,7 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
     
         ?>
         <div class="scroll-wrapper">
-            <button class="scroll-left">⬅</button>
+        <a class="left-button"><i class="or-arrow or-left"></i></a>
             <div class="image-scroll-container">
                 <div class="image-scroll-content news-container">
                     <?php
@@ -81,7 +81,7 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
                     ?>
                 </div>
             </div>
-            <button class="scroll-right">➡</button>
+            <i class="or-arrow or-right"></i>
         </div>
         <?php
     }    

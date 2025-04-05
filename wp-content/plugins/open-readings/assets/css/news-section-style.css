@@ -12,7 +12,7 @@
 }
 
 .image-scroll-container {
-  width: 100%;
+  width: 95%;
   height: 275px; /* ⬆ Ensures no extra height */
   overflow-x: auto; /* Horizontal scroll only */
   overflow-y: hidden; /* ⬆ Prevents vertical scroll */
@@ -34,7 +34,7 @@
 
 /* Resized container but kept the image at the top center */
 .news-post {
-  width: 245px; /* Keeps the adjusted width */
+  width: calc(33% - 3px); /* Keeps the adjusted width */
   height: 245px; /* Keeps the adjusted height */
   flex-shrink: 0;
   box-sizing: border-box;
@@ -58,7 +58,8 @@
 .news-img {
   width: 100%;
   height: 85%;
-  max-height: 125px;
+  max-height: 150px;
+  min-height: 150px;
   object-fit: contain;
   display: block;
   pointer-events: none; /* Prevents clicking only on the image */
@@ -95,4 +96,31 @@ button {
 
 button:hover {
   background: #555;
+}
+
+.or-arrow {
+  border: solid #272727;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  margin: 5px;
+}
+
+.or-arrow:hover{
+  border: solid #2386f3;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.or-right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.or-left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
 }

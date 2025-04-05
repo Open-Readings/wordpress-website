@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const scrollContainer = document.querySelector(".image-scroll-container");
-    const scrollLeftBtn = document.querySelector(".scroll-left");
-    const scrollRightBtn = document.querySelector(".scroll-right");
+    const scrollLeftBtn = document.querySelector(".left-button");
+    const scrollRightBtn = document.querySelector(".or-right");
     const newsPost = document.querySelector(".news-post"); // Get one post to calculate size
     let autoScroll;
     let direction = 1;
