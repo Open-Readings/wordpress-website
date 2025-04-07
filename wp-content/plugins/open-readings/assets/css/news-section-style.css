@@ -124,3 +124,9 @@ button:hover {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
+
+@media (max-width: 768px) {
+  .news-post {
+    width: calc(100%); /* Adjusted for smaller screens */
+  }
+}
