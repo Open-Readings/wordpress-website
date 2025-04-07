@@ -186,10 +186,13 @@ function add_new_form_actions($form_actions_registrar)
   require_once (__DIR__ . '/form-actions/or-form-action.php');
   require_once (__DIR__ . '/form-actions/or-presentation-redirect.php');
   require_once (__DIR__ . '/form-actions/custom-form.php');
+  require_once (__DIR__ . '/form-actions/or-hash-id-check.php');
+
 
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
   $form_actions_registrar->register(new \ORPresentationUpload());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
+  $form_actions_registrar->register(new \Elementor_Form_OR_Hash_Check());
 
 }
 add_action('elementor_pro/forms/actions/register', 'add_new_form_actions');
