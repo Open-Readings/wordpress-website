@@ -279,7 +279,17 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         if ($presentations_query->have_posts()) {
                             while ($presentations_query->have_posts()) {
                                 $presentations_query->the_post();
-                        
+
+                                $url = get_field('abstract_pdf');
+                                // Find the position of 'wp-content' in the URL
+                                $wp_content_pos = strpos($url, 'wp-content');
+
+                                // If 'wp-content' is found, extract the part after it
+                                if ($wp_content_pos !== false) {
+                                    $relative_path = substr($url, $wp_content_pos + strlen('wp-content'));
+                                    $url = WP_CONTENT_URL . $relative_path;
+                                }
+
                                 // Output the presentation title or other details
                                 $time = date('H:i', strtotime(get_field('presentation_start')));
                                 $presentations .= '<div>' .
@@ -289,7 +299,8 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 '<div style="display:inline-block; overflow:wrap; width: calc(100% - 55px);">' . 
                                     '<p class="or-dark-font"><strong>' .
                                     get_the_title() .
-                                    '</strong><br>' .
+                                    '&nbsp;|</strong>' . 
+                                    '<a href="' . $url . '" target="_blank"><strong>&nbsp;PDF</strong></a><br>' . 
                                     get_field('presentation_title') .
                                     '</p></div></div><hr>';
                                 // Add more presentation details as needed
@@ -331,6 +342,9 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         
                         // Run the query
                         $presentations_query = new WP_Query($args);
+
+                        
+
                         $presentations = '';
                         $presentations .= '<h1 style="display:inline;">' . $posts[$id]['title'] . ' | </h1>';
                         $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
@@ -341,17 +355,28 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         if ($presentations_query->have_posts()) {
                             while ($presentations_query->have_posts()) {
                                 $presentations_query->the_post();
+
+                                $url = get_field('abstract_pdf');
+                                // Find the position of 'wp-content' in the URL
+                                $wp_content_pos = strpos($url, 'wp-content');
+
+                                // If 'wp-content' is found, extract the part after it
+                                if ($wp_content_pos !== false) {
+                                    $relative_path = substr($url, $wp_content_pos + strlen('wp-content'));
+                                    $url = WP_CONTENT_URL . $relative_path;
+                                }
                         
                                 // Output the presentation title or other details
                                 $nr = get_field('poster_number');
                                 $presentations .= '<div>' .
-                                    '<div style="display:inline-block; width:9%; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
+                                    '<div style="display:inline-block; width:37px; vertical-align:top;"><p class="or-blue-font or-p-bold">' . 
                                     $nr .
                                     '</p></div>' .
                                 '<div style="display:inline-block; overflow:wrap; width:89%;">' . 
                                     '<p class="or-dark-font"><strong>' .
                                     get_the_title() .
-                                    '</strong><br>' .
+                                    '&nbsp;|</strong>' . 
+                                    '<a href="' . $url . '" target="_blank"><strong>&nbsp;PDF</strong></a><br>' . 
                                     get_field('presentation_title') .
                                     '</p></div></div><hr>';
                                 // Add more presentation details as needed
@@ -414,35 +439,9 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         echo '</table></div>';
         echo '<div class="overlay" onclick="hideModal()"></div>
                 <div class="or-modal" id="or-modal">
-                <div id="modal-content"></div>
+                    <div class="close-btn" onclick="hideModal()">×</div>
+                    <div id="modal-content" class="or-modal-content"></div>
             </div>';
-
-        echo "<script>
-            // Function to show the modal
-            function showModal(content) {
-            const modal = document.getElementById('or-modal');
-            const modalContent = document.getElementById('modal-content');
-            const overlay = document.querySelector('.overlay');
-
-            // Populate the modal with the cell's content
-            modalContent.innerHTML = content;
-
-            // Show the modal and overlay
-            modal.classList.add('active');
-            overlay.classList.add('active');
-            }
-
-            // Function to hide the modal
-            function hideModal() {
-            const modal = document.getElementById('or-modal');
-            const overlay = document.querySelector('.overlay');
-
-            // Hide the modal and overlay
-            modal.classList.remove('active');
-            overlay.classList.remove('active');
-            }
-        </script>";
-
         
     }
 }

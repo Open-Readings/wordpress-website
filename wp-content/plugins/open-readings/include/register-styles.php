@@ -12,6 +12,7 @@ function register_styles(){
         'latex-field-style' => 'assets/css/latex-field-style.css',
         'registration-evaluation-style' => 'assets/css/evaluation-style.css',
         'programme-25-style' => 'assets/css/programme-25.css',
+        'news-widget-style' => 'assets/css/news-section-style.css'
     ];
 
     foreach ($styles as $handle => $path) {
