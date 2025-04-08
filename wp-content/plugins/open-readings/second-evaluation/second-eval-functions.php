@@ -57,7 +57,7 @@ function print_eval_statistics()
         $rej_body = get_option('evaluation_reject_body');
         $subj = get_option('evaluation_subject');
 
-
+ 
 
         if ($decision == 3) {
             $vars =
