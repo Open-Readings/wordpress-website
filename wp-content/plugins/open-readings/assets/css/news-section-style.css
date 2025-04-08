@@ -12,7 +12,7 @@
 }
 
 .image-scroll-container {
-  width: 95%;
+  width: 90vw;
   height: 275px; /* ⬆ Ensures no extra height */
   overflow-x: auto; /* Horizontal scroll only */
   overflow-y: hidden; /* ⬆ Prevents vertical scroll */
@@ -34,7 +34,8 @@
 
 /* Resized container but kept the image at the top center */
 .news-post {
-  width: calc(33% - 3px); /* Keeps the adjusted width */
+  /* width: calc(33% - 3px); Keeps the adjusted width */
+  width: calc(30vw); /* Adjusted width for better fit */
   height: 245px; /* Keeps the adjusted height */
   flex-shrink: 0;
   box-sizing: border-box;
@@ -127,6 +128,6 @@ button:hover {
 
 @media (max-width: 768px) {
   .news-post {
-    width: calc(100%); /* Adjusted for smaller screens */
+    width: calc(90vw - 70px); /* Adjusted for smaller screens */
   }
 }

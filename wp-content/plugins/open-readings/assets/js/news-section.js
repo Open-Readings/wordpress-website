@@ -1,8 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const scrollContainer = document.querySelector(".image-scroll-container");
+    let viewportWidth = window.innerWidth;
+    let scrollContainer = document.querySelector(".image-scroll-container");
     const scrollLeftBtn = document.querySelector(".left-button");
     const scrollRightBtn = document.querySelector(".or-right");
-    const newsPost = document.querySelector(".news-post"); // Get one post to calculate size
+    let newsPosts = document.querySelectorAll(".news-post"); // Get one post to calculate size
+    newsPosts.forEach((post) => {
+        if (viewportWidth < 768) {
+            post.style.width = `${(scrollContainer.clientWidth - 20)}px`; // Set width to match container
+        } else if (viewportWidth >= 768 && viewportWidth < 1024) {
+            post.style.width = `${(scrollContainer.clientWidth - 30)/2}px`; // Set width to match container
+        } else {
+            post.style.width = `${(scrollContainer.clientWidth - 40)/3}px`; // Set width to match container       
+        }
+    });
+    let newsPost = document.querySelector(".news-post");
+
     let autoScroll;
     let direction = 1;
     let autoScrollTimeout;
@@ -69,4 +81,20 @@ document.addEventListener("DOMContentLoaded", function () {
     scrollRight.addEventListener("click", function () {
         scrollContainer.scrollBy({ left: 255, behavior: "smooth" });
     });
+});
+
+window.addEventListener("resize", function () {
+    viewportWidth = window.innerWidth;
+    scrollContainer = document.querySelector(".image-scroll-container");
+    newsPosts = document.querySelectorAll(".news-post");
+    newsPosts.forEach((post) => {
+        if (viewportWidth < 768) {
+            post.style.width = `${(scrollContainer.clientWidth - 20)}px`; // Set width to match container
+        } else if (viewportWidth >= 768 && viewportWidth < 1024) {
+            post.style.width = `${(scrollContainer.clientWidth - 30)/2}px`; // Set width to match container
+        } else {
+            post.style.width = `${(scrollContainer.clientWidth - 40)/3}px`; // Set width to match container       
+        }
+    });
+    scrollContainer.scrollTo({ left: 0, behavior: "smooth" }); // Reset scroll position
 });
