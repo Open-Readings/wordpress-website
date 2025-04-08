@@ -65,10 +65,8 @@
         }
 
         if (isset($_POST['save_settings'])) {
-            $comment = $_POST['comment'];
             $research_ar = $_POST['research_area'];
             
-
             $eval_id = $_POST['save_settings'];
             $update = $wpdb->update($reg_table, array('research_area' => $research_ar), array('hash_id' => $eval_id));
 
@@ -77,6 +75,13 @@
                 $save_error = true;
             } else {
                 $decision = $_POST['decision'];
+            }
+
+            if (!isset($_POST['comment']) or empty($_POST['comment'])) {
+                $error = "Please write a comment";
+                $save_error = true;
+            } else {
+                $comment = $_POST['comment'];
             }
 
             if (!isset($_POST['grade']) || $_POST['grade'] == 0) {
@@ -158,7 +163,7 @@
             echo '</select>';
             echo '</td>';
             echo '<td>';
-            echo '<textarea name="comment" rows="4" cols="50" required>' . $eval->comment . '</textarea></td>';
+            echo '<textarea name="comment" rows="4" cols="50">' . $eval->comment . '</textarea></td>';
             echo '</td>';
             if ($eval->decision == 0 || $is_admin)
                 echo '<td><button type="submit" name="save_settings"  value=' . $eval->evaluation_hash_id . '>Save</button></td>';

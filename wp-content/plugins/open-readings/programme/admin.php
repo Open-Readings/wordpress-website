@@ -302,12 +302,12 @@ class ORProgrammeAdmin
 
     function admin_index()
     {
-        require_once plugin_dir_path(__FILE__) . 'admin/programme-manager.php';
+        require_once plugin_dir_path(__FILE__) . 'admin/presentation-manager.php';
     }
 
     function admin_settings()
     {
-        require_once plugin_dir_path(__FILE__) . 'admin/programme-settings.php';
+        require_once plugin_dir_path(__FILE__) . 'admin/session-manager.php';
     }
 
     function admin_abstract()

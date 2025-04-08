@@ -18,6 +18,8 @@ function or_register_scripts()
         'title-field-js' => 'assets/js/title-field-js.js',
         'jquery-js' => 'assets/js/jquery-3.6.4.min.js',
         'evaluation-js' => 'assets/js/evaluation-js.js',
+        'news-section' => 'assets/js/news-section.js',
+        'programme-25-js' => 'assets/js/programme-25.js',
     ];
 
     foreach ($scripts as $handle => $path) {

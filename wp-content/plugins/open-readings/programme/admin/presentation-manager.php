@@ -185,6 +185,7 @@ if(isset($_POST['add-session-name'])){
                 <th>Nr.</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Affiliation</th>
                 <th>Presentation Title</th>
                 <th>Research Area</th>
                 <th>PDF</th>
@@ -428,11 +429,13 @@ if(isset($_POST['add-session-name'])){
                     $presentation_posts->the_post();
                     $post_id = get_the_ID();
                     $id = get_post_meta($post_id, 'hash_id', true);
+                    $affiliation = $wpdb->get_var("SELECT institution FROM $registration_table WHERE hash_id = '$id'");
                     $presentation_session = get_post_meta($post_id, 'presentation_session', true);
                     echo '<tr style="background-color:#ffa;">';
                     echo "<td>" . $list_index++ . "</td>";
                     echo "<td>" . get_post_meta($post_id, 'first_name', true) . "</td>";
                     echo "<td>" . get_post_meta($post_id, 'last_name', true) . "</td>";
+                    echo "<td>" . $affiliation . "</td>";
                     echo "<td>" . get_post_meta($post_id, 'presentation_title', true) . "</td>";
                     echo "<td>" . get_post_meta($post_id, 'research_area', true) . "</td>";
                     echo "<td> <a href=\"" . get_post_meta($post_id, 'abstract_pdf', true) . "?timestamp=" . time() . "\">" . basename(get_post_meta($post_id, 'abstract_pdf', true)) . "</a></td>";
@@ -499,6 +502,7 @@ if(isset($_POST['add-session-name'])){
                         $abstract_pdf = $result->pdf;
                         $research_area = $result->research_area;
                         $presentation_type = "";
+                        $affiliation = $result->institution;
 
                         $decision = $result->decision;
                         $args = array(
@@ -511,6 +515,7 @@ if(isset($_POST['add-session-name'])){
                         echo "<td>" . $list_index++ . "</td>";
                         echo "<td>$first_name</td>";
                         echo "<td>$last_name</td>";
+                        echo "<td>$affiliation</td>";
                         echo "<td>$presentation_title</td>";
                         echo "<td>" . $research_area . "</td>";
                         echo "<td> <a href=\"" . $result->pdf . "?timestamp=" . time() . "\">" . basename($result->pdf) . "</a></td>";

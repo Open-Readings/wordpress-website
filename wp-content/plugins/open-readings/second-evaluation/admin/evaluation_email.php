@@ -4,8 +4,25 @@
 
 
 <h1>Evaluation System Emailer</h1>
-<h2 style="color:#d00">Neveikia kol kas ;)</h2>
-
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h3 style="color: #2c3e50;">Available Template Tags</h3>
+  <p>Use these placeholders in your email templates. They will be replaced with actual data:</p>
+  
+  <ul style="list-style-type: none; padding: 0; background: #f9f9f9; border-radius: 5px; padding: 15px;">
+    <li><strong>{$title}</strong> - Presentation title</li>
+    <li><strong>{$day}</strong> - Presentation day (e.g., 15/03/2024)</li>
+    <li><strong>{$hour}</strong> - Presentation time (e.g., 14:30)</li>
+    <li><strong>{$session}</strong> - Session name (short title)</li>
+    <li><strong>{$type}</strong> - (Poster Presentation | Oral Presentation)</li>
+    <li><strong>{$first_name}</strong> - Presenter's first name</li>
+    <li><strong>{$last_name}</strong> - Presenter's last name</li>
+    <li><strong>{$research_area}</strong> - Research area</li>
+  </ul>
+  
+  <p style="font-size: 0.9em; color: #7f8c8d;">
+    Example: <code>"Dear {$first_name}, your presentation '{$title}' is on {$day} at {$hour}."</code>
+  </p>
+</div>
 <div style="display:flex; flex-direction:row; justify-content: left;">
     <?php
         echo "<div style='margin-right: 20px;'>";
@@ -96,41 +113,56 @@
 
                 $result = $wpdb->get_results($query);
                 $email = $result[0]->email;
-                // $args = array(
-                //     'post_type' => 'presentation',
-                //     'meta_query' => array(
-                //         array(
-                //             'key' => 'hash_id',
-                //             'value' => $id,
-                //             'compare' => '='
-                //         )
-                //     )
+                
+                $args = array(
+                    'post_type' => 'presentation',
+                    'meta_key' => 'hash_id',
+                    'meta_value' => $id,
+                    'posts_per_page' => 1,
+                    'post_status' => 'publish'
+                );
+                
+                $presentation_query = new WP_Query($args);
+                if ($result[0]->decision == 3) {
+                    $other_vars = array(
+                        '{$title}' => $result[0]->display_title,
+                        '{$first_name}' => $result[0]->first_name,
+                        '{$last_name}' => $result[0]->last_name,
+                        '{$research_area}' => $result[0]->research_area,
+                    );
+                }
+                else if ($presentation_query->have_posts()) {
+                    $presentation_post = $presentation_query->posts[0];
+                    $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
+                    $presentation_day = date('d/m/Y', strtotime($presentation_time));
+                    $presentation_hour = date('H:i', strtotime($presentation_time));
 
-                // );
-                // $presentation_post = get_posts($args)[0];
-                // $presentation_time = get_post_meta($presentation_post->ID, 'presentation_start', true);
-                // $presentation_day = date('d/m/Y', strtotime($presentation_time));
-                // $presentation_hour = date('H:i', strtotime($presentation_time));
-
-                // $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
-                // $session_post = get_post($presentation_session);
-                // $session_title = get_post_meta($session_post->ID, 'short_title', true);
-
-                if ($result[0]->decision == 1) {
-                    $duration = "Oral Presentation";
-                } else if ($result[0]->decision == 2) {
-                    $duration = "Poster Presentation";
+                    $presentation_session = get_post_meta($presentation_post->ID, 'presentation_session', true);
+                    $session_post = get_post($presentation_session);
+                    $session_title = get_post_meta($session_post->ID, 'short_title', true);
+                    if ($result[0]->decision == 1) {
+                        $duration = "Oral Presentation";
+                    } else if ($result[0]->decision == 2) {
+                        $duration = "Poster Presentation";
+                    }
+                    $other_vars = array(
+                        '{$title}' => $result[0]->display_title,
+                        '{$day}' => $presentation_day,
+                        '{$hour}' => $presentation_hour,
+                        '{$session}' => $session_title,
+                        '{$type}' => $duration,
+                        '{$first_name}' => $result[0]->first_name,
+                        '{$last_name}' => $result[0]->last_name,
+                        '{$research_area}' => $result[0]->research_area,
+                    );
+                } else {
+                    echo "<p>Could not find presentation post for $id : $email</p>";
+                    continue;
                 }
 
-                $other_vars = array(
-                    // '{$day}' => $presentation_day,
-                    // '{$hour}' => $presentation_hour,
-                    // '{$session}' => $session_title,
-                    '${type}' => $duration,
-                    '${first_name}' => $result[0]->first_name,
-                    '${last_name}' => $result[0]->last_name,
-                    '${research_area}' => $result[0]->research_area,
-                );
+                
+
+                
 
                 if ($result[0]->sent_email == 0) {
                     $sent = send_emails($email, $result[0]->decision, $result[0]->display_title, $other_vars);

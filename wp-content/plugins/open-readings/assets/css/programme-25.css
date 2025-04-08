@@ -1,0 +1,309 @@
+.programme-table {
+    border-collapse: collapse;
+    /* border-spacing: 5px; */
+    width: 100% !important;
+}
+
+.row-height {
+    height: 32px;
+}
+
+.or-bottom {
+    vertical-align: bottom;
+    width: 0%;
+}
+
+.or-center {
+    text-align: center;
+}
+
+.or-box {
+    border: 1px solid #fff;
+    border-radius: 7px;
+    padding: 0px 10px; 
+}
+
+.or-hover:hover {
+    background-color: rgb(0, 11, 61);
+    cursor: pointer;
+    color: #fff;
+}
+
+.or-font {
+    font-family: metropolis, arial;
+}
+
+.or-bottom-border {
+    /* border-bottom: 1px solid #2386f3 !important; */
+    border-bottom: 1px solid #999 !important;
+
+}
+
+.or-top-border {
+    /* border-top: 1px solid #2386f3; */
+    border-top: 1px solid #999;
+
+}
+
+
+
+.or-speaker {
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background-color: #121f47;
+}
+
+.or-speaker-affiliation {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.or-speaker-image {
+    border-radius: 50%;
+    margin: 10px;
+    overflow: hidden;
+}
+
+.or-speaker-description {
+    font-size: 0.8em;
+    font-weight: normal;
+    font-family: metropolis, arial;
+}
+
+.or-oral {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #ddd;
+}
+
+.or-poster {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #bccbee;
+}
+
+.or-special-event {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c0ddef;
+}
+
+.or-other {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c2d3ee;
+}
+
+.or-workshop {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #c0ddef;
+}
+
+.or-break {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #fff3d2;
+}
+
+.or-sponsor {
+    font-size: 1em;
+    font-weight: bold;
+    color: #272727;
+    background-color: #ddd;
+}
+
+.or-white-box {
+    background-color: #fff;
+}
+
+.or-time-font {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #777777;
+    font-family: metropolis, arial;
+}
+
+.or-dark-font {
+    color: #272727;
+}
+
+.or-light-font {
+    color: #ffffff;
+}
+
+.or-p-bold {
+    font-weight: bold;
+}
+
+.or-p-small {
+    font-size: 0.8em;
+}
+
+.or-p-normal {
+    font-weight: normal;
+}
+
+.or-p-left {
+    text-align: left;
+}
+
+.oral-hidden {
+    display: none;
+}
+
+/* Modal styling */
+.or-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    /* top: 50%; */
+    /* left: 50%; */
+    transform: translate(50%, 50%); /* Center the modal */
+    width: 50vw !important; /* Adjust width as needed */
+    height: 50vh !important; /* Adjust height as needed */
+    background-color: white !important;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    z-index: 101 !important; /* Ensure it appears above other content */
+    position: fixed;
+    left: 0;
+    top: 0;
+    
+  }
+
+  /* Overlay styling */
+  .overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 100 !important; /* Below the modal but above everything else */
+  }
+
+  /* Show the modal and overlay when active */
+  .or-modal.active, .overlay.active {
+    display: block;
+  }
+
+  .or-blue-font {
+    color: #2386f3;
+}
+
+.or-modal-content {
+    background-color: #fefefe;
+    margin-top: 35px;
+    width: 100%;
+    height: 90%;
+    overflow-y: scroll;
+    scrollbar-width: thin; /* "auto" or "thin" */
+    scrollbar-color: #888 transparent; /* Thumb color and track color */
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.2s;
+    font-size: 30px;
+    z-index: 300; /* Ensure it stays above other content */
+
+}
+
+/* WebKit-based browsers (Chrome, Safari) */
+.or-modal::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.or-modal::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+.or-modal::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.or-modal::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scrollbar thumb on hover */
+}
+
+.no-padding {
+    padding: 0px !important;
+    overflow: scroll;
+}
+
+@media (max-width: 600px) {
+    .or-font {
+        font-size: 80%; /* Reduce base font size by 20% on mobile */
+    }
+    .or-time-font {
+        font-size: 0.7em;
+    }
+    .or-modal {
+        width: 100vw !important; /* Adjust width as needed */
+        height: 100vh !important; /* Adjust height as needed */
+        font-size: 0.8em !important;
+    }
+
+    .or-modal-content {
+        padding: 10px;
+    }
+
+    .or-modal h1 {
+        font-size: 1.8em !important;
+    }
+
+    .or-box {
+        padding: 0px 5px; 
+    }
+}
+
+@media (max-width: 1100px) {
+    .or-font {
+        font-size: 85%; /* Reduce base font size by 20% on mobile */
+    }
+    .or-time-font {
+        font-size: 0.7em;
+    }
+    .or-modal {
+        width: 80vw !important; /* Adjust width as needed */
+        height: 80vh !important; /* Adjust height as needed */
+        transform: translate(10%, 10%); /* Center the modal */
+        font-size: 0.8em !important;
+    }
+
+    .or-modal h1 {
+        font-size: 1.8em !important;
+    }
+
+    .or-modal-content {
+        padding: 10px;
+    }
+
+    .or-modal-content:p {
+        font-size: 0.6em;
+    }
+
+    .or-box {
+        padding: 0px 5px; 
+    }
+}

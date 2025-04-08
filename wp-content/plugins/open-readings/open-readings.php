@@ -31,6 +31,8 @@ function register_faq_widget($widgets_manager)
   $widgets_manager->register(new \Elementor_Faq_Widget());
   require_once (__DIR__ . '/widgets/assigned-session-widget.php');
   $widgets_manager->register(new \Elementor_Assigned_Session_Widget());
+  require_once (__DIR__ . '/widgets/news-widget.php');
+  $widgets_manager->register(new \Elementor_News_Widget());
 }
 
 require_once __DIR__ . '/include/register-styles.php';
@@ -38,8 +40,10 @@ require_once __DIR__ . '/include/register-scripts.php';
 
 function register_programme_day_widget($widgets_manager)
 {
-  require_once (__DIR__ . '/widgets/programme-day.php');
-  $widgets_manager->register(new \ElementorProgrammeDay());
+  // require_once (__DIR__ . '/widgets/programme-day.php');
+  // $widgets_manager->register(new \ElementorProgrammeDay());
+  require_once (__DIR__ . '/widgets/programme-widget-25.php');
+  $widgets_manager->register(new \Elementor_Programme_25());
 }
 
 add_action('elementor/widgets/register', 'register_programme_day_widget');
@@ -182,10 +186,13 @@ function add_new_form_actions($form_actions_registrar)
   require_once (__DIR__ . '/form-actions/or-form-action.php');
   require_once (__DIR__ . '/form-actions/or-presentation-redirect.php');
   require_once (__DIR__ . '/form-actions/custom-form.php');
+  require_once (__DIR__ . '/form-actions/or-hash-id-check.php');
+
 
   $form_actions_registrar->register(new \Custom_Elementor_Form_Action());
   $form_actions_registrar->register(new \ORPresentationUpload());
   $form_actions_registrar->register(new \ORMainRegistrationSubmit());
+  $form_actions_registrar->register(new \Elementor_Form_OR_Hash_Check());
 
 }
 add_action('elementor_pro/forms/actions/register', 'add_new_form_actions');
@@ -345,6 +352,8 @@ add_action('rest_api_init', 'register_daily_word_endpoint');
 function register_pupils_workshop_script()
 {
   if (is_page(page: 'moksleiviu-sesijos-registracija'))
+    require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
+  else if (is_page(page: 'mokiniu-sesijos-klausytojo-registracija'))
     require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
 }
 add_action('wp_footer', 'register_pupils_workshop_script');
