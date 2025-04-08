@@ -58,7 +58,7 @@ function print_eval_statistics()
         $subj = get_option('evaluation_subject');
 
  
-
+        $test_variable_delete_this_later = "test_variable_delete_this_later";
         if ($decision == 3) {
             $vars =
                 array();
