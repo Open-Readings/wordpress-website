@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let autoScroll;
     let direction = 1;
     let autoScrollTimeout;
-
+ 
     function getScrollAmount() {
         const postWidth = newsPost.offsetWidth; // Get full width including padding/borders
         const gap = parseInt(getComputedStyle(scrollContainer).columnGap) || 0; // Check for CSS gap

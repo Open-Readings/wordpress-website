@@ -31,7 +31,7 @@
   height: 100%;
   flex-wrap: nowrap; /* Ensures items stay in one row */
 }
-
+ 
 /* Resized container but kept the image at the top center */
 .news-post {
   /* width: calc(33% - 3px); Keeps the adjusted width */
