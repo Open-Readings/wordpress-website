@@ -256,9 +256,10 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         $hover = 'or-hover';
                         $speaker_id = get_field('invited_speaker', post_id: $id)->ID;
                         $speaker_image = get_the_post_thumbnail($speaker_id, ['100', '100']);
+                        $speaker_url = get_permalink(post: $speaker_id);
                         $speaker_affiliation = get_field('affiliation', post_id: $speaker_id);
-                        $speaker_url = get_permalink($speaker_id);
-                        $link = empty($speaker_url) ? 'javascript:void(0);' : $speaker_url;
+                        if ($link == 'javascript:void(0);' and !empty($speaker_url))
+                            $link = $speaker_url;
                         $content = '
                         <div style="display:flex; align-items:center;">' .
                             '<div style="width: 80%; padding:10px;">' .
