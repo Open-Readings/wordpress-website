@@ -52,6 +52,20 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         );
 
         $this->add_control(
+            'programme_pupils',
+            [
+                'label' => esc_html__('Programme Pupils', 'elementor-programme-new-control'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    true => esc_html__('Yes', 'elementor-programme-new-control'),
+                    false => esc_html__('No', 'elementor-programme-new-control'),
+                ],
+                'default' => false,
+                'description' => esc_html__('Select if the programme is for pupils or not', 'elementor-programme-new-control'),
+            ]
+        );
+
+        $this->add_control(
             'Date',
             [
                 'label' => esc_html__('Date', 'elementor-programme-new-control'),
@@ -86,6 +100,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
+        $is_pupils_programme = $settings['programme_pupils'];
         $date = $settings['Date'];
         $day = date('Y-m-d', strtotime($date));
         //get all sessions for this day
@@ -124,6 +139,9 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         while($sessions->have_posts()){
             $sessions->the_post();
             $id = get_the_ID();
+            if ($is_pupils_programme != get_field('is_pupils_session')){
+                continue;
+            }
 
             $start = get_post_meta(get_the_ID(), 'session_start', true);
             $posts[$id]['start'] = date('H:i', strtotime($start));
@@ -184,6 +202,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             'special_event' => 'or-special-event',
             'other' => 'or-other',
             'sponsor' => 'or-sponsor',
+            'custom_popup' => 'or-oral',
         ];
 
         $display_title = $settings['Description'];
@@ -309,6 +328,24 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             // No presentations found for this session
                             echo 'No presentations found for this session.';
                         }
+                        $presentations = json_encode($presentations);
+                        $popup = "onclick='showModal($presentations)'";
+                        
+                        // Reset the post data
+                        wp_reset_postdata();
+                        $hover = 'or-hover';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
+                                // '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'custom_popup'){
+                        // Run the query
+                        $presentations = get_field('html_popup', $id);
                         $presentations = json_encode($presentations);
                         $popup = "onclick='showModal($presentations)'";
                         
