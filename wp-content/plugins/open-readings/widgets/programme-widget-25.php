@@ -339,6 +339,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             '<div style="width: 100%; padding:10px;">' .
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . $time_string . '</div>' .
                                 '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
                                 // '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
                             '</div>';
@@ -430,6 +431,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             '<div style="width: 100%; padding:10px;">' .
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . $time_string . '</div>' .
                             '</div>';
                     }
 
