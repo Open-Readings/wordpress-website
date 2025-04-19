@@ -253,6 +253,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                     $content = (isset($posts[$id]['title']) and $posts[$id]['title'] != null) ? $posts[$id]['title'] : '';
                     $link = $posts[$id]['link'];
                     if ($posts[$id]['type'] == 'speaker'){
+                        $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
                         $hover = 'or-hover';
                         $speaker_id = get_field('invited_speaker', post_id: $id)->ID;
                         $speaker_image = get_the_post_thumbnail($speaker_id, ['100', '100']);
@@ -266,6 +267,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 '<div class="or-font or-p-left">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal or-p-left">' . get_field('description', $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-left">' . $speaker_affiliation . '</div>' .
+                                '<div class="or-font or-p-small or-p-left">' . $time_string . '</div>' .
                                 '<div class="or-font or-p-small or-p-left">' . get_field('location', $id) . '</div>' .
                             '</div>' .
                             '<div style="" class="or-speaker-image">' . $speaker_image .'</div>'.
