@@ -52,6 +52,20 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         );
 
         $this->add_control(
+            'programme_pupils',
+            [
+                'label' => esc_html__('Programme Pupils', 'elementor-programme-new-control'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    true => esc_html__('Yes', 'elementor-programme-new-control'),
+                    false => esc_html__('No', 'elementor-programme-new-control'),
+                ],
+                'default' => false,
+                'description' => esc_html__('Select if the programme is for pupils or not', 'elementor-programme-new-control'),
+            ]
+        );
+
+        $this->add_control(
             'Date',
             [
                 'label' => esc_html__('Date', 'elementor-programme-new-control'),
@@ -86,6 +100,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
+        $is_pupils_programme = $settings['programme_pupils'];
         $date = $settings['Date'];
         $day = date('Y-m-d', strtotime($date));
         //get all sessions for this day
@@ -124,6 +139,9 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
         while($sessions->have_posts()){
             $sessions->the_post();
             $id = get_the_ID();
+            if ($is_pupils_programme != get_field('is_pupils_session')){
+                continue;
+            }
 
             $start = get_post_meta(get_the_ID(), 'session_start', true);
             $posts[$id]['start'] = date('H:i', strtotime($start));
@@ -184,6 +202,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             'special_event' => 'or-special-event',
             'other' => 'or-other',
             'sponsor' => 'or-sponsor',
+            'custom_popup' => 'or-oral',
         ];
 
         $display_title = $settings['Description'];
@@ -234,18 +253,21 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                     $content = (isset($posts[$id]['title']) and $posts[$id]['title'] != null) ? $posts[$id]['title'] : '';
                     $link = $posts[$id]['link'];
                     if ($posts[$id]['type'] == 'speaker'){
+                        $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
                         $hover = 'or-hover';
                         $speaker_id = get_field('invited_speaker', post_id: $id)->ID;
                         $speaker_image = get_the_post_thumbnail($speaker_id, ['100', '100']);
+                        $speaker_url = get_permalink(post: $speaker_id);
                         $speaker_affiliation = get_field('affiliation', post_id: $speaker_id);
-                        $speaker_url = get_permalink($speaker_id);
-                        $link = empty($speaker_url) ? 'javascript:void(0);' : $speaker_url;
+                        if ($link == 'javascript:void(0);' and !empty($speaker_url))
+                            $link = $speaker_url;
                         $content = '
                         <div style="display:flex; align-items:center;">' .
                             '<div style="width: 80%; padding:10px;">' .
                                 '<div class="or-font or-p-left">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal or-p-left">' . get_field('description', $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-left">' . $speaker_affiliation . '</div>' .
+                                '<div class="or-font or-p-small or-p-left">' . $time_string . '</div>' .
                                 '<div class="or-font or-p-small or-p-left">' . get_field('location', $id) . '</div>' .
                             '</div>' .
                             '<div style="" class="or-speaker-image">' . $speaker_image .'</div>'.
@@ -309,6 +331,25 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             // No presentations found for this session
                             echo 'No presentations found for this session.';
                         }
+                        $presentations = json_encode($presentations);
+                        $popup = "onclick='showModal($presentations)'";
+                        
+                        // Reset the post data
+                        wp_reset_postdata();
+                        $hover = 'or-hover';
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . $time_string . '</div>' .
+                                '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
+                                // '<div class="or-font or-p-small or-p-normal">Chair: ' . get_field('session_moderator', $id) . '</div>' .
+                            '</div>';
+                    }
+
+                    if ($posts[$id]['type'] == 'custom_popup'){
+                        // Run the query
+                        $presentations = get_field('html_popup', $id);
                         $presentations = json_encode($presentations);
                         $popup = "onclick='showModal($presentations)'";
                         
@@ -392,6 +433,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             '<div style="width: 100%; padding:10px;">' .
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . $time_string . '</div>' .
                             '</div>';
                     }
 

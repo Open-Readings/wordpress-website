@@ -115,6 +115,7 @@ class ORProgrammeAdmin
                                 'special_event' => 'Special Event',
                                 'speaker' => 'Speaker',
                                 'break' => 'Break',
+                                'custom_popup' => 'Custom HTML Popup',
                                 'other' => 'Other'
                             ),
                         ),
@@ -146,6 +147,29 @@ class ORProgrammeAdmin
                             'name' => 'location',
                             'type' => 'text',
                         ),
+                        array(
+                            'key' => 'session_pupils_boolean',
+                            'label' => 'Pupils session',
+                            'name' => 'is_pupils_session',
+                            'type' => 'true_false',
+                            'default_value' => 0,
+                        ),
+                        array(
+                            'key' => 'html_popup',
+                            'label' => 'HTML Popup',
+                            'name' => 'html_popup',
+                            'type' => 'wysiwyg',
+                            'instructions' => 'This will be displayed in a popup when the session is clicked on the programme page.',
+                            'conditional_logic' => array(
+                                array(
+                                    array(
+                                        'field' => 'session_type_field',
+                                        'operator' => '==',
+                                        'value' => 'custom_popup',
+                                    ),
+                                ),
+                            ),
+                        )
 
 
                     ),

@@ -57,8 +57,8 @@ function print_eval_statistics()
         $rej_body = get_option('evaluation_reject_body');
         $subj = get_option('evaluation_subject');
 
-
-
+ 
+        $test_variable_delete_this_later = "test_variable_delete_this_later";
         if ($decision == 3) {
             $vars =
                 array();
