@@ -17,6 +17,9 @@ $excursion_arr = [
     'gmc2' => 10,
     'ftmc2' => 10,
     'lightcon2' => 10,
+    'gmc3' => 5,
+    'ftmc3' => 5,
+    'lightcon3' => 5,
 ];
 
 $table_name = 'wp_pupils_registration_25';
