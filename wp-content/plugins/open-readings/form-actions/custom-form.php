@@ -100,6 +100,56 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
             ]
         );
 
+        $widget->add_control(
+            'or_perform_check',
+            [
+                'label' => __('Perform check', 'elementor-pro'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => '',
+                'description' => __('Perform check on field (like HASH ID)', 'elementor-pro'),
+            ]
+        );
+
+        $widget->add_control(
+            'or_check_table_name',
+            [
+                'label' => __('Table Name', 'elementor-pro'),
+                'type' => Controls_Manager::TEXT,
+                'default' => 'wp_or_registration',
+                'description' => __('Enter the name of the table to check.', 'elementor-pro'),
+            ]
+        );
+        
+        $widget->add_control(
+            'or_check_column',
+            [
+                'label' => __('Table Name', 'elementor-pro'),
+                'type' => Controls_Manager::TEXT,
+                'default' => 'hash_id',
+                'description' => __('Enter the name of the column to check.', 'elementor-pro'),
+            ]
+        );
+
+        $widget->add_control(
+            'or_check_field',
+            [
+                'label' => __('Field Name', 'elementor-pro'),
+                'type' => Controls_Manager::TEXT,
+                'default' => 'hash_id',
+                'description' => __('Enter the name of the form field to match.', 'elementor-pro'),
+            ]
+        );
+
+        $widget->add_control(
+            'or_check_message',
+            [
+                'label' => __('Message', 'elementor-pro'),
+                'type' => Controls_Manager::TEXTAREA,
+                'default' => __('The hash ID is not recognized.', 'elementor-pro'),
+                'description' => __('Enter the message to display if the hash ID is not recognized.', 'elementor-pro'),
+            ]
+        );
+
         $widget->end_controls_section();
     }
 
@@ -133,6 +183,28 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
 
 
         global $wpdb;
+
+        $perform_check = $record->get_form_settings('or_perform_check');
+
+        if($perform_check == "yes"){
+            // Get the table name from the control
+            $check_table_name = $record->get_form_settings('or_check_table_name');
+            $check_column = $record->get_form_settings('or_check_column');
+            $check_field = $record->get_form_settings('or_check_field');
+            $check_message = $record->get_form_settings('or_check_message');
+            // Get the value of the field from the form submission
+            $check_fields = $record->get('fields');
+            $check_field_value = $check_fields[$check_field]['value'];
+            // Check if the field value exists in the database
+            $query = $wpdb->prepare("SELECT * FROM {$check_table_name} WHERE {$check_column} = %s", $check_field_value);
+            $result = $wpdb->get_results($query);
+            // If the field value exists, do something
+            if (empty($result)) {
+                // The field value does not exist, so you can proceed with the form submission
+                $ajax_handler->add_error_message($check_message);
+                return;
+            }
+        }
 
 
 
