@@ -64,16 +64,21 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
                 <div class="image-scroll-content news-container">
                     <?php
                     global $wpdb;
-                    $result = $wpdb->get_results('SELECT post_title, ID FROM wp_posts WHERE post_type="news"');
+                    $result = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" ORDER BY post_date DESC');
                     
                     foreach ($result as $row) {
                         $result_id = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_thumbnail'");
                         $result_url = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_link'");
                         $result_img = $wpdb->get_var("SELECT `guid` FROM wp_posts WHERE ID=$result_id");
+                        $date = new DateTime($row->post_date);
+                        $date = $date->format('Y-m-d');
                         ?>
                             <a href="<?php echo $result_url ?>" class="news-post">
-                                <img class="news-img" src="<?php echo $result_img ?>">
+                                
+                                <div class="news-image-background"><img class="news-img" src="<?php echo $result_img ?>"></div>
+                                <p class="news-date"><?php echo $date; ?></p>
                                 <p class="news-title"><?php echo $row->post_title; ?></p>
+                                <p class="news-link">Read more >></p>
                             </a>
                             <?php
                     }
