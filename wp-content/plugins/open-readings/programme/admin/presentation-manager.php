@@ -43,8 +43,12 @@ if(isset($_POST['add-session-name'])){
 
     // Loop through each post and add/update the custom field
     foreach ($presentations_posts as $post) {
+        $hash_id = get_post_meta($post->ID, 'hash_id', true);
+        global $wpdb;
+        $pdf = $wpdb->get_var("SELECT pdf FROM wp_or_registration_presentations WHERE person_hash_id = '$hash_id'");
         // Add/update the custom field "example_field" with the value "Example data"
         update_post_meta($post->ID, 'session_name', $session_post_data[$post->presentation_session]['short_title']);
+        update_post_meta($post->ID, 'abstract_pdf', $pdf);
     }
 }
 ?>
@@ -62,26 +66,33 @@ if(isset($_POST['add-session-name'])){
 <form method='POST' id="get_session">
 
 <?php
-// echo '<select name="download">';
-// echo '<option value="none">Select session</option>';
-// $args = array(
-//     'post_type' => 'session',
-//     'posts_per_page' => -1, // To retrieve all posts, use -1
-// );
-// $query = new WP_Query($args);
-// if ($query->have_posts()) {
-//      while ($query->have_posts()) {
-//          $query->the_post();
-//          // Retrieve and display the custom field values
-//          $display = get_post_meta(get_the_ID(), 'display_title', true);
-//          $short_name = get_post_meta(get_the_ID(), 'short_title', true);
-//          if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
-//              echo '<option value="' . $short_name . '">' . $display . '</option>';
-//      }
-//  }
-//  echo '</select>';
+echo '<select name="download">';
+echo '<option value="none">Select session</option>';
+$current_year = date('Y'); // Gets current year (e.g., 2023)
+
+$args = array(
+    'post_type' => 'session',
+    'posts_per_page' => -1,
+    'date_query' => array(
+        array(
+            'year' => $current_year,
+        ),
+    ),
+);
+$query = new WP_Query($args);
+if ($query->have_posts()) {
+     while ($query->have_posts()) {
+         $query->the_post();
+         // Retrieve and display the custom field values
+         $display = get_post_meta(get_the_ID(), 'display_title', true);
+         $short_name = get_post_meta(get_the_ID(), 'short_title', true);
+         if (get_post_meta(get_the_ID(), 'session_type', true) != -1)
+             echo '<option value="' . get_the_ID() . '">' . $display . '</option>';
+     }
+ }
+ echo '</select>';
 ?>
-<!-- <button type='submit' label='download'> Download Presentations </button> -->
+<button type='submit' label='download'> Download Presentations </button>
 </form>
 
 

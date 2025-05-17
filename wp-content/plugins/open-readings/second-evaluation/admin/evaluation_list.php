@@ -60,6 +60,7 @@
             <th>Abstract PDF</th>
             <th>Research Area</th>
             <th>Grade</th>
+            <th>Av. Grade</th>
             <th>Decision</th>
             <th>Comment</th>
             <th>Evaluator</th>
@@ -127,6 +128,7 @@
                 echo "<td> <a href=\"{$pdf_url}\">" . basename($result->pdf) . "</a></td>";
                 echo "<td>" . $research_area . "</td>";
                 echo "<td>" . $result->evaluation . "</td>";
+                echo "<td>" . $result->grade_average . "</td>";
                 echo '<td>Preferred presentation type: <strong>' . $result->presentation_type . '</strong> <br>';
                 echo '<input type="radio" name="decision[' . $result->hash_id . ']" value="3" ' . (($decision == 3) ? "checked>" : ">") . 'Reject</input>';
                 echo '<br>';

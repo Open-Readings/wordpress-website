@@ -4,19 +4,20 @@ $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
 $workshop_arr = [
-    'chem1' => 15,
-    'fiz1' => 15,
-    'bio2' => 15,
-    'inz2' => 15,
+    'chem1' => 16,
+    'fiz1' => 16,
+    'bio2' => 16,
+    'inz2' => 16,
+    'sv2' => 1,
 ];
 
 $excursion_arr = [
     'gmc1' => 10,
     'ftmc1' => 10,
-    'lightcon1' => 10,
-    'gmc2' => 10,
-    'ftmc2' => 10,
-    'lightcon2' => 10,
+    'lightcon1' => 11,
+    'gmc2' => 11,
+    'ftmc2' => 12,
+    'lightcon2' => 11,
     'gmc3' => 5,
     'ftmc3' => 5,
     'lightcon3' => 5,
@@ -149,6 +150,10 @@ $places_left = [];
             hide_radios(radio4, radio5, radio6);
         });
         document.querySelector('input[type="radio"][value="inz2"]').addEventListener('change', function(){
+            show_radios(radio1, radio2, radio3);
+            hide_radios(radio4, radio5, radio6);
+        });
+        document.querySelector('input[type="radio"][value="sv2"]').addEventListener('change', function(){
             show_radios(radio1, radio2, radio3);
             hide_radios(radio4, radio5, radio6);
         });

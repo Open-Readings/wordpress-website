@@ -1,34 +1,49 @@
 <?php
 
-function download_session_zip(){
-    if (isset($_GET['page']) && $_GET['page'] === 'or_programme') {
-        if (isset($_POST['download'])){
-            $session = $_POST['download'];
-            $presentations = get_presentation_path_array($session);
-            $zip = new ZipArchive();
-            $zip_file = $session . '.zip';
+function download_session_zip() {
+    // Basic check for your admin page
+    if (!isset($_GET['page']) || $_GET['page'] !== 'or_programme') return;
     
-            if ($zip->open($zip_file, ZipArchive::CREATE) !== true) {
-                return false;
-            }
-            $zip->addEmptyDir($session);
+    // Check if download was requested
+    if (!isset($_POST['download'])) return;
     
-            foreach($presentations as $presentation){
-                $ext = pathinfo(basename($presentation['path']), PATHINFO_EXTENSION);
-                $zip->addFile($presentation['path'], $session . '/' . $presentation['name'] . "." . $ext);
-            }
-            
-            $zip->close();
-            // Set headers to initiate download
-            header('Content-disposition: attachment; filename=' . $zip_file);
-            header('Content-Type: application/zip');
-            readfile("$zip_file");
-            unlink($zip_file);
-            // Exit to prevent any further output
-            exit;
-        }
-        
+    $session = sanitize_text_field($_POST['download']);
+    $presentations = get_presentation_path_array($session);
+    
+    // Create ZIP in system temp directory
+    $zip_file = sys_get_temp_dir() . '/' . $session . '.zip';
+    
+    $zip = new ZipArchive();
+    if ($zip->open($zip_file, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        die("Failed to create ZIP file");
     }
+    
+    $zip->addEmptyDir($session);
+    
+    foreach ($presentations as $presentation) {
+        if (file_exists($presentation['path'])) {
+            $ext = pathinfo($presentation['path'], PATHINFO_EXTENSION);
+            $zip->addFile(
+                $presentation['path'],
+                $session . '/' . sanitize_file_name($presentation['name']) . '.' . $ext
+            );
+        }
+    }
+    
+    $zip->close();
+    
+    // Clear any previous output
+    if (ob_get_level()) ob_end_clean();
+    
+    // Send headers and file
+    header('Content-Type: application/zip');
+    header('Content-Disposition: attachment; filename="' . $session . '.zip"');
+    header('Content-Length: ' . filesize($zip_file));
+    readfile($zip_file);
+    
+    // Clean up
+    unlink($zip_file);
+    exit;
 }
 
 function wp_url_to_path($url) {
@@ -54,30 +69,30 @@ function wp_url_to_path($url) {
 
 function get_presentation_path_array(string $session){
     global $wpdb;
-    $results = $wpdb->get_results($wpdb->prepare(
-        "SELECT post_id FROM wp_postmeta WHERE meta_key = 'short_title' AND meta_value = '%s'",
-        $session
-    ));
-    $session_ids = array();
-    foreach($results as $result){
-        $session_ids[] = $result->post_id;
-    }
-    $session_id_string = implode(',', $session_ids);
 
-   
-    $results = $wpdb->get_results("SELECT post_id FROM wp_postmeta WHERE meta_key = 'presentation_session' AND meta_value IN ($session_id_string) GROUP BY post_id");
-    $presentation_ids = array();
-    foreach($results as $result){
-        $presentation_ids[] = $result->post_id;
-    }
-
-    $presentation_id_string = implode(',', $presentation_ids);
-
-    // Get array of presentation post ids
-    $results = $wpdb->get_results("SELECT meta_value FROM wp_postmeta WHERE meta_key = 'hash_id' AND post_id IN ($presentation_id_string) GROUP BY meta_value");
+    $presentation_args = array(
+        'post_type' => 'presentation',
+        'posts_per_page' => -1,  // Get all matching posts
+        'meta_query' => array(
+            array(
+                'key' => 'presentation_session',  // Meta key that stores session reference
+                'value' => $session,  // The session ID you're filtering by
+                'compare' => '='
+            )
+        ),
+        'fields' => 'ids'  // Only get post IDs for better performance
+    );
+    
+    $presentation_posts = get_posts($presentation_args);
+    
+    // Now collect all hash_ids from these presentations
     $hash_ids = array();
-    foreach($results as $result){
-        $hash_ids[] = $result->meta_value;
+    
+    foreach ($presentation_posts as $post_id) {
+        $hash_id = get_post_meta($post_id, 'hash_id', true);
+        if ($hash_id) {
+            $hash_ids[] = $hash_id;
+        }
     }
 
     foreach($hash_ids as $hash_id){

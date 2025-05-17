@@ -7,8 +7,19 @@ if(isset($_POST['save-page-template'])){
 if(isset($_POST['save-abstract-preamble'])){
     update_option('abstract-book-preamble', $_POST['preamble-template']);
 }
+
+if(isset($_POST['download-abstracts'])){
+    download_or_abstracts($_POST['abstract-hash-ids'], $_POST['download-figures']);
+}
+
+function download_or_abstracts($hash_ids, $download_figures){
+    echo "<h1>Abstracts</h1>";
+}
+
 ?>
 <h1>Abstract book generation</h1>
+
+
 
 
 <form method="POST">

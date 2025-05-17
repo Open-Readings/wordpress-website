@@ -23,6 +23,10 @@ registration_settings();
     ?>
 </form>
 
+<form method="POST">
+    <button type="submit" name="fix-pdf-url" class="button button-primary">Fix PDF URL</button>
+</form>
+
 
 
 <?php
@@ -37,6 +41,10 @@ function populate_database_button()
 
 if (isset($_POST['populate-database'])) {
     populate_database();
+}
+
+if (isset($_POST['fix-pdf-url'])) {
+    fix_pdf_url();
 }
 
 function populate_database()
@@ -323,20 +331,24 @@ function update_evaluation_table()
         'checker_name',
         'current_user',
         'evaluation_date',
-        'update_date'
+        'update_date',
+        'grade_average',
+        'rating',
     ];
 
 
     $evaluation_data_sql = [
-        "evaluation_hash_id" => "varchar(255) NOT NULL, PRIMARY KEY (hash_id)",
-        "evaluation_id" => "varchar(255) NOT NULL",
+        "evaluation_hash_id" => "varchar(255) NOT NULL",
+        "evaluation_id" => "varchar(255) NOT NULL, PRIMARY KEY (evaluation_hash_id)",
         "status" => "int(11) NOT NULL",
         "email_content" => "varchar(1000)",
         "checker_name" => "varchar(255)",
         "current_user" => "varchar(255)",
         "evaluation_date" => "GETDATE()",
         "update_date" => "GETDATE()",
-        "latex_error" => "varchar(255)"
+        "latex_error" => "varchar(255)",
+        "grade_average" => "float",
+        "rating" => "int(11) NOT NULL",
 
     ];
     $presentation_table_name = $wpdb->prefix . get_option('or_registration_database_table') . '_presentations';
@@ -370,8 +382,49 @@ function update_evaluation_table()
     }
     $presentation_table_results = $wpdb->get_col("SELECT person_hash_id FROM $presentation_table_name");
 
+    # Get unique checkers
+    $checkers = $wpdb->get_col("SELECT DISTINCT checker FROM $evaluation_table_name");
+    $checkers = array_filter($checkers, function($checker) {
+        return $checker !== null;
+    });
+    $evaluator_score = [];
+    foreach ($checkers as $checker) {
+        # get all the grades by the checker
+        $grades = $wpdb->get_col($wpdb->prepare("SELECT evaluation FROM $evaluation_table_name WHERE checker = %s AND (decision = 1 OR decision = 2)", $checker));
+        $grades = array_filter($grades, function($grade) {
+            return $grade !== null;
+        });
+        # get the average of the grades
+        if (!empty($grades)) {
+            $average = array_sum($grades) / count($grades);
+            $evaluator_score[$checker] = $average;
+        }
+    }
+    $score_sum = array_sum($evaluator_score);
+    $score_count = count($evaluator_score);
+    $target = $score_sum / $score_count;
+    $coefficient = [];
+
+    # Names of the checkers
+    $checker_names = [];
+    foreach ($checkers as $checker) {
+        $user_info = get_userdata($checker);
+        if ($user_info) {
+            $checker_names[$checker] = $user_info->first_name . " " . $user_info->last_name;
+        } else {
+            $checker_names[$checker] = "";
+        }
+    }
+
+    print("Target: $target <br>");
+    foreach ($evaluator_score as $checker => $score) {
+        $coefficient[$checker] = $target / $score;
+        print("$checker_names[$checker],$evaluator_score[$checker],$coefficient[$checker] <br>");
+    }
+
+
     foreach ($presentation_table_results as $hash_id) {
-        $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE evaluation_id = %s", $result));
+        $exists_in_evaluation_table = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $evaluation_table_name WHERE evaluation_id = %s", $hash_id));
 
         if (!$exists_in_evaluation_table) {
             $evaluation_id = md5($result);
@@ -388,6 +441,15 @@ function update_evaluation_table()
             }
 
 
+        } else {
+            $checker = $wpdb->get_var($wpdb->prepare("SELECT checker FROM $evaluation_table_name WHERE evaluation_id = %s", $hash_id));
+            $grade = $wpdb->get_var($wpdb->prepare("SELECT evaluation FROM $evaluation_table_name WHERE evaluation_id = %s", $hash_id));
+            
+            if ($checker and $grade) {
+                $multiplier = $coefficient[$checker];
+                $new_grade = $grade * $multiplier;
+                $wpdb->update($evaluation_table_name, array('grade_average' => $new_grade), array('evaluation_id' => $hash_id));
+            }
         }
     }
 
@@ -441,6 +503,19 @@ function or_registration_database_max_images_callback()
     echo '<input type="number" name="or_registration_max_images" value="' . $value . '">';
 }
 
+function fix_pdf_url()
+{
+    include_once(OR_PLUGIN_DIR . 'second-evaluation/second-eval-functions.php');
+    global $wpdb;
+    $hash_ids = $wpdb->get_col("SELECT person_hash_id FROM wp_or_registration_presentations");
+    foreach ($hash_ids as $hash_id) {
+        $pdf = $wpdb->get_var($wpdb->prepare("SELECT pdf FROM wp_or_registration_presentations WHERE person_hash_id = %s", $hash_id));
+        if ($pdf) {
+            $url = normalize_url($pdf);
+            $wpdb->update('wp_or_registration_presentations', array('pdf' => $url), array('person_hash_id' => $hash_id));
+        }
+    }
+}
 
 
 

@@ -348,6 +348,7 @@ add_action( 'admin_enqueue_scripts', 'custom_admin_styles' );
 
 require_once __DIR__ . '/app/ordle.php';
 add_action('rest_api_init', 'register_daily_word_endpoint');
+add_action('rest_api_init', 'register_rating_endpoint');
 
 function register_pupils_workshop_script()
 {

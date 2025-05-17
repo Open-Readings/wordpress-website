@@ -36,16 +36,27 @@ class ORApp
     {
         if (isset($_POST['or_wordle_list'])) {
             update_option('or_wordle_list', $_POST['or_wordle_list']);
+            update_option('or_ordle_word_file', $_POST['or_wordle_file']);
+        }
+
+        if (isset($_POST['or_rating_pass'])) {
+            update_option('or_rating_pass', $_POST['or_rating_pass']);
         }
 
         echo '<h1>Open Readings App</h1>';
         echo '<form method="post">';
+        echo '<label for="or_wordle_list">Wordle List File:</label>';
+        echo '<input type="text" id="or_wordle_list" name="or_wordle_file" value="' . stripslashes(get_option('or_ordle_word_file')) . '"></input><br>';
         echo '<h2>Wordle List</h2>';
         echo '<textarea name="or_wordle_list" style="width: 300px; height: 300px;">' . stripslashes(get_option('or_wordle_list')) . '</textarea><br>';
         echo '<input type="submit" value="Save" class="button button-primary">';
         echo '</form>';
 
-        
+        echo '<form method="post">';
+        echo '<h2>Password for presentation ratings</h2>';
+        echo '<input type="text" name="or_rating_pass" value="' . stripslashes(get_option('or_rating_pass')) . '"></input><br>';
+        echo '<input type="submit" value="Save" class="button button-primary">';
+
     }
 
 }
