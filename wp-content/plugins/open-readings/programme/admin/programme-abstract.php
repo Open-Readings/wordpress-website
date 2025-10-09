@@ -1,5 +1,11 @@
 <?php
 
+use OpenReadings\Registration\ORLatexExport;
+use OpenReadings\Registration\OpenReadingsRegistration;
+use OpenReadings\Registration\PersonData;
+use OpenReadings\Registration\PresentationData;
+use OpenReadings\Registration\RegistrationData;
+
 if(isset($_POST['save-page-template'])){
     update_option('abstract-book-page-template', $_POST['page-template']);
 }
@@ -8,13 +14,7 @@ if(isset($_POST['save-abstract-preamble'])){
     update_option('abstract-book-preamble', $_POST['preamble-template']);
 }
 
-if(isset($_POST['download-abstracts'])){
-    download_or_abstracts($_POST['abstract-hash-ids'], $_POST['download-figures']);
-}
 
-function download_or_abstracts($hash_ids, $download_figures){
-    echo "<h1>Abstracts</h1>";
-}
 
 ?>
 <h1>Abstract book generation</h1>
@@ -24,7 +24,7 @@ function download_or_abstracts($hash_ids, $download_figures){
 
 <form method="POST">
     <label>Enter hash ids separated by newline</label><br>
-    <textarea cols=60 name="abstract-hash-ids"></textarea><br>
+    <textarea cols=60 rows="20" name="abstract-hash-ids"></textarea><br>
     <input type="checkbox" id="figures" name="download-figures"><label for="figures">Download figures and style</label><br>
     <button class="button-primary" name="download-abstracts">Abstract download</button>
 </form><br>

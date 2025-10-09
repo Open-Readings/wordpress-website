@@ -11,7 +11,7 @@ class ORLatexExport {
     public RegistrationData $registration_data;
 
     public function __construct($registration_data = null){
-        if ($registration_data == null){
+        if ($registration_data == null || is_wp_error($registration_data)) {
             $or_get_fields = new ORReadForm;
             $this->registration_data = $or_get_fields->get_form();
         } else {
@@ -109,28 +109,30 @@ class ORLatexExport {
         return $acknowledgement;
     }
 
+    private function fixUnclosedTags($text, $tagOpen, $tagClose)
+    {
+        $countOpen = substr_count($text, $tagOpen);
+        $countClose = substr_count($text, $tagClose);
+
+        $tagDiff = $countOpen - $countClose;
+
+        if ($tagDiff > 0) {
+            $text .= str_repeat($tagClose, $tagDiff);
+        }
+
+        return $text;
+    }
+
     public function generate_title(){
         $titleField = $this->process_field($this->registration_data->title);
         //$titleField = str_replace('"', '', $title);
-        function fixUnclosedTags($text, $tagOpen, $tagClose)
-        {
-            $countOpen = substr_count($text, $tagOpen);
-            $countClose = substr_count($text, $tagClose);
 
-            $tagDiff = $countOpen - $countClose;
-
-            if ($tagDiff > 0) {
-                $text .= str_repeat($tagClose, $tagDiff);
-            }
-
-            return $text;
-        }
 
         // Add missing </sup> tags
-        $titleField = fixUnclosedTags($titleField, '<sup>', '</sup>');
+        $titleField = $this->fixUnclosedTags($titleField, '<sup>', '</sup>');
 
         // Add missing </sub> tags
-        $titleField = fixUnclosedTags($titleField, '<sub>', '</sub>');
+        $titleField = $this->fixUnclosedTags($titleField, '<sub>', '</sub>');
 
 
         $sup_starting_tag = '<sup>';
@@ -766,7 +768,11 @@ class OpenReadingsRegistration
             $image_path = WP_CONTENT_DIR . '/latex/perm/' . $presentation_data->session_id . '/images/';
         }
         $images = scandir($image_path);
-        $images = array_values(array_diff($images, array('.', '..')));
+        if ($images === false) {
+            $images = [];
+        } else {
+            $images = array_values(array_diff($images, array('.', '..')));
+        }
 
 
         $presentation_data->images = json_encode($images, JSON_UNESCAPED_UNICODE);

@@ -308,10 +308,6 @@ add_filter("rest_presentation_collection_params", function ($params) {
   return $params;
 });
 
-require_once __DIR__ . '/programme/generate-abstract.php';
-
-add_action('admin_init', 'download_abstract');
-
 function or_registration_cookies() {
   // Check if the page slug or ID matches the specific page you want
   if (is_page('registration')) {
@@ -358,3 +354,15 @@ function register_pupils_workshop_script()
     require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
 }
 add_action('wp_footer', 'register_pupils_workshop_script');
+
+add_action('admin_init', function () {
+  if(isset($_POST['download-abstracts'])){
+      require_once __DIR__ . '/programme/download-abstract.php';
+      if(isset($_POST['download-figures'])){
+          $download_figures = true;
+      }else{
+          $download_figures = false;
+      }
+      download_or_abstracts($_POST['abstract-hash-ids'], $download_figures);
+  }
+});

@@ -64,7 +64,7 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
                 <div class="image-scroll-content news-container">
                     <?php
                     global $wpdb;
-                    $result = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" ORDER BY post_date DESC');
+                    $result = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" AND post_status="publish" ORDER BY post_date DESC');
                     
                     foreach ($result as $row) {
                         $result_id = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_thumbnail'");
