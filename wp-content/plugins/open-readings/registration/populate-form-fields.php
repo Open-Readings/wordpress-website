@@ -125,12 +125,14 @@ array_walk_recursive($registration_data->references, function (&$value) {
     const institution = <?= json_encode(stripslashes($registration_data->institution)) ?>;
     const department = <?= json_encode(stripslashes($registration_data->department)) ?>;
     const researchArea = <?= json_encode($registration_data->research_area) ?>;
+    const researchSubarea = <?= json_encode($registration_data->research_subarea) ?>;
     const presentationType = <?= json_encode($registration_data->presentation_type) ?>;
     const presentationTitle = <?= json_encode(stripslashes($registration_data->title)) ?>;
     const affiliations = <?= json_encode($registration_data->affiliations) ?>;
     const authors = <?= json_encode($registration_data->authors) ?>;
     const references = <?= json_encode($registration_data->references) ?>;
     const acknowledgements = <?= json_encode(stripslashes($registration_data->acknowledgement)) ?>;
+    const keywords = <?= json_encode(stripslashes($registration_data->keywords)) ?>;
     const abstractContent = <?= json_encode(stripslashes($registration_data->abstract), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
     const needsVisa = <?= json_encode($registration_data->needs_visa) ?>;
     const privacy = <?= json_encode($registration_data->privacy) ?>;
@@ -151,8 +153,11 @@ array_walk_recursive($registration_data->references, function (&$value) {
         ['form-field-institution', institution],
         ['form-field-department', department],
         ['form-field-research_area', researchArea],
+        ['form-field-research_subarea', researchSubarea],
+        ['form-field-research_subarea_custom', researchSubarea],
         ['form-field-abstract_title', presentationTitle],
         ['form-field-acknowledgement', acknowledgements],
+        ['form-field-keywords', keywords],
         ['textArea', abstractContent],
         ['form-field-visa', needsVisa],
         ['form-field-privacy', privacy],
@@ -160,6 +165,9 @@ array_walk_recursive($registration_data->references, function (&$value) {
         ['form-field-email_agree', agreesToEmail],
         ['save-form', saveCheckbox]
     ];
+
+    console.log(researchArea);
+    console.log(researchSubarea);
 
     // document.addEventListener('DOMContentLoaded', function () {
     //     console.log('personTitle', personTitle, '\nfirstName', firstName, '\nlastName', lastName, '\nemail', email, '\ncountry', country, '\ninstitution', institution, '\ndepartment', department, '\nresearchArea', researchArea, '\npresentationType', presentationType, '\npresentationTitle', presentationTitle, '\naffiliations', affiliations, '\nauthors', authors, '\nreferences', references, '\nacknowledgements', acknowledgements, '\nabstractContent', abstractContent, '\nneedsVisa', needsVisa, '\nprivacy', privacy, '\nagreesToEmail', agreesToEmail);
@@ -179,6 +187,10 @@ array_walk_recursive($registration_data->references, function (&$value) {
                         element.checked = field[1];
                     else
                         element.value = field[1];
+                        if(field[0] === 'form-field-research_area'){
+                            const event = new Event('change');
+                            element.dispatchEvent(event);
+                        }
                 }
         });
 

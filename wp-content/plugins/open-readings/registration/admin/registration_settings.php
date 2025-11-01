@@ -79,6 +79,7 @@ function populate_database()
         'needs_visa',
         'agrees_to_email',
         'research_area',
+        'research_subarea',
         'presentation_type',
         'submit_time',
 
@@ -95,7 +96,8 @@ function populate_database()
         'pdf',
         'session_id',
         'display_title',
-        'acknowledgement'
+        'acknowledgement',
+        'keywords'
     ];
 
     $temp_fields = [
@@ -116,6 +118,7 @@ function populate_database()
         "privacy" => "tinyint(1) NOT NULL",
         "needs_visa" => "tinyint(1) NOT NULL",
         "research_area" => "varchar(255) NOT NULL",
+        "research_subarea" => "varchar(255) NOT NULL",
         "presentation_type" => "varchar(255) NOT NULL",
         "submit_time" => "GETDATE() NOT NULL",
         "agrees_to_email" => "tinyint(1) NOT NULL"
@@ -132,8 +135,8 @@ function populate_database()
         'pdf' => "varchar(255) NOT NULL",
         'session_id' => "varchar(255) NOT NULL",
         'display_title' => "varchar(255) NOT NULL",
-        'acknowledgement' => "varchar(1000) NOT NULL"
-
+        'acknowledgement' => "varchar(1000) NOT NULL",
+        'keywords' => "varchar(500) NOT NULL"
     ];
 
     $temp_data_sql = [
@@ -156,6 +159,7 @@ function populate_database()
             privacy varchar(255) NOT NULL,
             needs_visa varchar(255) NOT NULL,
             research_area varchar(255) NOT NULL,
+            research_subarea varchar(255) NOT NULL,
             presentation_type varchar(255) NOT NULL,
             submit_time DATETIME NOT NULL,
             agrees_to_email tinyint(1) NOT NULL
@@ -193,6 +197,7 @@ function populate_database()
             privacy varchar(255) NOT NULL,
             needs_visa varchar(255) NOT NULL,
             research_area varchar(255) NOT NULL,
+            research_subarea varchar(255) NOT NULL,
             presentation_type varchar(255) NOT NULL,
             submit_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             agrees_to_email tinyint(1) NOT NULL
@@ -227,7 +232,8 @@ function populate_database()
             pdf varchar(255) NOT NULL,
             session_id varchar(255) NOT NULL,
             display_title varchar(255) NOT NULL,
-            acknowledgement varchar(1000) NOT NULL
+            acknowledgement varchar(1000) NOT NULL,
+            keywords varchar(500) NOT NULL
             )");
 
     } else {
@@ -257,7 +263,8 @@ function populate_database()
             pdf varchar(255) NOT NULL,
             session_id varchar(255) NOT NULL,
             display_title varchar(255) NOT NULL,
-            acknowledgement varchar(1000) NOT NULL
+            acknowledgement varchar(1000) NOT NULL,
+            keywords varchar(500) NOT NULL
             )");
 
     } else {

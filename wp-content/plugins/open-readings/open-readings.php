@@ -247,8 +247,8 @@ $PRESENTATION_TYPE = [
   'Rejected' => 3
 ];
 
-global $RESEARCH_AREAS;
-$RESEARCH_AREAS = [
+global $RESEARCH_AREAS_OLD;
+$RESEARCH_AREAS_OLD = [
   1 => 'Astrophysics and Astronomy',
   2 => 'Chemistry and Chemical Physics',
   3 => 'Material Science and Nanotechnology',
@@ -258,6 +258,19 @@ $RESEARCH_AREAS = [
   7 => 'Biochemistry, Biophysics, and Biotechnology',
   8 => 'Biology, Genetics and Biomedical Sciences'
 ];
+
+global $RESEARCH_AREAS;
+$RESEARCH_AREAS = [
+  1 => 'Lasers and Optical Technologies',
+  2 => 'Spectroscopy and Imaging',
+  3 => 'Astronomy and Theoretical Physics',
+  4 => 'Biology and Medicine',
+  5 => 'Chemistry',
+  6 => 'Materials Science and Nanotechnology',
+  7 => 'Ecology, Geology and Environmental Sciences',
+];
+
+
 global $STATUS_CODES;
 $STATUS_CODES = [
   'Not Checked' => 0,
