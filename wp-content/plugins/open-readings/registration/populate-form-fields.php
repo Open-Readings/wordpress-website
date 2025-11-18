@@ -153,8 +153,6 @@ array_walk_recursive($registration_data->references, function (&$value) {
         ['form-field-institution', institution],
         ['form-field-department', department],
         ['form-field-research_area', researchArea],
-        ['form-field-research_subarea', researchSubarea],
-        ['form-field-research_subarea_custom', researchSubarea],
         ['form-field-abstract_title', presentationTitle],
         ['form-field-acknowledgement', acknowledgements],
         ['form-field-keywords', keywords],
@@ -193,6 +191,23 @@ array_walk_recursive($registration_data->references, function (&$value) {
                         }
                 }
         });
+
+        for (let i = 0; i < researchSubarea.length; i++) {
+            const subarea = researchSubarea[i];
+            const checkbox = document.querySelector(`input[name="form_fields[research_subarea][]"][value="${subarea}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        }
+
+        if (researchSubarea.includes("Other")) {
+            const otherCheckbox = document.querySelector(`input[name="form_fields[research_subarea][]"][value="Other"]`);
+            const otherField = document.querySelector('input[name="form_fields[research_subarea][]"][type="text"]');
+            otherField.value = researchSubarea.at(-1);
+            otherCheckbox.checked = true;
+            otherField.style.display = "block";
+            otherField.disabled = false;
+        }
 
         // Set presentation type (oral/poster)
         var presentation_radio = document.querySelector('input[name="form_fields[presentation_type]"][value="'+presentationType+'"]');

@@ -344,7 +344,7 @@ class ORCheckForm {
             ['references', 'References (optional)', 1000, ''],
             ['abstract', 'Abstract content', 3000, ''],
             ['acknowledgement', 'Acknowledgement (optional)', 1000, ''],
-            ['research_subarea', 'Research Subarea', 500, ''],
+            ['research_subarea', 'Research Areas (multiple)', 500, ''],
             ['keywords', 'Keywords (optional)', 500, ''],
         ];
 
@@ -366,7 +366,7 @@ class ORCheckForm {
                     if ($item[3] != '') if (preg_match($item[3], $field)) {
                         return $item[1] . " field. Special characters are not allowed in this field."; # NEEDS FIXING
                     }
-                    if (trim($field) == '' && $item[0] != 'references') {
+                    if (trim($field) == '' && !in_array($item[0], ['references', 'research_subarea'])) {
                         return $item[1] . " field can't be left empty.";
                     }
                 }
@@ -521,7 +521,7 @@ class RegistrationData
     public bool $needs_visa;
     public string $research_area;
 
-    public string $research_subarea;
+    public $research_subarea = array();
     public string $presentation_type;
     public bool $agrees_to_email;
     public string $hash_id;
@@ -553,7 +553,7 @@ class RegistrationData
         $this->privacy = $personData->privacy;
         $this->needs_visa = $personData->needs_visa;
         $this->research_area = $personData->research_area;
-        $this->research_subarea = $personData->research_subarea;
+        $this->research_subarea = json_decode($personData->research_subarea);
         $this->presentation_type = $personData->presentation_type;
         $this->agrees_to_email = $personData->agrees_to_email;
 
@@ -629,7 +629,7 @@ class PersonData
         $this->privacy = $data->privacy;
         $this->needs_visa = $data->needs_visa;
         $this->research_area = $data->research_area;
-        $this->research_subarea = $data->research_subarea;
+        $this->research_subarea = json_encode($data->research_subarea, JSON_UNESCAPED_UNICODE);
         $this->presentation_type = $data->presentation_type;
         $this->agrees_to_email = $data->agrees_to_email;
         $this->hash_id = $hash_id;
@@ -702,7 +702,7 @@ class OpenReadingsRegistration
         $query = '
         INSERT INTO ' . $table_name . '
         (hash_id, first_name, last_name, email, institution, country, department, privacy, needs_visa, research_area, research_subarea, presentation_type, agrees_to_email, title) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %s, %s, %d, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %s, %s, %d, %s)
         ';
 
         $query = $wpdb->prepare($query, $hash_id, $person_data->first_name, $person_data->last_name, $person_data->email, $person_data->institution, $person_data->country, $person_data->department, $person_data->privacy, $person_data->needs_visa, $person_data->research_area, $person_data->research_subarea, $person_data->presentation_type, $person_data->agrees_to_email, $person_data->title);

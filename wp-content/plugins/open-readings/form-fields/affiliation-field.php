@@ -27,7 +27,7 @@ class Elementor_Affiliation_Field extends \ElementorPro\Modules\Forms\Fields\Fie
         <div id="affList">
             <div class="aff-div">
                 <label class="aff-label">1.</label>
-                <input type="text" class="aff-width form-padding elementor-field elementor-field-textual" value="" name="affiliation[]" placeholder="(e.g. Vilnius University)">
+                <input type="text" class="aff-width form-padding elementor-field elementor-field-textual" value="" name="affiliation[]" placeholder="(e.g. e.g. Lithuania, Vilnius University, Faculty of Physics, Institute of Chemical Physics)">
             </div>
         </div>
         <button type="button" class="aff-add">Add</button>

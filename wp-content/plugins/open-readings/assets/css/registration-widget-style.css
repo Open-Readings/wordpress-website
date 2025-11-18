@@ -21,6 +21,21 @@
     color: #555;
 }
 
+/* Ensure dropdown items are left-aligned and fill the row */
+.registration-selection .registration-dropdown-element {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+/* Make the wrapper a positioning context so dropdown can align to it */
+#institution-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .registration-li:nth-child(n+5) {
     display: none;
 }

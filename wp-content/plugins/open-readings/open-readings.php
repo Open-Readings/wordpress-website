@@ -268,6 +268,7 @@ $RESEARCH_AREAS = [
   5 => 'Chemistry',
   6 => 'Materials Science and Nanotechnology',
   7 => 'Ecology, Geology and Environmental Sciences',
+  8 => 'Applied Electrodynamics'
 ];
 
 
