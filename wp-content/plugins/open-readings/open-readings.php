@@ -360,6 +360,9 @@ require_once __DIR__ . '/app/ordle.php';
 add_action('rest_api_init', 'register_daily_word_endpoint');
 add_action('rest_api_init', 'register_rating_endpoint');
 
+require_once __DIR__ . '/app/abstinderlist.php';
+
+
 function register_pupils_workshop_script()
 {
   if (is_page(page: 'moksleiviu-sesijos-registracija'))
