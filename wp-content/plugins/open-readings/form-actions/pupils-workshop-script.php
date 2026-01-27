@@ -3,6 +3,8 @@
 $path = preg_replace( '/wp-content.*$/', '', __DIR__ );
 require_once( $path . 'wp-load.php' );
 
+global $wpdb;
+
 $table = $wpdb->prefix . 'pupils_registration_26';
 $column = 'workshop';
 
