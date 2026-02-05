@@ -3,9 +3,8 @@
 \usepackage{titlesec}
 \usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
 \usepackage{tikz}
+\usepackage{fontspec}
 \usepackage{float}
 \usepackage{blindtext}
 \usepackage{tocloft}
@@ -26,7 +25,11 @@
   {}
 
 
-\usepackage{mathptmx}
+%\usepackage{mathptmx}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{FreeSans} % or whatever you want
+\setmathfont{Latin Modern Math}
 \renewcommand{\familydefault}{\rmdefault}
 \usepackage{graphicx}
 \usepackage{orstylet}

@@ -66,7 +66,7 @@ accordionContainer.appendChild(labelHeader);
       "Electron Microscopy", "Nuclear Magnetic Resonance", "Photoacoustic Imaging",
       "Ultrasonic Spectroscopy", "Microwave Spectroscopy"
     ],
-    "Astronomy and Theoretical Physics": [
+    "Astrophysics and Theoretical Physics": [
       "Astrophysics and Astronomy", "Quantum Physics", "Theoretical Physics",
       "Particle Physics", "Simulations"
     ],
@@ -89,7 +89,7 @@ accordionContainer.appendChild(labelHeader);
       "Hydrology", "Geochemistry", "Geochronology", "Geomorphology", "Paleontology"
     ],
     "Applied Electrodynamics": [
-      "Dialectrics", "Nanoionics", "Telecommunication",
+      "Dielectrics", "Nanoionics", "Telecommunication",
       "THz Sensors and Emitters", "Noise Characterization", "Electromagnetism"
     ]
   };

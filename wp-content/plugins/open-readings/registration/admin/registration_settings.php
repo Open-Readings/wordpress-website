@@ -409,7 +409,7 @@ function update_evaluation_table()
     }
     $score_sum = array_sum($evaluator_score);
     $score_count = count($evaluator_score);
-    $target = $score_sum / $score_count;
+    $target = $score_count > 0 ? $score_sum / $score_count : 0;
     $coefficient = [];
 
     # Names of the checkers

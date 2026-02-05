@@ -240,8 +240,14 @@ class ORLatexExport {
     public function generate_abstract(){
         $d = chdir("temp/{$this->registration_data->session_id}");
         // $_ = shell_exec('/bin/lualatex -interaction=nonstopmode --output-directory="temp/' . $this->folder . '" "temp/' . $this->folder . '/abstract.tex"');
-        $_ = shell_exec('TEXMFCACHE=../../.texlive2022 /bin/lualatex -interaction=nonstopmode abstract.tex');
-
+        $_ = shell_exec(
+        'env ' .
+        'HOME=/var/www/html/wp-content/latex/.texlive2022 ' .
+        'XDG_CACHE_HOME=/var/www/html/wp-content/latex/.texlive2022 ' .
+        'TEXMFCACHE=/var/www/html/wp-content/latex/.texlive2022 ' .
+        'TEXMFVAR=/var/www/html/wp-content/latex/.texlive2022 ' .
+        '/bin/lualatex -interaction=nonstopmode -halt-on-error -file-line-error abstract.tex 2>&1'
+        );
     }
 
 }

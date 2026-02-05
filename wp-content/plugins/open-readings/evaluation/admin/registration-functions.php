@@ -256,11 +256,11 @@ function display_evaluation_page()
     // $result['response'] .= '<br><label for="email-author">Contact email: </label><b><input class="evaluation-input" name="email-author" type=text value="' . $email . '"></input></b>';
     // $result['response'] .= '<div><label for="contact_author">Contact nr.: </label><b><input class="evaluation-input" name="contact_author" type=text value="' . $contact . '"></input></b></div><br>';
 
-    // $affiliation_index = 0;
-    // foreach (json_decode($presentation_row['affiliations']) as $item) {
-    //     $affiliation_index++;
-    //     $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="' . $item . '"></input></b><br>';
-    // }
+    $affiliation_index = 0;
+    foreach (json_decode($presentation_row['affiliations']) as $item) {
+        $affiliation_index++;
+        $result['response'] .= '<label for="affiliation[]"> Affiliation to display: </label><b><input class="evaluation-input" name="affiliation[]" type=text value="' . $item . '"></input></b><br>';
+    }
 
     // $reference_index = 0;
     // $result['response'] .= '<p>References [if there are any]<p>';
@@ -396,6 +396,7 @@ function generate_abstract()
 
     $latex_export->registration_data->title = $_POST['display_title'];
     $latex_export->registration_data->abstract = $_POST['abstract'];
+    $latex_export->registration_data->affiliations = $_POST['affiliation'];
 
     $latex_export->generate_tex();
     $latex_export->generate_abstract();
@@ -689,9 +690,10 @@ function save_changes()
 
     $presentation_table_name = 'wp_or_registration_presentations';
 
-    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, display_title = %s, content = %s WHERE person_hash_id = %s';
+    $query = 'UPDATE ' . $presentation_table_name . ' SET title = %s, display_title = %s, content = %s, affiliations = %s WHERE person_hash_id = %s';
 
-    $query = $wpdb->prepare($query, $_POST['display_title'], $_POST['display_title'], $_POST['abstract'], $_SESSION['e_hash']);
+    $affiliations = json_encode($_POST['affiliation'], JSON_UNESCAPED_UNICODE);
+    $query = $wpdb->prepare($query, $_POST['display_title'], $_POST['display_title'], $_POST['abstract'], $affiliations, $_SESSION['e_hash']);
 
     $db_result = $wpdb->query($query);
     if ($db_result === false) {
