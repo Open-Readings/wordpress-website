@@ -13,6 +13,7 @@
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}  
 \usepackage{titletoc}
 \usepackage{pdfpages}
+\usepackage{lipsum}
 \titleformat{name=\section,numberless}
   {\center\large}{}{0em}{\vspace{0pt}\large\textbf}
 \titlespacing\section{0pt}{0pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
