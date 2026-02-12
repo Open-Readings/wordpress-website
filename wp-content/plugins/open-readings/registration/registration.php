@@ -20,31 +20,51 @@ class ORLatexExport {
     }
 
 
-    public function process_field($field){
-        $field = stripslashes($field);
-        $replacements = array(
-            // Step 1: Temporarily replace `{` and `}` with placeholders
-            '{' => '?:OPEN:?',
-            '}' => '?:CLOSE:?',
-            
-            // Step 2: Other special character replacements
-            '\\' => '\textbackslash{}',
-            '#' => '\#{}',
-            '$' => '\${}',
-            '%' => '\%{}',
-            '^' => '\^{}',
-            '&' => '\&{}',
-            '_' => '\_{}',
-            '~' => '\~{}',
-            
-            // Step 3: Replace placeholders with safer LaTeX-escaped braces
-            '?:OPEN:?' => '\{{}',
-            '?:CLOSE:?' => '\}{}',
-        );
+public function process_field($field) {
+    $field = stripslashes($field);
 
-        $field = str_replace(array_keys($replacements), array_values($replacements), $field);
-        return $field;
+    // 1) Protect "rainbows: ... :rainbows" regions
+    $protected = [];
+    $field = preg_replace_callback(
+        '/latex:(.*?):latex/s',
+        function ($m) use (&$protected) {
+            $key = '?:PROTECTED:' . count($protected) . ':?';
+            $protected[$key] = $m[1]; // store only inner content
+            return $key;
+        },
+        $field
+    );
+
+    // 2) Escape everything else (your existing logic)
+    $replacements = array(
+        '{' => '?:OPEN:?',
+        '}' => '?:CLOSE:?',
+        '\\' => '\textbackslash{}',
+        '#' => '\#{}',
+        '$' => '\${}',
+        '%' => '\%{}',
+        '^' => '\^{}',
+        '&' => '\&{}',
+        '_' => '\_{}',
+        '~' => '\~{}',
+        '?:OPEN:?' => '\{{}',
+        '?:CLOSE:?' => '\}{}',
+    );
+
+    $field = str_replace(array_keys($replacements), array_values($replacements), $field);
+
+    // 3) Restore protected regions, and wrap them as math (optional)
+    // If you want them to be inline math, wrap with $...$
+    foreach ($protected as $key => $raw) {
+        // choose ONE:
+        $restore = $raw;          // leave exactly as-is
+        // $restore = '$' . $raw . '$'; // force inline math
+
+        $field = str_replace($key, $restore, $field);
     }
+
+    return $field;
+}
 
     public function generate_authors(){
         $authors_tex = '';
