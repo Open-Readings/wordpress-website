@@ -99,7 +99,7 @@ require_once OR_PLUGIN_DIR . 'registration/registration-session.php';
             07f40453255688743fas3234<br>
             To update your submission please click <strong><a href="https://openreadings.eu/registration?id=exampleid">HERE</a></strong><br><br>
 
-            Note: In order to be accepted into the conference, you must make these changes until February 23rd <br>
+            Note: In order to be accepted into the conference, you must make these changes until February 25<sup>th</sup> <br>
             If you have further questions, please reach out to <a href="mailto:info@openreadings.eu">info@openreadings.eu</a><br><br>
 
             Best regards, <br>

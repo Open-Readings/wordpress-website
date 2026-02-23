@@ -69,6 +69,7 @@ include_once __DIR__ . '/../second-eval-functions.php';
             <th>Presentation Title</th>
             <th>Abstract PDF</th>
             <th>Research Area</th>
+            <th>Research Subarea</th>
             <th>Check</th>
         </tr>
         <?php
@@ -141,6 +142,7 @@ include_once __DIR__ . '/../second-eval-functions.php';
             // $pdf_url = str_replace(ABSPATH, site_url('/'), subject: $result->pdf);
             $pdf_url = normalize_url($result->pdf) . "?" . time();
             $research_area = $result->research_area;
+            $research_subarea = json_decode($result->research_subarea, true);
             $color = "";
             if ($result->decision == 1 || $result->decision == 2) {
                 $color = "#66ff66";
@@ -154,6 +156,15 @@ include_once __DIR__ . '/../second-eval-functions.php';
             echo "<td>$presentation_title</td>";
             echo "<td> <a href=\"{$pdf_url}\">" . basename($abstract_pdf) . "</a></td>";
             echo "<td>" . $research_area . "</td>";
+            echo "<td>";
+
+            if (is_array($research_subarea)) {
+                echo implode("<br>", array_map("htmlspecialchars", $research_subarea));
+            } else {
+                echo htmlspecialchars($research_subarea);
+            }
+
+            echo "</td>";
             if ($result->checker == $user_id || (isset($_POST['save_settings']) && !empty($_POST['check']) && in_array($result->hash_id, $_POST['check']))) {
                 echo "<td><input type='checkbox' name='check[" . $result->hash_id . "]' value='$result->hash_id' checked></td>";
             } else if ((!empty($checked_before) and !in_array($result->hash_id, $checked_before)) || $result->checker == 0)
