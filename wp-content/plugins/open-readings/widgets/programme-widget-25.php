@@ -341,7 +341,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             }
                         } else {
                             // No presentations found for this session
-                            echo 'No presentations found for this session.';
+                            // echo 'No presentations found for this session.';
                         }
                         $presentations = json_encode($presentations);
                         $popup = "onclick='showModal($presentations)'";
