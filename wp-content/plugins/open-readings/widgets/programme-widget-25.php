@@ -260,10 +260,13 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         $primary_url = get_field('speaker_post_url', post_id: $speaker_id);                       $speaker_url = get_permalink(post: $speaker_id);
                         $speaker_affiliation = get_field('affiliation', post_id: $speaker_id);
                         $is_sponsored = get_field('is_sponsored', post_id: $speaker_id);
+                        $is_partner = get_field('partner', post_id: $speaker_id);
                         $sponsor_logo = get_field('sponsor_logo', post_id: $speaker_id);
-                        if ($is_sponsored == 'yes' and $sponsor_logo != false){
+                        if (($is_sponsored == 'yes' or $is_partner == 'yes') and $sponsor_logo != false){
+                            $sponsor_partner = $is_sponsored == 'yes' ? 'Sponsored by: ' : 'Partner: ';
+
                             $html = '<div style="background:white; border-radius:3px; height:auto; padding:3px; color:#555; display:inline-block;">
-                            <span style="display:inline-flex; font-size:14px; align-items:center;">Sponsored by:<img src="' . $sponsor_logo['url'] . '" style="width: 100px; max-height: 50px; object-fit: contain; margin-left:10px;"/></span>
+                            <span style="display:inline-flex; font-size:14px; align-items:center;">' . $sponsor_partner . '<img src="' . $sponsor_logo['url'] . '" style="width: 100px; max-height: 50px; object-fit: contain; margin-left:10px;"/></span>
                         </div>';                        } else {
                             $html = '';
                         }
@@ -308,6 +311,8 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
                         $presentations .= '<h1 class="or-blue-font" style="display:inline; white-space: nowrap;">' . $time_string . ' </h1>';
                         $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
+                        // Temp TBA
+                        $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>TBA</strong></p>';
                         
                         // Check if there are any presentations
                         if ($presentations_query->have_posts()) {
