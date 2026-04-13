@@ -6,7 +6,7 @@
 
 $date_query = array(
     'after' => array(
-        'year' => 2025,
+        'year' => 2026,
         'month' => 01,
         'day' => 01,
     ),
@@ -257,6 +257,7 @@ if ($query->have_posts()) {
                                 $final_end = $start_day . ' ' . $end_time->format('H:i');
                             }
                             $decision = array_search($result->decision, $PRESENTATION_TYPE);
+                            $session_short_name = get_post_meta($session_name, 'short_title', true);
 
                             $presentation_data = array(
                                 'post_title' => $result->first_name . ' ' . $result->last_name,
@@ -267,14 +268,14 @@ if ($query->have_posts()) {
                                     'first_name' => $result->first_name,
                                     'last_name' => $result->last_name,
                                     'research_area' => $result->research_area,
-                                    'presentation_title' => $result->display_title,
-                                    'abstract_pdf' => $result->pdf,
+                                    'presentation_title' => preg_replace('/latex:\\\\*textit\{(.*?)\}:latex/', '<i>$1</i>', $result->display_title),                                    'abstract_pdf' => $result->pdf,
                                     'presentation_type' => $decision,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
                                     'presentation_end' => $final_end,
                                     'poster_number' => $_POST['session-poster'][$id],
+                                    'session_name' => $session_short_name,
 
                                 )
                             );
@@ -318,6 +319,7 @@ if ($query->have_posts()) {
 
 
                             $presentation_type = get_post_meta($session_name, 'session_type', true);
+                            $session_short_name = get_post_meta($session_name, 'short_title', true);
                             if ($presentation_type == 'poster') {
                                 $final_start = get_post_meta($session_name, 'session_start', true);
                                 $final_end = get_post_meta($session_name, 'session_end', true);
@@ -337,14 +339,14 @@ if ($query->have_posts()) {
                                     'first_name' => $result->first_name,
                                     'last_name' => $result->last_name,
                                     'research_area' => $result->research_area,
-                                    'presentation_title' => $result->display_title,
-                                    'abstract_pdf' => $result->pdf,
+                                    'presentation_title' => preg_replace('/latex:\\\\*textit\{(.*?)\}:latex/', '<i>$1</i>', $result->display_title),                                    'abstract_pdf' => $result->pdf,
                                     'presentation_type' => $decision,
                                     'hash_id' => $id,
                                     'presentation_session' => $_POST['session-name'][$id],
                                     'presentation_start' => $final_start,
                                     'presentation_end' => $final_end,
                                     'poster_number' => $_POST['session-poster'][$id],
+                                    'session_name' => $session_short_name,
 
                                 )
                             );
@@ -367,7 +369,7 @@ if ($query->have_posts()) {
 
 
             global $STATUS_CODES;
-            $query = "SELECT * FROM $joint_table WHERE (decision = 1 OR decision = 2)";
+            $query = "SELECT * FROM $joint_table WHERE (`status` = 1 OR `status` = 2)";
 
             $query_array = array();
 

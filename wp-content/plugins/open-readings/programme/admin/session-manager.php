@@ -83,7 +83,7 @@ if (isset($_POST['session-name'])) {
                 $type = get_post_meta(get_the_ID(), 'session_type', true);
                 $start = get_post_meta(get_the_ID(), 'session_start', true);
                 $end = get_post_meta(get_the_ID(), 'session_end', true);
-                $current_time_obj = new DateTime('2025-01-01 00:00:00');
+                $current_time_obj = new DateTime('2026-01-01 00:00:00');
                 $compare_time_obj = new DateTime($start);
                 $color = ($current_time_obj > $compare_time_obj) ? '#fcc' : '';
                 if ($type >= 0) {

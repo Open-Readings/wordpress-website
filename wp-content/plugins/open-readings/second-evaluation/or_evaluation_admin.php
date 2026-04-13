@@ -105,7 +105,7 @@ class ORSecondEvaluationAdmin
             header('Content-Disposition: attachment; filename="export.csv"');
             header('Pragma: no-cache');
             header('Expires: 0');
-            fputcsv($fp, array('First Name', 'Last Name', 'Email', 'Affiliation','Country' , 'Presentation Title', 'Abstract PDF', 'Research Area', 'Eval First Name', 'Eval Last Name', 'Decision', 'Grade', 'Av. Grade', 'Session', 'Poster Number', 'HASH ID'));
+            fputcsv($fp, array('First Name', 'Last Name', 'Email', 'Affiliation','Country' , 'Presentation Title', 'Abstract PDF', 'Research Area', 'Eval First Name', 'Eval Last Name', 'Decision', 'Grade', 'Av. Grade', 'Session', 'Poster Number', 'Start Time', 'End Time', 'HASH ID'));
             foreach ($results as $result) {
                 #user first name
                 
@@ -133,12 +133,20 @@ class ORSecondEvaluationAdmin
                     $presentation_session = get_post_meta(get_the_ID(), 'presentation_session', true);
                     $session_name = get_post_meta(get_the_ID(), 'session_name', single: true);
                     $poster_number = get_post_meta(get_the_ID(), 'poster_number', single: true);
+                    $start = get_post_meta(get_the_ID(), 'presentation_start', single: true);
+                    $end = get_post_meta(get_the_ID(), 'presentation_end', single: true);
                     
                     // Reset post data
                     wp_reset_postdata();
+                } else {
+                    $presentation_session = '';
+                    $session_name = '';
+                    $poster_number = '';
+                    $start = '';
+                    $end = '';
                 }
 
-                fputcsv($fp, array($result->first_name, $result->last_name, $result->email, $result->institution, $result->country, $result->display_title, $result->pdf, $result->research_area, $first_name, $last_name, array_search($result->decision, $PRESENTATION_TYPE), $result->evaluation, $result->grade_average, $session_name, $poster_number, $result->hash_id));
+                fputcsv($fp, array($result->first_name, $result->last_name, $result->email, $result->institution, $result->country, $result->display_title, $result->pdf, $result->research_area, $first_name, $last_name, array_search($result->decision, $PRESENTATION_TYPE), $result->evaluation, $result->grade_average, $session_name, $poster_number, $start, $end, $result->hash_id));
             }
             fclose($fp);
             die;
