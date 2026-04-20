@@ -366,6 +366,8 @@ function register_pupils_workshop_script()
     require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
   else if (is_page(page: 'mokiniu-sesijos-klausytojo-registracija'))
     require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
+  else if (is_page(page: 'auki-konkurso-registracija'))
+    require_once (__DIR__ . '/form-actions/pupils-workshop-script.php');
 }
 add_action('wp_footer', 'register_pupils_workshop_script');
 
@@ -380,3 +382,21 @@ add_action('admin_init', function () {
       download_or_abstracts($_POST['abstract-hash-ids'], $download_figures);
   }
 });
+
+add_action( 'template_redirect', 'fix_elementor_search_and_post_type' );
+
+function fix_elementor_search_and_post_type() {
+    // Check if it's a search request AND the Elementor parameter is present
+    if ( is_search() && isset( $_GET['e_search_props'] ) ) {
+        
+        // 1. Remove the Elementor junk
+        $clean_url = remove_query_arg( 'e_search_props', false );
+        
+        // 2. Literally just add the post type parameter
+        $final_url = add_query_arg( 'post_type', 'presentation', $clean_url );
+        
+        // 3. Redirect seamlessly
+        wp_safe_redirect( $final_url );
+        exit();
+    }
+}

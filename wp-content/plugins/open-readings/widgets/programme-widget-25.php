@@ -312,7 +312,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         $presentations .= '<h1 class="or-blue-font" style="display:inline; white-space: nowrap;">' . $time_string . ' </h1>';
                         $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
                         // Temp TBA
-                        $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>TBA</strong></p>';
+                        //$presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>TBA</strong></p>';
                         
                         // Check if there are any presentations
                         if ($presentations_query->have_posts()) {
@@ -408,7 +408,8 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                         $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
                         $presentations .= '<h1 class="or-blue-font" style="display:inline; white-space: nowrap;">' . $time_string . ' </h1>';
                         $presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>' . get_field('description', $id) . '</strong></p>';
-                        
+                        // Temp TBA
+                        //$presentations .= '<p class="or-dark-font" style="font-size:20px;"><strong>TBA</strong></p>';
                         // Check if there are any presentations
                         if ($presentations_query->have_posts()) {
                             while ($presentations_query->have_posts()) {
@@ -451,6 +452,7 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
                                 '<div class="or-font or-p-small or-p-normal">' . get_field('description', $id) . '</div>' .
                                 '<div class="or-font or-p-small">' . $time_string . '</div>' .
+                                '<div class="or-font or-p-small">' . get_field('location', $id) . '</div>' .
                             '</div>';
                     }
 
@@ -463,11 +465,20 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
                             '</div>';
                     }
 
-                    if ($posts[$id]['type'] == 'sponsor' or $posts[$id]['type'] == 'special_event' or $posts[$id]['type'] == 'other'){
+                    if ($posts[$id]['type'] == 'sponsor' or $posts[$id]['type'] == 'other'){
                         $hover = 'or-hover';
                         $content =
                             '<div style="width: 100%; padding:10px;">' .
                                 '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                            '</div>';
+                    }
+                    if ($posts[$id]['type'] == 'special_event'){
+                        $hover = 'or-hover';
+                        $time_string = date('H:i', strtotime($posts[$id]['start'])) . ' - ' . date('H:i', strtotime($posts[$id]['end']));
+                        $content =
+                            '<div style="width: 100%; padding:10px;">' .
+                                '<div class="or-font">' . get_field('display_title', post_id: $id) . '</div>' .
+                                '<div class="or-font or-p-small">' . $time_string . '</div>' .
                             '</div>';
                     }
 

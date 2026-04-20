@@ -8,24 +8,25 @@ function download_session_zip() {
     if (!isset($_POST['download'])) return;
     
     $session = sanitize_text_field($_POST['download']);
+    $session_name = 'presentations';
     $presentations = get_presentation_path_array($session);
     
     // Create ZIP in system temp directory
-    $zip_file = sys_get_temp_dir() . '/' . $session . '.zip';
+    $zip_file = sys_get_temp_dir() . '/' . $session_name . '.zip';
     
     $zip = new ZipArchive();
     if ($zip->open($zip_file, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
         die("Failed to create ZIP file");
     }
     
-    $zip->addEmptyDir($session);
+    $zip->addEmptyDir($session_name);
     
     foreach ($presentations as $presentation) {
         if (file_exists($presentation['path'])) {
             $ext = pathinfo($presentation['path'], PATHINFO_EXTENSION);
             $zip->addFile(
                 $presentation['path'],
-                $session . '/' . sanitize_file_name($presentation['name']) . '.' . $ext
+                $session_name . '/' . sanitize_file_name($presentation['name']) . '.' . $ext
             );
         }
     }
@@ -37,7 +38,7 @@ function download_session_zip() {
     
     // Send headers and file
     header('Content-Type: application/zip');
-    header('Content-Disposition: attachment; filename="' . $session . '.zip"');
+    header('Content-Disposition: attachment; filename="' . $session_name . '.zip"');
     header('Content-Length: ' . filesize($zip_file));
     readfile($zip_file);
     

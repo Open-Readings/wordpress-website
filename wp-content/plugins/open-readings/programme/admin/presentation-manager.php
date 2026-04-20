@@ -71,11 +71,18 @@ echo '<option value="none">Select session</option>';
 $current_year = date('Y'); // Gets current year (e.g., 2023)
 
 $args = array(
-    'post_type' => 'session',
+    'post_type'      => 'session',
     'posts_per_page' => -1,
-    'date_query' => array(
+    'date_query'     => array(
         array(
             'year' => $current_year,
+        ),
+    ),
+    'meta_query'     => array(
+        array(
+            'key'     => 'session_type',
+            'value'   => 'oral',
+            'compare' => '=', // This ensures it matches exactly
         ),
     ),
 );
