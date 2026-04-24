@@ -154,7 +154,14 @@ class Elementor_Programme_25 extends \Elementor\Widget_Base
             $posts[$id]['printed'] = false;
             $posts[$id]['link'] = get_field('link');
             $posts[$id]['link']= empty($posts[$id]['link']) ? 'javascript:void(0);' : $posts[$id]['link'];
+            $posts[$id]['published'] = get_the_time('U');
         }
+
+        // ADD THESE LINES: Sort the array by publish date (Oldest first)
+        // If you want newest first, swap $a and $b in the return statement: $b['published'] <=> $a['published']
+        uasort($posts, function($a, $b) {
+            return $a['published'] <=> $b['published'];
+        });
 
         // Go through all rows and get the sessions
         for ($i = 0; $i < $row_count; $i++){
