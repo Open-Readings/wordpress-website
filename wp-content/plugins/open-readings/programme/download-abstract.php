@@ -123,6 +123,7 @@ function download_or_abstracts($hash_ids, $download_figures){
             '${affiliations}' => $or_export->generate_affiliations(),
             '${content}' => $or_export->generate_content(),
             '${acknowledgement}' => $or_export->generate_acknowledgement(),
+            '${keywords}' => $or_export->generate_keywords(),
             '${references}' => $or_export->generate_references(),
             '${research_area}' => $data->research_area,
             '${presentation_session}' => $presentation_session,

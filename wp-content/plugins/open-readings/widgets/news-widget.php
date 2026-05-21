@@ -70,12 +70,14 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
                         $result_id = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_thumbnail'");
                         $result_url = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_link'");
                         $result_img = $wpdb->get_var("SELECT `guid` FROM wp_posts WHERE ID=$result_id");
+                        $image_data = wp_get_attachment_image_src($result_id, 'medium_large');
+                        $result_img_url = $image_data[0];
                         $date = new DateTime($row->post_date);
                         $date = $date->format('Y-m-d');
                         ?>
                             <a href="<?php echo $result_url ?>" class="news-post">
                                 
-                                <div class="news-image-background"><img class="news-img" src="<?php echo $result_img ?>"></div>
+                                <div class="news-image-background"><img class="news-img" src="<?php echo $result_img_url ?>"></div>
                                 <p class="news-date"><?php echo $date; ?></p>
                                 <p class="news-title"><?php echo $row->post_title; ?></p>
                                 <p class="news-link">Read more >></p>

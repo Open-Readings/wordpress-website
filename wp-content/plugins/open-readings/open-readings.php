@@ -400,3 +400,5 @@ function fix_elementor_search_and_post_type() {
         exit();
     }
 }
+
+require_once __DIR__ . '/archive/serve-abstract.php';

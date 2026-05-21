@@ -1,9 +1,15 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
     let viewportWidth = window.innerWidth;
     let width;
-    let scrollContainer = document.querySelector(".image-scroll-container");
+    const scrollContainer = document.querySelector(".image-scroll-container");
     const scrollLeftBtn = document.querySelector(".left-button");
     const scrollRightBtn = document.querySelector(".or-right");
+    if (!scrollContainer || !scrollLeftBtn || !scrollRightBtn) {
+        setTimeout(initNewsWidget, 100); 
+        return;
+    }
     let newsPosts = document.querySelectorAll(".news-post"); // Get one post to calculate size
     let newsImageBackground = document.querySelectorAll(".news-image-background");
     newsPosts.forEach((post) => {
@@ -89,6 +95,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const scrollContainer = document.querySelector(".image-scroll-container");
     const scrollLeft = document.querySelector(".scroll-left");
     const scrollRight = document.querySelector(".scroll-right");
+
+    if (!scrollContainer || !scrollLeft || !scrollRight) {
+        setTimeout(initNewsWidget, 100); 
+        return;
+    }
 
     scrollLeft.addEventListener("click", function () {
         scrollContainer.scrollBy({ left: -255, behavior: "smooth" });
