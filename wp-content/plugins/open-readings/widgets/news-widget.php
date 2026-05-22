@@ -55,43 +55,60 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
     }
 
     protected function render() {
-        // $desiredIndex = 3; 
-    
         ?>
         <div class="scroll-wrapper">
-        <a class="left-button"><i class="or-arrow or-left"></i></a>
+            <a class="left-button"><i class="or-arrow or-left"></i></a>
             <div class="image-scroll-container">
                 <div class="image-scroll-content news-container">
                     <?php
                     global $wpdb;
-                    $result = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" AND post_status="publish" ORDER BY post_date DESC');
+                    $results = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" AND post_status="publish" ORDER BY post_date DESC');
                     
-                    foreach ($result as $row) {
-                        $result_id = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_thumbnail'");
-                        $result_url = $wpdb->get_var("SELECT meta_value FROM wp_postmeta WHERE post_id=$row->ID and meta_key = 'news_link'");
-                        $result_img = $wpdb->get_var("SELECT `guid` FROM wp_posts WHERE ID=$result_id");
-                        $image_data = wp_get_attachment_image_src($result_id, 'medium_large');
-                        $result_img_url = $image_data[0];
-                        $date = new DateTime($row->post_date);
-                        $date = $date->format('Y-m-d');
-                        ?>
-                            <a href="<?php echo $result_url ?>" class="news-post">
-                                
-                                <div class="news-image-background"><img class="news-img" src="<?php echo $result_img_url ?>"></div>
-                                <p class="news-date"><?php echo $date; ?></p>
-                                <p class="news-title"><?php echo $row->post_title; ?></p>
-                                <p class="news-link">Read more >></p>
-                            </a>
-                            <?php
-                    }
+                    $index = 0;
+                    foreach ($results as $row) {
+                        $result_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_thumbnail'", $row->ID));
+                        $result_url = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_link'", $row->ID));
+                        
+                        $date = (new DateTime($row->post_date))->format('Y-m-d');
+                        
+                        // Set attributes dynamically for performance
+                        $img_attributes = array(
+                            'class' => 'news-img',
+                            'alt'   => $row->post_title,
+                        );
 
+                        // First image gets high priority for LCP; others get lazy loaded
+                        if ($index === 0) {
+                            $img_attributes['fetchpriority'] = 'high';
+                            $img_attributes['loading'] = 'eager'; // Don't lazy load the very first visible item
+                        } else {
+                            $img_attributes['loading'] = 'lazy';
+                        }
+                        
+                        ?>
+                        <a href="<?php echo esc_url($result_url); ?>" class="news-post">
+                            <div class="news-image-background">
+                                <?php 
+                                // This outputs a dynamic <img> tag with srcset automatically!
+                                if ($result_id) {
+                                    echo wp_get_attachment_image($result_id, 'medium_large', false, $img_attributes); 
+                                }
+                                ?>
+                            </div>
+                            <p class="news-date"><?php echo esc_html($date); ?></p>
+                            <p class="news-title"><?php echo esc_html($row->post_title); ?></p>
+                            <p class="news-link">Read more >></p>
+                        </a>
+                        <?php
+                        $index++;
+                    }
                     ?>
                 </div>
-            </div>
-            <i class="or-arrow or-right"></i>
-        </div>
+                </div>
+                    <a class="right-button or-right"><i class="or-arrow"></i></a>
+                </div>
         <?php
-    }    
+    }
     
     //<!-- display flex -->
     // <img src="https://openreadings.eu/wp-content/uploads/2024/05/OR-visi-300x200.jpg">

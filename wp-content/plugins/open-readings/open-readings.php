@@ -402,3 +402,35 @@ function fix_elementor_search_and_post_type() {
 }
 
 require_once __DIR__ . '/archive/serve-abstract.php';
+
+/**
+ * Inject high priority preload link for the homepage LCP background image.
+ */
+function open_readings_inject_lcp_preload() {
+    // Only target the main homepage
+    if ( is_front_page() ) {
+        // Preload the Desktop image
+        echo '<link rel="preload" as="image" href="https://openreadings.eu/wp-content/uploads/2026/05/2026group-img-1536x856.webp" fetchpriority="high">' . "\n";
+        
+        // Preload the Mobile image
+        echo '<link rel="preload" as="image" href="https://openreadings.eu/wp-content/uploads/2026/05/2026group-mobile-727x1024.webp" fetchpriority="high">' . "\n";
+    }
+}
+add_action( 'wp_head', 'open_readings_inject_lcp_preload', 1 );
+
+// Preload the Metropolis fonts to break the network chain
+add_action('wp_head', 'preload_metropolis_fonts', 1);
+function preload_metropolis_fonts() {
+    echo '<link rel="preload" href="/wp-content/uploads/2024/12/Metropolis-Regular.woff" as="font" type="font/woff" crossorigin>';
+    echo '<link rel="preload" href="/wp-content/uploads/2024/12/Metropolis-Bold.woff" as="font" type="font/woff" crossorigin>';
+    echo '<link rel="preload" href="/wp-content/uploads/2024/12/Metropolis-RegularItalic.woff" as="font" type="font/woff" crossorigin>';
+    echo '<link rel="preload" href="/wp-content/uploads/2024/12/Metropolis-BoldItalic.woff" as="font" type="font/woff" crossorigin>';
+}
+
+add_action('wp_head', 'add_preconnect_hints', 1);
+function add_preconnect_hints() {
+    // MathJax CDN
+    echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>';
+    // Your own site (for your font files)
+    echo '<link rel="preconnect" href="https://openreadings.eu" crossorigin>';
+}

@@ -1,142 +1,100 @@
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    let viewportWidth = window.innerWidth;
-    let width;
+function initNewsWidget() {
+    // 1. Grab the container and buttons (supports both sets of class names you used)
     const scrollContainer = document.querySelector(".image-scroll-container");
-    const scrollLeftBtn = document.querySelector(".left-button");
-    const scrollRightBtn = document.querySelector(".or-right");
-    if (!scrollContainer || !scrollLeftBtn || !scrollRightBtn) {
-        setTimeout(initNewsWidget, 100); 
+    const scrollLeftBtn = document.querySelector(".left-button") || document.querySelector(".scroll-left");
+    const scrollRightBtn = document.querySelector(".or-right") || document.querySelector(".scroll-right");
+
+    // 2. Safety Check: If the container isn't loaded yet, wait 100ms and try again
+    if (!scrollContainer) {
+        setTimeout(initNewsWidget, 100);
         return;
     }
-    let newsPosts = document.querySelectorAll(".news-post"); // Get one post to calculate size
-    let newsImageBackground = document.querySelectorAll(".news-image-background");
-    newsPosts.forEach((post) => {
+
+    // 3. Centralized Sizing Logic (Runs on load AND on resize)
+    function updateSizes() {
+        let viewportWidth = window.innerWidth;
+        let width;
+
+        // Your exact size math
         if (viewportWidth < 768) {
-            width = (scrollContainer.clientWidth - 10);
+            width = scrollContainer.clientWidth - 10;
         } else if (viewportWidth >= 768 && viewportWidth < 1024) {
-            width = (scrollContainer.clientWidth - 20)/2;
+            width = (scrollContainer.clientWidth - 20) / 2;
         } else {
-            width = (scrollContainer.clientWidth - 30)/3;
+            width = (scrollContainer.clientWidth - 30) / 3;
         }
-        post.style.width = `${width}px`; // Set width to match container
-        post.style.height = `${width/2 + 220}px`; // Set height to match container
+
+        // Apply to posts
+        document.querySelectorAll(".news-post").forEach((post) => {
+            post.style.width = `${width}px`;
+            post.style.height = `${width / 2 + 220}px`;
+        });
+
+        // Apply to image backgrounds
+        document.querySelectorAll(".news-image-background").forEach((bg) => {
+            bg.style.height = `${width / 1.92}px`;
+        });
+    }
+
+    // Run the sizing logic immediately, and attach it to the window resize event
+    updateSizes();
+    window.addEventListener("resize", () => {
+        updateSizes();
+        scrollContainer.scrollTo({ left: 0, behavior: "smooth" }); // Reset scroll position on resize
     });
 
-    newsImageBackground.forEach((post) => {
-        if (viewportWidth < 768) {
-            width = (scrollContainer.clientWidth - 10);
-        } else if (viewportWidth >= 768 && viewportWidth < 1024) {
-            width = (scrollContainer.clientWidth - 20)/2;
-        } else {
-            width = (scrollContainer.clientWidth - 30)/3;
-        }
-        post.style.height = `${width/1.92}px`; // Set height to match container
-    });
-
-    let newsPost = document.querySelector(".news-post");
-
+    // 4. Auto-Scroll Logic
     let autoScroll;
-    let direction = 1;
     let autoScrollTimeout;
- 
+
     function getScrollAmount() {
-        const postWidth = newsPost.offsetWidth; // Get full width including padding/borders
-        const gap = parseInt(getComputedStyle(scrollContainer).columnGap) || 0; // Check for CSS gap
-        const containerPadding = parseInt(getComputedStyle(scrollContainer).paddingLeft) || 0;
-        return postWidth + gap + containerPadding + 10; // Adjusted for accurate scrolling
+        const newsPost = document.querySelector(".news-post");
+        if (!newsPost) return 255; // Safe fallback if no posts exist yet
+        const postWidth = newsPost.offsetWidth;
+        const gap = parseInt(window.getComputedStyle(scrollContainer).columnGap) || 0;
+        const containerPadding = parseInt(window.getComputedStyle(scrollContainer).paddingLeft) || 0;
+        return postWidth + gap + containerPadding + 10;
+    }
+
+    function scrollImages() {
+        scrollContainer.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+
+        // Loop back when reaching the end
+        if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10) {
+            scrollContainer.scrollTo({ left: 0, behavior: "smooth" });
+        }
     }
 
     function startAutoScroll() {
         clearInterval(autoScroll);
-        autoScroll = setInterval(() => {
-            scrollImages();
-        }, 25000);
-    }
-
-    function scrollImages() {
-        const scrollAmount = getScrollAmount();
-        scrollContainer.scrollBy({ left: scrollAmount * direction, behavior: "smooth" });
-
-        // Loop back when reaching the end
-        if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth) {
-            scrollContainer.scrollTo({ left: 0, behavior: "smooth" });
-        }
+        autoScroll = setInterval(scrollImages, 25000);
     }
 
     function stopAndRestartAutoScroll() {
         clearInterval(autoScroll);
         clearTimeout(autoScrollTimeout);
-        autoScrollTimeout = setTimeout(startAutoScroll, 4000);
+        autoScrollTimeout = setTimeout(startAutoScroll, 4000); // Pause for 4 seconds after user clicks
     }
 
-    // Adjusted click events for dynamic scroll amount
-    scrollLeftBtn.addEventListener("click", () => {
-        scrollContainer.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
-        stopAndRestartAutoScroll();
-    });
+    // 5. Button Click Events (Only attaches if the buttons actually exist)
+    if (scrollLeftBtn) {
+        scrollLeftBtn.addEventListener("click", () => {
+            scrollContainer.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+            stopAndRestartAutoScroll();
+        });
+    }
 
-    scrollRightBtn.addEventListener("click", () => {
-        scrollContainer.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
-        stopAndRestartAutoScroll();
-    });
+    if (scrollRightBtn) {
+        scrollRightBtn.addEventListener("click", () => {
+            scrollContainer.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+            stopAndRestartAutoScroll();
+        });
+    }
 
-    // Hide scrollbar
-    scrollContainer.style.overflowX = "hidden"; //to show the scrollbar
-
+    // Hide scrollbar and start the timer
+    scrollContainer.style.overflowX = "hidden";
     startAutoScroll();
-});
+}
 
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const scrollContainer = document.querySelector(".image-scroll-container");
-    const scrollLeft = document.querySelector(".scroll-left");
-    const scrollRight = document.querySelector(".scroll-right");
-
-    if (!scrollContainer || !scrollLeft || !scrollRight) {
-        setTimeout(initNewsWidget, 100); 
-        return;
-    }
-
-    scrollLeft.addEventListener("click", function () {
-        scrollContainer.scrollBy({ left: -255, behavior: "smooth" });
-    });
-
-    scrollRight.addEventListener("click", function () {
-        scrollContainer.scrollBy({ left: 255, behavior: "smooth" });
-    });
-});
-
-window.addEventListener("resize", function () {
-    viewportWidth = window.innerWidth;
-    scrollContainer = document.querySelector(".image-scroll-container");
-    newsPosts = document.querySelectorAll(".news-post");
-    newsImageBackground = document.querySelectorAll(".news-image-background");
-    newsPosts.forEach((post) => {
-        if (viewportWidth < 768) {
-            width = (scrollContainer.clientWidth - 10);
-        } else if (viewportWidth >= 768 && viewportWidth < 1024) {
-            width = (scrollContainer.clientWidth - 20)/2;
-        } else {
-            width = (scrollContainer.clientWidth - 30)/3;
-        }
-        post.style.width = `${width}px`; // Set width to match container
-        post.style.height = `${width/2 + 220}px`; // Set height to match container
-    });
-
-    newsImageBackground.forEach((post) => {
-        if (viewportWidth < 768) {
-            width = (scrollContainer.clientWidth - 10);
-        } else if (viewportWidth >= 768 && viewportWidth < 1024) {
-            width = (scrollContainer.clientWidth - 20)/2;
-        } else {
-            width = (scrollContainer.clientWidth - 30)/3;
-        }
-        post.style.height = `${width/1.92}px`; // Set height to match container
-    });
-
-    scrollContainer.scrollTo({ left: 0, behavior: "smooth" }); // Reset scroll position
-});
+// Start the entire process as soon as the DOM is ready
+document.addEventListener("DOMContentLoaded", initNewsWidget);
