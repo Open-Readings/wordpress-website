@@ -7,6 +7,9 @@ add_action('init', function() {
 
     // RULE 2: Pupils' session book (Strict clean URL pattern)
     add_rewrite_rule('^archive/([0-9]{4})/moksleiviu-sesija/pdf/?$', 'index.php?archive_year=$matches[1]&serve_pupils_pdf=1', 'top');
+
+    // RULE 3: Individual abstract page
+    add_rewrite_rule('^archive/([0-9]{4})/([^/]+)/pdf/?$', 'index.php?archive_year=$matches[1]&abs_id=$matches[2]', 'top');
 });
 
 // 2. Register the query variables so WordPress recognizes them
@@ -14,6 +17,7 @@ add_filter('query_vars', function($vars) {
     $vars[] = 'archive_year';
     $vars[] = 'serve_pdf';
     $vars[] = 'serve_pupils_pdf'; // Added for the new rule
+    $vars[] = 'abs_id';
     return $vars;
 });
 
@@ -22,6 +26,7 @@ add_action('template_redirect', function() {
     $year = intval(get_query_var('archive_year'));
     $serve_pdf = get_query_var('serve_pdf');
     $serve_pupils_pdf = get_query_var('serve_pupils_pdf');
+    $abs_id = get_query_var('abs_id');
 
     if (!$year) {
         return;
@@ -63,6 +68,24 @@ add_action('template_redirect', function() {
             header('Cache-Control: public, max-age=31536000');
             header('Pragma: public');
             
+            readfile($pdf_path);
+            exit;
+        }
+    }
+
+    if ($abs_id) {
+        // Serve individual abstract PDF if it exists
+        $pdf_path = WP_CONTENT_DIR . "/uploads/abstracts/{$year}/pdf/{$abs_id}.pdf";
+
+        if (file_exists($pdf_path)) {
+            while (ob_get_level() > 0) {
+                if (!ob_end_clean()) { break; }
+            }
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . $abs_id . '_' . $year . '.pdf"');
+            header('Content-Length: ' . filesize($pdf_path));
+            header('Cache-Control: public, max-age=31536000');
+            header('Pragma: public');
             readfile($pdf_path);
             exit;
         }

@@ -55,60 +55,75 @@ class Elementor_News_Widget extends \Elementor\Widget_Base
     }
 
     protected function render() {
-        ?>
-        <div class="scroll-wrapper">
-            <a class="left-button"><i class="or-arrow or-left"></i></a>
-            <div class="image-scroll-container">
-                <div class="image-scroll-content news-container">
-                    <?php
-                    global $wpdb;
-                    $results = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" AND post_status="publish" ORDER BY post_date DESC');
+    ?>
+    <div class="or-news-carousel-wrapper">
+        <div class="or-news-nav-btn btn-left">
+            <i class="or-arrow or-left"></i>
+        </div>
+        
+        <div class="or-news-scroll-container">
+            <div class="or-news-scroll-content">
+                <?php
+                global $wpdb;
+                $results = $wpdb->get_results('SELECT post_date, post_title, ID FROM wp_posts WHERE post_type="news" AND post_status="publish" ORDER BY post_date DESC');
+                
+                $index = 0;
+                foreach ($results as $row) {
+                    $result_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_thumbnail'", $row->ID));
+                    $result_url = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_link'", $row->ID));
                     
-                    $index = 0;
-                    foreach ($results as $row) {
-                        $result_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_thumbnail'", $row->ID));
-                        $result_url = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM wp_postmeta WHERE post_id=%d AND meta_key = 'news_link'", $row->ID));
-                        
-                        $date = (new DateTime($row->post_date))->format('Y-m-d');
-                        
-                        // Set attributes dynamically for performance
-                        $img_attributes = array(
-                            'class' => 'news-img',
-                            'alt'   => $row->post_title,
-                        );
+                    $date = (new DateTime($row->post_date))->format('Y-m-d');
+                    
+                    $img_attributes = array(
+                        'class' => 'news-img',
+                        'alt'   => $row->post_title,
+                    );
 
-                        // First image gets high priority for LCP; others get lazy loaded
-                        if ($index === 0) {
-                            $img_attributes['fetchpriority'] = 'high';
-                            $img_attributes['loading'] = 'eager'; // Don't lazy load the very first visible item
-                        } else {
-                            $img_attributes['loading'] = 'lazy';
-                        }
-                        
-                        ?>
-                        <a href="<?php echo esc_url($result_url); ?>" class="news-post">
-                            <div class="news-image-background">
-                                <?php 
-                                // This outputs a dynamic <img> tag with srcset automatically!
-                                if ($result_id) {
-                                    echo wp_get_attachment_image($result_id, 'medium_large', false, $img_attributes); 
-                                }
-                                ?>
-                            </div>
-                            <p class="news-date"><?php echo esc_html($date); ?></p>
-                            <p class="news-title"><?php echo esc_html($row->post_title); ?></p>
-                            <p class="news-link">Read more >></p>
-                        </a>
-                        <?php
-                        $index++;
+                    // Native priority optimization
+                    if ($index === 0) {
+                        $img_attributes['fetchpriority'] = 'high';
+                        $img_attributes['loading'] = 'eager';
+                    } else {
+                        $img_attributes['loading'] = 'lazy';
                     }
                     ?>
-                </div>
-                </div>
-                    <a class="right-button or-right"><i class="or-arrow"></i></a>
-                </div>
-        <?php
-    }
+                    
+                    <a href="<?php echo esc_url($result_url); ?>" class="news-post">
+                        <div class="news-image-background">
+                            <?php 
+                            if ($result_id) {
+                                // 1. Define how wide this image will be in your CSS layout
+                                // On mobile (<768px) it's 100vw, on desktop it's fixed around 360px
+                                $sizes = '(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 360px';
+                                
+                                // 2. Add 'sizes' to your attributes array
+                                $img_attributes['sizes'] = $sizes;
+
+                                // 3. Use 'medium_large' OR 'large' here. 
+                                // IMPORTANT: Because we added 'sizes', the browser will IGNORE the name 
+                                // and use the browser-native logic to pick the smallest/best file.
+                                echo wp_get_attachment_image($result_id, 'large', false, $img_attributes); 
+                            }
+                            ?>
+                        </div>
+                        <p class="news-date"><?php echo esc_html($date); ?></p>
+                        <h3 class="news-title"><?php echo esc_html($row->post_title); ?></h3>
+                        <span class="news-link-action">Read more &gt;&gt;</span>
+                    </a>
+                    
+                    <?php
+                    $index++;
+                }
+                ?>
+            </div>
+        </div>
+
+        <div class="or-news-nav-btn btn-right">
+            <i class="or-arrow or-right"></i>
+        </div>
+    </div>
+    <?php
+}
     
     //<!-- display flex -->
     // <img src="https://openreadings.eu/wp-content/uploads/2024/05/OR-visi-300x200.jpg">

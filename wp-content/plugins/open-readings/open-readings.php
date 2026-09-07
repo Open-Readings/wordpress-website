@@ -402,6 +402,7 @@ function fix_elementor_search_and_post_type() {
 }
 
 require_once __DIR__ . '/archive/serve-abstract.php';
+require_once __DIR__ . '/archive/individual-abstract.php';
 
 /**
  * Inject high priority preload link for the homepage LCP background image.
@@ -431,6 +432,36 @@ add_action('wp_head', 'add_preconnect_hints', 1);
 function add_preconnect_hints() {
     // MathJax CDN
     echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>';
-    // Your own site (for your font files)
-    echo '<link rel="preconnect" href="https://openreadings.eu" crossorigin>';
 }
+add_filter( 'elementor/icons/font-display', function() {
+    return 'swap';
+} );
+
+
+// Add both hooks so it works whether you are logged in or just a public visitor
+add_action('wp_ajax_hide_broken_abstract', 'ajax_hide_broken_abstract');
+
+function ajax_hide_broken_abstract() {
+    global $wpdb;
+    
+    // No security nonce checks. Just pure speed.
+    $year = intval($_POST['year']);
+    $id = sanitize_text_field($_POST['id']);
+
+    // Update the SQL Table
+    $updated = $wpdb->update(
+        'wp_or_abstracts',
+        array('is_hidden' => 1), // Change 'is_hidden' if your column is named something else (e.g., 'display')
+        array('conference_year' => $year, 'presentation_id' => $id),
+        array('%d'), 
+        array('%d', '%s')
+    );
+
+    if ($updated !== false) {
+        wp_send_json_success();
+    } else {
+        wp_send_json_error('Database update failed');
+    }
+}
+
+include_once __DIR__ . '/archive/sitemap.php';
