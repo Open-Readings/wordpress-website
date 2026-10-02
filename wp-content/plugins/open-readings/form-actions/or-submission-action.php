@@ -3,7 +3,7 @@
 
 use Elementor\Controls_Manager;
 
-class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class ORSubmissionAction extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
 
     public function get_name()
@@ -13,7 +13,7 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
 
     public function get_label()
     {
-        return __('Custom Form Action', 'elementor-pro');
+        return __('OR Submission Action', 'elementor-pro');
     }
 
     public function register_settings_section($widget)
@@ -21,7 +21,7 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
         $widget->start_controls_section(
             'section_custom_form_action',
             [
-                'label' => __('Custom Form Action', 'elementor-pro'),
+                'label' => __('OR Submission Action', 'elementor-pro'),
                 'condition' => [
                     'submit_actions' => $this->get_name(),
                 ],
@@ -79,24 +79,6 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
                 'label' => __('Maximum submissions', 'elementor-pro'),
                 'type' => Controls_Manager::NUMBER,
                 'description' => __('Set the submission limit', 'elementor-pro'),
-            ]
-        );
-
-        $widget->add_control(
-            'limit_fields',
-            [
-                'label' => __('Field entries limit:', 'elementor-pro'),
-                'type' => Controls_Manager::TEXTAREA,
-                'description' => __('Enter limits for fields in format: field_name|value=max_entries', 'elementor-pro'),
-            ]
-        );
-        $widget->add_control(
-            'check_pupils_workshops',
-            [
-                'label' => __('Pupils workshops check', 'elementor-pro'),
-                'type' => Controls_Manager::SWITCHER,
-                'default' => '',
-                'description' => __('Makes sure one workshop and excursion is selected', 'elementor-pro'),
             ]
         );
 
@@ -253,24 +235,6 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
             'value' => $hash_id,
         );
 
-        $check_pupils_workshops = $record->get_form_settings('check_pupils_workshops');
-        if($check_pupils_workshops == "yes"){
-            $workshop1 = $form_fields['workshop1']['value'];
-            $workshop2 = $form_fields['workshop2']['value'];
-
-            // I want to check that one is workshop and one is excursion. Do a check if contains. and if both contain then return error
-            if(strpos($workshop1, 'workshop') !== false && strpos($workshop2, 'workshop') !== false){
-                $ajax_handler->add_error_message("Pasirinkite vienas dirbtuves ir vieną ekskursiją");
-                return;
-            }
-            if(strpos($workshop1, 'excursion') !== false && strpos($workshop2, 'excursion') !== false){
-                $ajax_handler->add_error_message("Pasirinkite vienas dirbtuves ir vieną ekskursiją");
-                return;
-            }
-        }
-
-        
-
         if (in_array('email', $form_fields) && in_array('repeat_email', $form_fields)) {
             if ($form_fields['email']['value'] != $form_fields['repeat_email']['value']) {
                 $ajax_handler->add_error_message(_e('Emails do not match'));
@@ -287,40 +251,6 @@ class Custom_Elementor_Form_Action extends \ElementorPro\Modules\Forms\Classes\A
             if ($form_fields['research_area']['value'] == 'Null' || $form_fields['research_area']['value'] == 'Select') {
                 $ajax_handler->add_error_message(_e('You must select a research area'));
                 return;
-            }
-        }
-
-        // Get the field limit data
-        $pattern = '/(\w+)\|(\w+)=(\d+)/';
-        preg_match_all($pattern, $record->get_form_settings('limit_fields'), $matches, PREG_SET_ORDER);
-
-        $field_limit_arr = [];
-        foreach ($matches as $match) {
-            $field_name = $match[1]; // Captured field name
-            $value = $match[2];  // Captured value name
-            $number = (int) $match[3]; // Captured number
-
-            $field_limit_arr[] = [
-                'field_name' => $field_name,
-                'value' => $value,
-                'number' => $number
-            ];
-        }
-
-        // Check if the field limit is reached
-        foreach ($field_limit_arr as $field_limit) {
-            $field_name = $field_limit['field_name'];
-            $value = $field_limit['value'];
-            $number = $field_limit['number'];
-
-            $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE $field_name = '$value'");
-
-
-            if ($count >= $number) {
-                if ($form_fields[$field_name]['value'] == $value) {
-                    $ajax_handler->add_error_message("(Maximum number of submissions for $field_name: $value has been reached)");
-                    return;
-                }
             }
         }
 
