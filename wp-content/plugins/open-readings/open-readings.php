@@ -25,6 +25,10 @@ use OpenReadings\Registration\Registration_Session\ORRegistrationSession;
 
 define('OR_PLUGIN_DIR', __DIR__ . '/');
 define('OR_PLUGIN_FILE', __FILE__);
+
+global $or_conference_id;
+$or_conference_id = 'OR-2027';
+
 function register_faq_widget($widgets_manager)
 {
   require_once (__DIR__ . '/widgets/faq-widget.php');
@@ -37,6 +41,7 @@ function register_faq_widget($widgets_manager)
 
 require_once __DIR__ . '/include/register-styles.php';
 require_once __DIR__ . '/include/register-scripts.php';
+require_once __DIR__ . '/include/email-preview.php';
 
 function register_programme_day_widget($widgets_manager)
 {

@@ -1,0 +1,65 @@
+.or-email-preview {
+    box-sizing: border-box;
+    width: min(900px, 94vw);
+    height: 90vh;
+    max-height: 90vh;
+    margin: auto;
+    padding: 20px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+}
+
+.or-email-preview[open] {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.or-email-preview::backdrop {
+    background: rgb(0 0 0 / 55%);
+}
+
+.or-email-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.or-email-preview h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.or-email-preview button {
+    padding: 8px 14px;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    cursor: pointer;
+}
+
+.or-email-preview p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.or-email-preview-subject {
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.or-email-preview iframe {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.or-email-preview iframe[hidden] {
+    display: none;
+}

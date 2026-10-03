@@ -23,7 +23,7 @@ class ORmailer
         // stuff to init
     }
 
-    public function send_OR_mail($to, $subject, $content, $attachments = array())
+    public function render_email($content)
     {
         //fetch template from wp settings
 
@@ -31,10 +31,19 @@ class ORmailer
         if (!$template) {
             $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_email_template.html');
         }
-        $message = str_replace('[content]', $content, $template);
+        return str_replace('[content]', $content, $template);
+    }
+
+    public function send_OR_mail($to, $subject, $content, $attachments = array(), $from_email = 'it@openreadings.eu')
+    {
+        if (!in_array($from_email, ['it@openreadings.eu', 'info@openreadings.eu'], true)) {
+            $from_email = 'it@openreadings.eu';
+        }
+
+        $message = $this->render_email($content);
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: Open Readings 2027 <it@openreadings.eu>'
+            'From: Open Readings 2027 <' . $from_email . '>'
         );
 
 
