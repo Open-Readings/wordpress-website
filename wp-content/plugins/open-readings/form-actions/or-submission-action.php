@@ -128,6 +128,19 @@ class ORSubmissionAction extends \ElementorPro\Modules\Forms\Classes\Action_Base
         );
 
         $widget->add_control(
+            'submission_limit_fields',
+            [
+                'label' => __('Match fields for submission limit', 'elementor-pro'),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'description' => __('The limit always counts only the current conference. Enter comma-separated field IDs, for example workshop, participant_type, to count only submissions matching all of those submitted values. Hidden fields with constant values are supported. Leave empty to count all submissions for the current conference.', 'elementor-pro'),
+                'condition' => [
+                    'limit_submissions' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
             'or_perform_check',
             [
                 'label' => __('Perform check', 'elementor-pro'),
@@ -225,11 +238,11 @@ class ORSubmissionAction extends \ElementorPro\Modules\Forms\Classes\Action_Base
 
         $table_name = $record->get_form_settings('table_name');
 
-        if (!$this->validate_submission_limit($record, $table_name, $ajax_handler)) {
+        $this->create_submission_table($record, $table_name);
+
+        if (!$this->validate_submission_limit($record, $table_name, $form_fields, $ajax_handler)) {
             return;
         }
-
-        $this->create_submission_table($record, $table_name);
 
         $columns = $wpdb->get_col("DESC $table_name", 0);
 
@@ -296,20 +309,66 @@ class ORSubmissionAction extends \ElementorPro\Modules\Forms\Classes\Action_Base
         return true;
     }
 
-    private function validate_submission_limit($record, $table_name, $ajax_handler)
+    private function validate_submission_limit($record, $table_name, $form_fields, $ajax_handler)
     {
-        global $wpdb;
+        global $wpdb, $or_conference_id;
 
-        $limit_submissions = $record->get_form_settings('limit_submissions');
-        $max_submissions = $record->get_form_settings('max_submissions');
+        if ($record->get_form_settings('limit_submissions') != 'yes') {
+            return true;
+        }
 
-        if ($limit_submissions == "yes") {
-            $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
-
-            if ($count >= $max_submissions) {
-                $ajax_handler->add_error_message("Registration is closed (maximum number of submissions has been reached)");
+        $match_values = ['conference_id' => sanitize_text_field($or_conference_id)];
+        $field_ids = array_unique(array_filter(array_map('trim', explode(',', (string) $record->get_form_settings('submission_limit_fields'))), 'strlen'));
+        foreach ($field_ids as $field_id) {
+            // Always use the server's conference ID, even if the form includes it.
+            if ($field_id === 'conference_id') {
+                continue;
+            }
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $field_id)
+                || in_array($field_id, ['id', 'hash_id', 'repeat_email'], true)
+                || !isset($form_fields[$field_id]['value'])) {
+                $ajax_handler->add_error_message(__('The submission limit has an invalid match field. Please contact the organizer.'));
                 return false;
             }
+            $match_values[$field_id] = sanitize_text_field($form_fields[$field_id]['value']);
+        }
+
+        $quoted_table = '`' . str_replace('`', '``', $table_name) . '`';
+        $columns = $wpdb->get_col("DESC $quoted_table", 0);
+        if (empty($columns)) {
+            $ajax_handler->add_error_message(__('Could not check the submission limit. Please try again.'));
+            return false;
+        }
+
+        $conditions = [];
+        $values = [];
+        foreach ($match_values as $field_id => $value) {
+            if (!in_array($field_id, $columns, true)) {
+                // New form fields are added on insert with an empty-string default.
+                if ($value !== '') {
+                    $conditions[] = '1 = 0';
+                }
+                continue;
+            }
+            $conditions[] = "`$field_id` = %s";
+            $values[] = $value;
+        }
+
+        $query = "SELECT COUNT(*) FROM $quoted_table";
+        if ($conditions) {
+            $query .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+        if ($values) {
+            $query = $wpdb->prepare($query, $values);
+        }
+        $count = $wpdb->get_var($query);
+        if ($count === null) {
+            $ajax_handler->add_error_message(__('Could not check the submission limit. Please try again.'));
+            return false;
+        }
+        if ($count >= $record->get_form_settings('max_submissions')) {
+            $ajax_handler->add_error_message("Registration is closed (maximum number of submissions has been reached)");
+            return false;
         }
 
         return true;
