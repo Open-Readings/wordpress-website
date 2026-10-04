@@ -31,6 +31,13 @@ class ORmailer
         if (!$template) {
             $template = file_get_contents(OR_PLUGIN_DIR . 'mailer/OR_email_template.html');
         }
+        // Table-based templates need a cell around ordinary editor HTML or text.
+        // Keep existing row-based messages (such as registration emails) intact.
+        if (preg_match('/<table\b[^>]*>\s*\[content\]/i', $template)
+            && !preg_match('/^\s*(?:<!--.*?-->\s*)*<(?:tr|tbody|thead|tfoot)\b/is', $content)) {
+            $content = '<tr><td align="left" style="text-align:left;">' . $content . '</td></tr>';
+        }
+
         return str_replace('[content]', $content, $template);
     }
 
